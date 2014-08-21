@@ -1,0 +1,17 @@
+{
+  "name": "Js13KGames-2014",
+  "version": "0.0.0",
+  "description": "Entry into the 2014 Js13kGames",
+  "scripts": {
+    "start": "./node_modules/.bin/gulp default"
+  },
+  "author": "Matt Gale <matt@littleball.co.uk>",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^3.8.7",
+    "gulp-concat": "^2.3.4",
+    "gulp-filesize": "0.0.6",
+    "gulp-uglify": "^0.3.1",
+    "gulp-zip": "^2.0.1"
+  }
+}
