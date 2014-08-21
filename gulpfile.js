@@ -2,7 +2,8 @@ var gulp = require('gulp'),
   uglify = require('gulp-uglify'),
   zip = require('gulp-zip'),
   size = require('gulp-filesize'),
-  concat = require('gulp-concat');
+  concat = require('gulp-concat'),
+  localhost = require('browser-sync');
 
 gulp.task('html', function () {
   return gulp.src('src/index.html')
@@ -34,4 +35,10 @@ gulp.task('watch', ['compile'], function () {
   gulp.watch('src/**/*', ['compile']);
 });
 
-gulp.task('default', ['watch']);
+gulp.task('localhost', ['watch'], function () {
+  return localhost.init(['dest/www/*'], {
+    server: './dest/www'
+  });
+});
+
+gulp.task('default', ['localhost']);
