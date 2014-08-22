@@ -12,6 +12,8 @@ var Game = function () {
   this.canvas.width = 300;
   this.canvas.height = 300;
 
+  this.fps = 1000 / 60;
+
   this.ctx = this.canvas.getContext('2d');
   doc.getElementsByTagName('body')[0].appendChild(this.canvas);
 
@@ -22,20 +24,30 @@ var Game = function () {
   ]);
 
   aa.play('powerup');
+};
 
+Game.prototype.start = function () {
+  var _this = this;
+  this.interval = window.setInterval(function () {
+    _this.update();
+  }, this.fps);
   this.tick();
+};
+
+Game.prototype.pause = function () {
+  window.clearInterval(this.interval);
+  delete this.interval;
 };
 
 Game.prototype.update = function () {
 };
 
-Game.prototype.draw = function () {
+Game.prototype.render = function () {
 };
 
 Game.prototype.tick = function () {
-
-  this.update();
-  this.draw();
-
-  window.raf(this.tick.bind(this));
+  if (this.interval) {
+    this.render();
+    window.raf(this.tick.bind(this));
+  }
 };
