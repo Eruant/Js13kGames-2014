@@ -3,7 +3,9 @@ var gulp = require('gulp'),
   zip = require('gulp-zip'),
   size = require('gulp-filesize'),
   concat = require('gulp-concat'),
-  localhost = require('browser-sync');
+  localhost = require('browser-sync'),
+  sass = require('gulp-sass'),
+  rename = require('gulp-rename');
 
 gulp.task('html', function () {
   return gulp.src('src/index.html')
@@ -21,7 +23,14 @@ gulp.task('js', function () {
     .pipe(gulp.dest('dest/www'));
 });
 
-gulp.task('compress', ['html', 'js'], function () {
+gulp.task('css', function () {
+  return gulp.src('src/scss/base.scss')
+    .pipe(sass())
+    .pipe(rename('js13k.css'))
+    .pipe(gulp.dest('dest/www'));
+});
+
+gulp.task('compress', ['html', 'js', 'css'], function () {
   return gulp.src('dest/www/*')
     .pipe(zip('archive.zip'))
     .pipe(gulp.dest('dest'));
