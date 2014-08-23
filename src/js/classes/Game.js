@@ -87,18 +87,47 @@ Game.prototype.handleEvent = function (event) {
 };
 
 Game.prototype.setKeyState = function (code, value) {
+
   switch (code) {
     case 49: // 1
-      this.io.activeInput.earth = value;
+      if (value) {
+        this.io.activeInput.earth = true;
+        this.io.activeInput.water = false;
+        this.io.activeInput.air = false;
+        this.io.activeInput.fire = false;
+      } else {
+        this.io.activeInput.earth = false;
+      }
       break;
     case 50: // 2
-      this.io.activeInput.water = value;
+      if (value) {
+        this.io.activeInput.earth = false;
+        this.io.activeInput.water = true;
+        this.io.activeInput.air = false;
+        this.io.activeInput.fire = false;
+      } else {
+        this.io.activeInput.water = false;
+      }
       break;
     case 51: // 3
-      this.io.activeInput.air = value;
+      if (value) {
+        this.io.activeInput.earth = false;
+        this.io.activeInput.water = false;
+        this.io.activeInput.air = true;
+        this.io.activeInput.fire = false;
+      } else {
+        this.io.activeInput.air = false;
+      }
       break;
     case 52: // 4
-      this.io.activeInput.fire = value;
+      if (value) {
+        this.io.activeInput.earth = false;
+        this.io.activeInput.water = false;
+        this.io.activeInput.air = false;
+        this.io.activeInput.fire = true;
+      } else {
+        this.io.activeInput.fire = false;
+      }
       break;
     case 37: // left
       this.io.activeInput.left = value;

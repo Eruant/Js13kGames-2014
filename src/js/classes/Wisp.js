@@ -12,6 +12,7 @@ var Wisp = function (x, y) {
 
   this.PI2 = Math.PI * 2;
   this.accelerate = 2;
+  this.state = 'normal';
 };
 
 Wisp.prototype.update = function (input) {
@@ -43,6 +44,18 @@ Wisp.prototype.update = function (input) {
 
   this.position.x += this.speed.x;
   this.position.y += this.speed.y;
+
+  if (input.earth) {
+    this.state = 'earth';
+  } else if (input.water) {
+    this.state = 'water';
+  } else if (input.air) {
+    this.state = 'air';
+  } else if (input.fire) {
+    this.state = 'fire';
+  } else {
+    this.state = 'normal';
+  }
 };
 
 Wisp.prototype.render = function (ctx) {
@@ -50,7 +63,23 @@ Wisp.prototype.render = function (ctx) {
   ctx.translate(this.position.x, this.position.y);
   ctx.beginPath();
   ctx.arc(0, 0, 10, 0, this.PI2, false);
-  ctx.fillStyle = '#fff';
+  switch (this.state) {
+    case 'earth':
+      ctx.fillStyle = '#0f0';
+      break;
+    case 'water':
+      ctx.fillStyle = '#00f';
+      break;
+    case 'air':
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      break;
+    case 'fire':
+      ctx.fillStyle = '#f00';
+      break;
+    default:
+      ctx.fillStyle = '#fff';
+      break;
+  }
   ctx.fill();
   ctx.restore();
 };
