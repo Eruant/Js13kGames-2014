@@ -1,4 +1,6 @@
-var Wisp = function (x, y) {
+var Wisp = function (x, y, canvas) {
+
+  this.canvas = canvas;
 
   this.position = {
     x: x || 0,
@@ -39,11 +41,28 @@ Wisp.prototype.update = function (input) {
     this.speed.x = -10;
   }
 
+  // add dampening
   this.speed.x *= 0.9;
   this.speed.y *= 0.9;
 
+  this.speed.y += 0.3; // add gravity
+
   this.position.x += this.speed.x;
   this.position.y += this.speed.y;
+
+  if (this.position.x > this.canvas.width) {
+    this.position.x -= this.canvas.width;
+  } else if (this.position.x < 0) {
+    this.position.x += this.canvas.width;
+  }
+
+  if (this.position.y > this.canvas.height) {
+    this.position.y = this.canvas.height;
+    this.speed.y = -this.speed.y;
+  } else if (this.position.y < 0) {
+    this.position.y = 0;
+    this.speed.y = -this.speed.y;
+  }
 
   if (input.earth) {
     this.state = 'earth';

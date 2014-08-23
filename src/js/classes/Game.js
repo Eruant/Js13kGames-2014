@@ -31,7 +31,7 @@ var Game = function (width, height) {
     right: false
   };
 
-  this.player = new Wisp(this.canvas.width / 2, this.canvas.height / 2);
+  this.player = new Wisp(this.canvas.width / 2, this.canvas.height / 2, this.canvas);
 
   var aa = new ArcadeAudio();
   
@@ -60,9 +60,13 @@ Game.prototype.update = function () {
 };
 
 Game.prototype.render = function () {
+
+  // draw bakground
   this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   this.ctx.fillStyle = '#ccc';
   this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+  // other objects
   this.player.render(this.ctx);
 };
 
