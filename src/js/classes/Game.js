@@ -33,13 +33,15 @@ var Game = function (width, height) {
 
   this.player = new Wisp(this.canvas.width / 2, this.canvas.height / 2, this.canvas);
 
-  var aa = new ArcadeAudio();
+  this.aa = new ArcadeAudio();
   
-  aa.add('powerup', 10, [
-    [0, , 0.01, , 0.4384, 0.2, , 0.12, 0.28, 1, 0.65, , , 0.0419, , , , , 1, , , , , 0.3]
+  this.aa.add('fire', 10, [
+    [3, 0.25, 0.27, 0.76, 0.54, 0.5571, , 0.1799, -0.0999, 0.0035, 0.56, -0.6597, 0.61, 0.0862, -0.8256, , 0.5, 0.5, 0.71, -0.0181, , 0.0368, 0.0333, 0.5]
   ]);
 
-  aa.play('powerup');
+  this.aa.add('air', 10, [
+    [3, 0.33, 0.89, 0.25, 0.81, 0.4692, , -0.0122, 0.0113, -0.5995, 0.23, -0.54, -0.1575, , 0.2234, 0.84, -0.4, 0.6599, 0.17, -0.3399, 0.96, 0.25, 0.72, 0.5]
+  ]);
 };
 
 Game.prototype.start = function () {
@@ -115,6 +117,7 @@ Game.prototype.setKeyState = function (code, value) {
       break;
     case 51: // 3
       if (value) {
+        this.aa.play('air');
         this.io.activeInput.earth = false;
         this.io.activeInput.water = false;
         this.io.activeInput.air = true;
@@ -125,6 +128,7 @@ Game.prototype.setKeyState = function (code, value) {
       break;
     case 52: // 4
       if (value) {
+        this.aa.play('fire');
         this.io.activeInput.earth = false;
         this.io.activeInput.water = false;
         this.io.activeInput.air = false;
