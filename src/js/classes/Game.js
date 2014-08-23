@@ -1,16 +1,16 @@
-/*globals ArcadeAudio, IO*/
+/*globals ArcadeAudio, IO, Wisp*/
 
 window.raf = (function () {
   return window.requestAnimationFrame || function (cb) { window.setTimeout(cb, 1000 / 60); };
 })();
 
-var Game = function () {
+var Game = function (width, height) {
 
   var doc = window.document;
 
   this.canvas = doc.createElement('canvas');
-  this.canvas.width = 300;
-  this.canvas.height = 300;
+  this.canvas.width = width;
+  this.canvas.height = height;
 
   this.fps = 1000 / 60;
 
@@ -30,6 +30,8 @@ var Game = function () {
     left: false,
     right: false
   };
+
+  this.player = new Wisp(this.canvas.width / 2, this.canvas.height / 2);
 
   var aa = new ArcadeAudio();
   
@@ -54,9 +56,14 @@ Game.prototype.pause = function () {
 };
 
 Game.prototype.update = function () {
+  this.player.update(this.io.activeInput);
 };
 
 Game.prototype.render = function () {
+  this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  this.ctx.fillStyle = '#ccc';
+  this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  this.player.render(this.ctx);
 };
 
 Game.prototype.tick = function () {
@@ -70,11 +77,9 @@ Game.prototype.handleEvent = function (event) {
 
   switch (event.type) {
     case 'keydown':
-      console.log('key down');
       this.setKeyState(event.keyCode, true);
       break;
     case 'keyup':
-      console.log('key up');
       this.setKeyState(event.keyCode, false);
       break;
   }
@@ -108,4 +113,8 @@ Game.prototype.setKeyState = function (code, value) {
       this.io.activeInput.down = value;
       break;
   }
+};
+
+Game.prototype.setTouchState = function (action, value) {
+  console.log(action, value);
 };

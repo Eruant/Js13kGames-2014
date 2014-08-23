@@ -1,5 +1,5 @@
 /*globals Game*/
 window.onload = function () {
-  var game = new Game(300, 300);
+  var game = new Game(320, 480);
   game.start();
 };
