@@ -18,19 +18,6 @@ var Game = function (width, height) {
   doc.getElementsByTagName('body')[0].appendChild(this.canvas);
 
   this.io = new IO(this.canvas, this);
-  this.io.delegate = this;
-  this.io.addEvents();
-  this.io.activeInput = {
-    earth: false,
-    water: false,
-    air: false,
-    fire: false,
-    up: false,
-    down: false,
-    left: false,
-    right: false
-  };
-
   this.sounds = new ArcadeAudio();
   this.player = new Wisp(this.canvas.width / 2, this.canvas.height / 2, this);
 };
@@ -68,81 +55,4 @@ Game.prototype.tick = function () {
     this.render();
     window.raf(this.tick.bind(this));
   }
-};
-
-Game.prototype.handleEvent = function (event) {
-
-  switch (event.type) {
-    case 'keydown':
-      this.setKeyState(event.keyCode, true);
-      break;
-    case 'keyup':
-      this.setKeyState(event.keyCode, false);
-      break;
-  }
-
-};
-
-Game.prototype.setKeyState = function (code, value) {
-
-  switch (code) {
-    case 49: // 1
-      if (value) {
-        this.io.activeInput.earth = true;
-        this.io.activeInput.water = false;
-        this.io.activeInput.air = false;
-        this.io.activeInput.fire = false;
-      } else {
-        this.io.activeInput.earth = false;
-      }
-      break;
-    case 50: // 2
-      if (value) {
-        this.io.activeInput.earth = false;
-        this.io.activeInput.water = true;
-        this.io.activeInput.air = false;
-        this.io.activeInput.fire = false;
-      } else {
-        this.io.activeInput.water = false;
-      }
-      break;
-    case 51: // 3
-      if (value) {
-        this.sounds.play('air');
-        this.io.activeInput.earth = false;
-        this.io.activeInput.water = false;
-        this.io.activeInput.air = true;
-        this.io.activeInput.fire = false;
-      } else {
-        this.io.activeInput.air = false;
-      }
-      break;
-    case 52: // 4
-      if (value) {
-        this.sounds.play('fire');
-        this.io.activeInput.earth = false;
-        this.io.activeInput.water = false;
-        this.io.activeInput.air = false;
-        this.io.activeInput.fire = true;
-      } else {
-        this.io.activeInput.fire = false;
-      }
-      break;
-    case 37: // left
-      this.io.activeInput.left = value;
-      break;
-    case 39: // right
-      this.io.activeInput.right = value;
-      break;
-    case 38: // up
-      this.io.activeInput.up = value;
-      break;
-    case 40: // down
-      this.io.activeInput.down = value;
-      break;
-  }
-};
-
-Game.prototype.setTouchState = function (action, value) {
-  console.log(action, value);
 };

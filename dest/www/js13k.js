@@ -1,1 +1,919 @@
-function SfxrParams(){this.setSettings=function(t){for(var e=0;24>e;e++)this[String.fromCharCode(97+e)]=t[e]||0;this.c<.01&&(this.c=.01);var i=this.b+this.c+this.e;if(.18>i){var s=.18/i;this.b*=s,this.c*=s,this.e*=s}}}function SfxrSynth(){this._params=new SfxrParams;var t,e,i,s,a,n,h,r,o,c,d,p;this.reset=function(){var t=this._params;s=100/(t.f*t.f+.001),a=100/(t.g*t.g+.001),n=1-t.h*t.h*t.h*.01,h=-t.i*t.i*t.i*1e-6,t.a||(d=.5-t.n/2,p=5e-5*-t.o),r=1+t.l*t.l*(t.l>0?-.9:10),o=0,c=1==t.m?0:(1-t.m)*(1-t.m)*2e4+32},this.totalReset=function(){this.reset();var s=this._params;return t=s.b*s.b*1e5,e=s.c*s.c*1e5,i=s.e*s.e*1e5+12,3*((t+e+i)/3|0)},this.synthWave=function(v,u){var l=this._params,f=1!=l.s||l.v,y=l.v*l.v*.1,w=1+3e-4*l.w,g=l.s*l.s*l.s*.1,m=1+1e-4*l.t,k=1!=l.s,I=l.x*l.x,b=l.g,E=l.q||l.r,x=l.r*l.r*l.r*.2,S=l.q*l.q*(l.q<0?-1020:1020),A=l.p?((1-l.p)*(1-l.p)*2e4|0)+32:0,L=l.d,G=l.j/2,M=l.k*l.k*.01,C=l.a,P=t,W=1/t,q=1/e,O=1/i,R=5/(1+l.u*l.u*20)*(.01+g);R>.8&&(R=.8),R=1-R;for(var T,_,j,K,U,B,F=!1,N=0,z=0,D=0,H=0,J=0,Q=0,V=0,X=0,Y=0,Z=0,$=new Array(1024),te=new Array(32),ee=$.length;ee--;)$[ee]=0;for(var ee=te.length;ee--;)te[ee]=2*Math.random()-1;for(var ee=0;u>ee;ee++){if(F)return ee;if(A&&++Y>=A&&(Y=0,this.reset()),c&&++o>=c&&(c=0,s*=r),n+=h,s*=n,s>a&&(s=a,b>0&&(F=!0)),_=s,G>0&&(Z+=M,_*=1+Math.sin(Z)*G),_|=0,8>_&&(_=8),C||(d+=p,0>d?d=0:d>.5&&(d=.5)),++z>P)switch(z=0,++N){case 1:P=e;break;case 2:P=i}switch(N){case 0:D=z*W;break;case 1:D=1+2*(1-z*q)*L;break;case 2:D=1-z*O;break;case 3:D=0,F=!0}E&&(S+=x,j=0|S,0>j?j=-j:j>1023&&(j=1023)),f&&w&&(y*=w,1e-5>y?y=1e-5:y>.1&&(y=.1)),B=0;for(var ie=8;ie--;){if(V++,V>=_&&(V%=_,3==C))for(var se=te.length;se--;)te[se]=2*Math.random()-1;switch(C){case 0:U=d>V/_?.5:-.5;break;case 1:U=1-V/_*2;break;case 2:K=V/_,K=6.28318531*(K>.5?K-1:K),U=1.27323954*K+.405284735*K*K*(0>K?1:-1),U=.225*((0>U?-1:1)*U*U-U)+U;break;case 3:U=te[Math.abs(32*V/_|0)]}f&&(T=Q,g*=m,0>g?g=0:g>.1&&(g=.1),k?(J+=(U-Q)*g,J*=R):(Q=U,J=0),Q+=J,H+=Q-T,H*=1-y,U=H),E&&($[X%1024]=U,U+=$[(X-j+1024)%1024],X++),B+=U}B*=.125*D*I,v[ee]=B>=1?32767:-1>=B?-32768:32767*B|0}return u}}var synth=new SfxrSynth;window.jsfxr=function(t){synth._params.setSettings(t);var e=synth.totalReset(),i=new Uint8Array(4*((e+1)/2|0)+44),s=2*synth.synthWave(new Uint16Array(i.buffer,44),e),a=new Uint32Array(i.buffer,0,44);a[0]=1179011410,a[1]=s+36,a[2]=1163280727,a[3]=544501094,a[4]=16,a[5]=65537,a[6]=44100,a[7]=88200,a[8]=1048578,a[9]=1635017060,a[10]=s,s+=44;for(var n=0,h="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",r="data:audio/wav;base64,";s>n;n+=3){var o=i[n]<<16|i[n+1]<<8|i[n+2];r+=h[o>>18]+h[o>>12&63]+h[o>>6&63]+h[63&o]}return r};var ArcadeAudio=function(){this.sounds={}};ArcadeAudio.prototype.add=function(t,e,i){this.sounds[t]=[],i.forEach(function(i,s){this.sounds[t].push({tick:0,count:e,pool:[]});for(var a=0;e>a;a++){var n=new Audio;n.src=jsfxr(i),this.sounds[t][s].pool.push(n)}},this)},ArcadeAudio.prototype.play=function(t){var e=this.sounds[t],i=e.length>1?e[Math.floor(Math.random()*e.length)]:e[0];i.pool[i.tick].play(),i.tick=i.tick<i.count-1?i.tick+1:0};var Emitter=function(){};Emitter.prototype.update=function(){},Emitter.prototype.draw=function(){},window.raf=function(){return window.requestAnimationFrame||function(t){window.setTimeout(t,1e3/60)}}();var Game=function(t,e){var i=window.document;this.canvas=i.createElement("canvas"),this.canvas.width=t,this.canvas.height=e,this.fps=1e3/60,this.ctx=this.canvas.getContext("2d"),i.getElementsByTagName("body")[0].appendChild(this.canvas),this.io=new IO(this.canvas,this),this.io.delegate=this,this.io.addEvents(),this.io.activeInput={earth:!1,water:!1,air:!1,fire:!1,up:!1,down:!1,left:!1,right:!1},this.sounds=new ArcadeAudio,this.player=new Wisp(this.canvas.width/2,this.canvas.height/2,this)};Game.prototype.start=function(){var t=this;this.interval=window.setInterval(function(){t.update()},this.fps),this.tick()},Game.prototype.pause=function(){window.clearInterval(this.interval),delete this.interval},Game.prototype.update=function(){this.player.update(this.io.activeInput)},Game.prototype.render=function(){this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height),this.ctx.fillStyle="#ccc",this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height),this.player.render(this.ctx)},Game.prototype.tick=function(){this.interval&&(this.render(),window.raf(this.tick.bind(this)))},Game.prototype.handleEvent=function(t){switch(t.type){case"keydown":this.setKeyState(t.keyCode,!0);break;case"keyup":this.setKeyState(t.keyCode,!1)}},Game.prototype.setKeyState=function(t,e){switch(t){case 49:e?(this.io.activeInput.earth=!0,this.io.activeInput.water=!1,this.io.activeInput.air=!1,this.io.activeInput.fire=!1):this.io.activeInput.earth=!1;break;case 50:e?(this.io.activeInput.earth=!1,this.io.activeInput.water=!0,this.io.activeInput.air=!1,this.io.activeInput.fire=!1):this.io.activeInput.water=!1;break;case 51:e?(this.sounds.play("air"),this.io.activeInput.earth=!1,this.io.activeInput.water=!1,this.io.activeInput.air=!0,this.io.activeInput.fire=!1):this.io.activeInput.air=!1;break;case 52:e?(this.sounds.play("fire"),this.io.activeInput.earth=!1,this.io.activeInput.water=!1,this.io.activeInput.air=!1,this.io.activeInput.fire=!0):this.io.activeInput.fire=!1;break;case 37:this.io.activeInput.left=e;break;case 39:this.io.activeInput.right=e;break;case 38:this.io.activeInput.up=e;break;case 40:this.io.activeInput.down=e}},Game.prototype.setTouchState=function(t,e){console.log(t,e)};var IO=function(t){this.el=t,this.ongoingTouches=[],this.delegate=this};IO.prototype.addEvents=function(){this.el.addEventListener("touchstart",this.delegate.handleEvent,!1),this.el.addEventListener("touchmove",this.delegate.handleEvent,!1),this.el.addEventListener("touchend",this.delegate.handleEvent,!1),this.el.addEventListener("touchcancel",this.delegate.handleEvent,!1),window.addEventListener("keydown",this.delegate.handleEvent.bind(this.delegate),!0),window.addEventListener("keyup",this.delegate.handleEvent.bind(this.delegate),!0)},IO.prototype.removeEvents=function(){this.el.removeEventListener("touchstart",this.delegate.handleEvent,!1),this.el.removeEventListener("touchmove",this.delegate.handleEvent,!1),this.el.removeEventListener("touchend",this.delegate.handleEvent,!1),this.el.removeEventListener("touchcancel",this.delegate.handleEvent,!1),window.removeEventListener("keydown",this.delegate.handleEvent.bind(this.delegate),!0),window.removeEventListener("keyup",this.delegate.handleEvent.bind(this.delegate),!0)},IO.prototype.handleEvent=function(){};var Wisp=function(t,e,i){this.game=i,this.game.sounds.add("fire",10,[[3,.25,.27,.76,.54,.5571,,.1799,-.0999,.0035,.56,-.6597,.61,.0862,-.8256,,.5,.5,.71,-.0181,,.0368,.0333,.5]]),this.game.sounds.add("air",10,[[3,.33,.89,.25,.81,.4692,,-.0122,.0113,-.5995,.23,-.54,-.1575,,.2234,.84,-.4,.6599,.17,-.3399,.96,.25,.72,.5]]),this.position={x:t||0,y:e||0},this.speed={x:0,y:0},this.PI2=2*Math.PI,this.accelerate=2,this.state="normal"};Wisp.prototype.update=function(t){t.left&&(this.speed.x-=this.accelerate),t.right&&(this.speed.x+=this.accelerate),t.up&&(this.speed.y-=this.accelerate),t.down&&(this.speed.y+=this.accelerate),this.speed.x>10?this.speed.x=10:this.speed.x<-10&&(this.speed.x=-10),this.speed.x*=.9,this.speed.y*=.9,this.speed.y+=.3,this.position.x+=this.speed.x,this.position.y+=this.speed.y,this.position.x>this.game.canvas.width?this.position.x-=this.game.canvas.width:this.position.x<0&&(this.position.x+=this.game.canvas.width),this.position.y>this.game.canvas.height?(this.position.y=this.game.canvas.height,this.speed.y=-this.speed.y):this.position.y<0&&(this.position.y=0,this.speed.y=-this.speed.y),this.state=t.earth?"earth":t.water?"water":t.air?"air":t.fire?"fire":"normal"},Wisp.prototype.render=function(t){switch(t.save(),t.translate(this.position.x,this.position.y),t.beginPath(),t.arc(0,0,10,0,this.PI2,!1),this.state){case"earth":t.fillStyle="#0f0";break;case"water":t.fillStyle="#00f";break;case"air":t.fillStyle="rgba(255, 255, 255, 0.5)";break;case"fire":t.fillStyle="#f00";break;default:t.fillStyle="#fff"}t.fill(),t.restore()},window.onload=function(){var t=new Game(320,480);t.start()};
+/**
+ * SfxrParams
+ *
+ * Copyright 2010 Thomas Vian
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @author Thomas Vian
+ */
+/** @constructor */
+function SfxrParams() {
+  //--------------------------------------------------------------------------
+  //
+  //  Settings String Methods
+  //
+  //--------------------------------------------------------------------------
+
+  /**
+   * Parses a settings array into the parameters
+   * @param array Array of the settings values, where elements 0 - 23 are
+   *                a: waveType
+   *                b: attackTime
+   *                c: sustainTime
+   *                d: sustainPunch
+   *                e: decayTime
+   *                f: startFrequency
+   *                g: minFrequency
+   *                h: slide
+   *                i: deltaSlide
+   *                j: vibratoDepth
+   *                k: vibratoSpeed
+   *                l: changeAmount
+   *                m: changeSpeed
+   *                n: squareDuty
+   *                o: dutySweep
+   *                p: repeatSpeed
+   *                q: phaserOffset
+   *                r: phaserSweep
+   *                s: lpFilterCutoff
+   *                t: lpFilterCutoffSweep
+   *                u: lpFilterResonance
+   *                v: hpFilterCutoff
+   *                w: hpFilterCutoffSweep
+   *                x: masterVolume
+   * @return If the string successfully parsed
+   */
+  this.setSettings = function(values)
+  {
+    for ( var i = 0; i < 24; i++ )
+    {
+      this[String.fromCharCode( 97 + i )] = values[i] || 0;
+    }
+
+    // I moved this here from the reset(true) function
+    if (this['c'] < .01) {
+      this['c'] = .01;
+    }
+
+    var totalTime = this['b'] + this['c'] + this['e'];
+    if (totalTime < .18) {
+      var multiplier = .18 / totalTime;
+      this['b']  *= multiplier;
+      this['c'] *= multiplier;
+      this['e']   *= multiplier;
+    }
+  }
+}
+
+/**
+ * SfxrSynth
+ *
+ * Copyright 2010 Thomas Vian
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @author Thomas Vian
+ */
+/** @constructor */
+function SfxrSynth() {
+  // All variables are kept alive through function closures
+
+  //--------------------------------------------------------------------------
+  //
+  //  Sound Parameters
+  //
+  //--------------------------------------------------------------------------
+
+  this._params = new SfxrParams();  // Params instance
+
+  //--------------------------------------------------------------------------
+  //
+  //  Synth Variables
+  //
+  //--------------------------------------------------------------------------
+
+  var _envelopeLength0, // Length of the attack stage
+      _envelopeLength1, // Length of the sustain stage
+      _envelopeLength2, // Length of the decay stage
+
+      _period,          // Period of the wave
+      _maxPeriod,       // Maximum period before sound stops (from minFrequency)
+
+      _slide,           // Note slide
+      _deltaSlide,      // Change in slide
+
+      _changeAmount,    // Amount to change the note by
+      _changeTime,      // Counter for the note change
+      _changeLimit,     // Once the time reaches this limit, the note changes
+
+      _squareDuty,      // Offset of center switching point in the square wave
+      _dutySweep;       // Amount to change the duty by
+
+  //--------------------------------------------------------------------------
+  //
+  //  Synth Methods
+  //
+  //--------------------------------------------------------------------------
+
+  /**
+   * Resets the runing variables from the params
+   * Used once at the start (total reset) and for the repeat effect (partial reset)
+   */
+  this.reset = function() {
+    // Shorter reference
+    var p = this._params;
+
+    _period       = 100 / (p['f'] * p['f'] + .001);
+    _maxPeriod    = 100 / (p['g']   * p['g']   + .001);
+
+    _slide        = 1 - p['h'] * p['h'] * p['h'] * .01;
+    _deltaSlide   = -p['i'] * p['i'] * p['i'] * .000001;
+
+    if (!p['a']) {
+      _squareDuty = .5 - p['n'] / 2;
+      _dutySweep  = -p['o'] * .00005;
+    }
+
+    _changeAmount =  1 + p['l'] * p['l'] * (p['l'] > 0 ? -.9 : 10);
+    _changeTime   = 0;
+    _changeLimit  = p['m'] == 1 ? 0 : (1 - p['m']) * (1 - p['m']) * 20000 + 32;
+  }
+
+  // I split the reset() function into two functions for better readability
+  this.totalReset = function() {
+    this.reset();
+
+    // Shorter reference
+    var p = this._params;
+
+    // Calculating the length is all that remained here, everything else moved somewhere
+    _envelopeLength0 = p['b']  * p['b']  * 100000;
+    _envelopeLength1 = p['c'] * p['c'] * 100000;
+    _envelopeLength2 = p['e']   * p['e']   * 100000 + 12;
+    // Full length of the volume envelop (and therefore sound)
+    // Make sure the length can be divided by 3 so we will not need the padding "==" after base64 encode
+    return ((_envelopeLength0 + _envelopeLength1 + _envelopeLength2) / 3 | 0) * 3;
+  }
+
+  /**
+   * Writes the wave to the supplied buffer ByteArray
+   * @param buffer A ByteArray to write the wave to
+   * @return If the wave is finished
+   */
+  this.synthWave = function(buffer, length) {
+    // Shorter reference
+    var p = this._params;
+
+    // If the filters are active
+    var _filters = p['s'] != 1 || p['v'],
+        // Cutoff multiplier which adjusts the amount the wave position can move
+        _hpFilterCutoff = p['v'] * p['v'] * .1,
+        // Speed of the high-pass cutoff multiplier
+        _hpFilterDeltaCutoff = 1 + p['w'] * .0003,
+        // Cutoff multiplier which adjusts the amount the wave position can move
+        _lpFilterCutoff = p['s'] * p['s'] * p['s'] * .1,
+        // Speed of the low-pass cutoff multiplier
+        _lpFilterDeltaCutoff = 1 + p['t'] * .0001,
+        // If the low pass filter is active
+        _lpFilterOn = p['s'] != 1,
+        // masterVolume * masterVolume (for quick calculations)
+        _masterVolume = p['x'] * p['x'],
+        // Minimum frequency before stopping
+        _minFreqency = p['g'],
+        // If the phaser is active
+        _phaser = p['q'] || p['r'],
+        // Change in phase offset
+        _phaserDeltaOffset = p['r'] * p['r'] * p['r'] * .2,
+        // Phase offset for phaser effect
+        _phaserOffset = p['q'] * p['q'] * (p['q'] < 0 ? -1020 : 1020),
+        // Once the time reaches this limit, some of the    iables are reset
+        _repeatLimit = p['p'] ? ((1 - p['p']) * (1 - p['p']) * 20000 | 0) + 32 : 0,
+        // The punch factor (louder at begining of sustain)
+        _sustainPunch = p['d'],
+        // Amount to change the period of the wave by at the peak of the vibrato wave
+        _vibratoAmplitude = p['j'] / 2,
+        // Speed at which the vibrato phase moves
+        _vibratoSpeed = p['k'] * p['k'] * .01,
+        // The type of wave to generate
+        _waveType = p['a'];
+
+    var _envelopeLength      = _envelopeLength0,     // Length of the current envelope stage
+        _envelopeOverLength0 = 1 / _envelopeLength0, // (for quick calculations)
+        _envelopeOverLength1 = 1 / _envelopeLength1, // (for quick calculations)
+        _envelopeOverLength2 = 1 / _envelopeLength2; // (for quick calculations)
+
+    // Damping muliplier which restricts how fast the wave position can move
+    var _lpFilterDamping = 5 / (1 + p['u'] * p['u'] * 20) * (.01 + _lpFilterCutoff);
+    if (_lpFilterDamping > .8) {
+      _lpFilterDamping = .8;
+    }
+    _lpFilterDamping = 1 - _lpFilterDamping;
+
+    var _finished = false,     // If the sound has finished
+        _envelopeStage    = 0, // Current stage of the envelope (attack, sustain, decay, end)
+        _envelopeTime     = 0, // Current time through current enelope stage
+        _envelopeVolume   = 0, // Current volume of the envelope
+        _hpFilterPos      = 0, // Adjusted wave position after high-pass filter
+        _lpFilterDeltaPos = 0, // Change in low-pass wave position, as allowed by the cutoff and damping
+        _lpFilterOldPos,       // Previous low-pass wave position
+        _lpFilterPos      = 0, // Adjusted wave position after low-pass filter
+        _periodTemp,           // Period modified by vibrato
+        _phase            = 0, // Phase through the wave
+        _phaserInt,            // Integer phaser offset, for bit maths
+        _phaserPos        = 0, // Position through the phaser buffer
+        _pos,                  // Phase expresed as a Number from 0-1, used for fast sin approx
+        _repeatTime       = 0, // Counter for the repeats
+        _sample,               // Sub-sample calculated 8 times per actual sample, averaged out to get the super sample
+        _superSample,          // Actual sample writen to the wave
+        _vibratoPhase     = 0; // Phase through the vibrato sine wave
+
+    // Buffer of wave values used to create the out of phase second wave
+    var _phaserBuffer = new Array(1024),
+        // Buffer of random values used to generate noise
+        _noiseBuffer  = new Array(32);
+    for (var i = _phaserBuffer.length; i--; ) {
+      _phaserBuffer[i] = 0;
+    }
+    for (var i = _noiseBuffer.length; i--; ) {
+      _noiseBuffer[i] = Math.random() * 2 - 1;
+    }
+
+    for (var i = 0; i < length; i++) {
+      if (_finished) {
+        return i;
+      }
+
+      // Repeats every _repeatLimit times, partially resetting the sound parameters
+      if (_repeatLimit) {
+        if (++_repeatTime >= _repeatLimit) {
+          _repeatTime = 0;
+          this.reset();
+        }
+      }
+
+      // If _changeLimit is reached, shifts the pitch
+      if (_changeLimit) {
+        if (++_changeTime >= _changeLimit) {
+          _changeLimit = 0;
+          _period *= _changeAmount;
+        }
+      }
+
+      // Acccelerate and apply slide
+      _slide += _deltaSlide;
+      _period *= _slide;
+
+      // Checks for frequency getting too low, and stops the sound if a minFrequency was set
+      if (_period > _maxPeriod) {
+        _period = _maxPeriod;
+        if (_minFreqency > 0) {
+          _finished = true;
+        }
+      }
+
+      _periodTemp = _period;
+
+      // Applies the vibrato effect
+      if (_vibratoAmplitude > 0) {
+        _vibratoPhase += _vibratoSpeed;
+        _periodTemp *= 1 + Math.sin(_vibratoPhase) * _vibratoAmplitude;
+      }
+
+      _periodTemp |= 0;
+      if (_periodTemp < 8) {
+        _periodTemp = 8;
+      }
+
+      // Sweeps the square duty
+      if (!_waveType) {
+        _squareDuty += _dutySweep;
+        if (_squareDuty < 0) {
+          _squareDuty = 0;
+        } else if (_squareDuty > .5) {
+          _squareDuty = .5;
+        }
+      }
+
+      // Moves through the different stages of the volume envelope
+      if (++_envelopeTime > _envelopeLength) {
+        _envelopeTime = 0;
+
+        switch (++_envelopeStage)  {
+          case 1:
+            _envelopeLength = _envelopeLength1;
+            break;
+          case 2:
+            _envelopeLength = _envelopeLength2;
+        }
+      }
+
+      // Sets the volume based on the position in the envelope
+      switch (_envelopeStage) {
+        case 0:
+          _envelopeVolume = _envelopeTime * _envelopeOverLength0;
+          break;
+        case 1:
+          _envelopeVolume = 1 + (1 - _envelopeTime * _envelopeOverLength1) * 2 * _sustainPunch;
+          break;
+        case 2:
+          _envelopeVolume = 1 - _envelopeTime * _envelopeOverLength2;
+          break;
+        case 3:
+          _envelopeVolume = 0;
+          _finished = true;
+      }
+
+      // Moves the phaser offset
+      if (_phaser) {
+        _phaserOffset += _phaserDeltaOffset;
+        _phaserInt = _phaserOffset | 0;
+        if (_phaserInt < 0) {
+          _phaserInt = -_phaserInt;
+        } else if (_phaserInt > 1023) {
+          _phaserInt = 1023;
+        }
+      }
+
+      // Moves the high-pass filter cutoff
+      if (_filters && _hpFilterDeltaCutoff) {
+        _hpFilterCutoff *= _hpFilterDeltaCutoff;
+        if (_hpFilterCutoff < .00001) {
+          _hpFilterCutoff = .00001;
+        } else if (_hpFilterCutoff > .1) {
+          _hpFilterCutoff = .1;
+        }
+      }
+
+      _superSample = 0;
+      for (var j = 8; j--; ) {
+        // Cycles through the period
+        _phase++;
+        if (_phase >= _periodTemp) {
+          _phase %= _periodTemp;
+
+          // Generates new random noise for this period
+          if (_waveType == 3) {
+            for (var n = _noiseBuffer.length; n--; ) {
+              _noiseBuffer[n] = Math.random() * 2 - 1;
+            }
+          }
+        }
+
+        // Gets the sample from the oscillator
+        switch (_waveType) {
+          case 0: // Square wave
+            _sample = ((_phase / _periodTemp) < _squareDuty) ? .5 : -.5;
+            break;
+          case 1: // Saw wave
+            _sample = 1 - _phase / _periodTemp * 2;
+            break;
+          case 2: // Sine wave (fast and accurate approx)
+            _pos = _phase / _periodTemp;
+            _pos = (_pos > .5 ? _pos - 1 : _pos) * 6.28318531;
+            _sample = 1.27323954 * _pos + .405284735 * _pos * _pos * (_pos < 0 ? 1 : -1);
+            _sample = .225 * ((_sample < 0 ? -1 : 1) * _sample * _sample  - _sample) + _sample;
+            break;
+          case 3: // Noise
+            _sample = _noiseBuffer[Math.abs(_phase * 32 / _periodTemp | 0)];
+        }
+
+        // Applies the low and high pass filters
+        if (_filters) {
+          _lpFilterOldPos = _lpFilterPos;
+          _lpFilterCutoff *= _lpFilterDeltaCutoff;
+          if (_lpFilterCutoff < 0) {
+            _lpFilterCutoff = 0;
+          } else if (_lpFilterCutoff > .1) {
+            _lpFilterCutoff = .1;
+          }
+
+          if (_lpFilterOn) {
+            _lpFilterDeltaPos += (_sample - _lpFilterPos) * _lpFilterCutoff;
+            _lpFilterDeltaPos *= _lpFilterDamping;
+          } else {
+            _lpFilterPos = _sample;
+            _lpFilterDeltaPos = 0;
+          }
+
+          _lpFilterPos += _lpFilterDeltaPos;
+
+          _hpFilterPos += _lpFilterPos - _lpFilterOldPos;
+          _hpFilterPos *= 1 - _hpFilterCutoff;
+          _sample = _hpFilterPos;
+        }
+
+        // Applies the phaser effect
+        if (_phaser) {
+          _phaserBuffer[_phaserPos % 1024] = _sample;
+          _sample += _phaserBuffer[(_phaserPos - _phaserInt + 1024) % 1024];
+          _phaserPos++;
+        }
+
+        _superSample += _sample;
+      }
+
+      // Averages out the super samples and applies volumes
+      _superSample *= .125 * _envelopeVolume * _masterVolume;
+
+      // Clipping if too loud
+      buffer[i] = _superSample >= 1 ? 32767 : _superSample <= -1 ? -32768 : _superSample * 32767 | 0;
+    }
+
+    return length;
+  }
+}
+
+// Adapted from http://codebase.es/riffwave/
+var synth = new SfxrSynth();
+// Export for the Closure Compiler
+window['jsfxr'] = function(settings) {
+  // Initialize SfxrParams
+  synth._params.setSettings(settings);
+  // Synthesize Wave
+  var envelopeFullLength = synth.totalReset();
+  var data = new Uint8Array(((envelopeFullLength + 1) / 2 | 0) * 4 + 44);
+  var used = synth.synthWave(new Uint16Array(data.buffer, 44), envelopeFullLength) * 2;
+  var dv = new Uint32Array(data.buffer, 0, 44);
+  // Initialize header
+  dv[0] = 0x46464952; // "RIFF"
+  dv[1] = used + 36;  // put total size here
+  dv[2] = 0x45564157; // "WAVE"
+  dv[3] = 0x20746D66; // "fmt "
+  dv[4] = 0x00000010; // size of the following
+  dv[5] = 0x00010001; // Mono: 1 channel, PCM format
+  dv[6] = 0x0000AC44; // 44,100 samples per second
+  dv[7] = 0x00015888; // byte rate: two bytes per sample
+  dv[8] = 0x00100002; // 16 bits per sample, aligned on every two bytes
+  dv[9] = 0x61746164; // "data"
+  dv[10] = used;      // put number of samples here
+
+  // Base64 encoding written by me, @maettig
+  used += 44;
+  var i = 0,
+      base64Characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
+      output = 'data:audio/wav;base64,';
+  for (; i < used; i += 3)
+  {
+    var a = data[i] << 16 | data[i + 1] << 8 | data[i + 2];
+    output += base64Characters[a >> 18] + base64Characters[a >> 12 & 63] + base64Characters[a >> 6 & 63] + base64Characters[a & 63];
+  }
+  return output;
+}
+
+/*globals Audio, jsfxr*/
+
+/**
+ * @class ArcadeAudio
+ * @requires jsfxr
+ *
+ * This class allows you to add and play sounds.
+ *
+ * ## Usage
+ * Sounds can be generated at [as3sfxr](http://www.superflashbros.net/as3sfxr/)
+ *
+ * You can then copy and paste the sound array into the add function
+ *
+ *     var aa = new ArcadeAudio();
+ *     aa.add('powerup', 10, [
+ *         [0, , 0.01, , 0.4384, 0.2, , 0.12, 0.28, 1, 0.65, , , 0.0419, , , , , 1, , , , , 0.3]
+ *     ]);
+ *     aa.play('powerup');
+ **/
+var ArcadeAudio = function () {
+  this.sounds = {};
+};
+
+/**
+ *
+ **/
+ArcadeAudio.prototype.add = function (key, count, settings) {
+
+  this.sounds[key] = [];
+  
+  settings.forEach(function (elem, index) {
+
+    this.sounds[key].push({
+      tick: 0,
+      count: count,
+      pool: []
+    });
+
+    for (var i = 0; i < count; i++) {
+      var audio = new Audio();
+      audio.src = jsfxr(elem);
+      this.sounds[key][index].pool.push(audio);
+    }
+
+  }, this);
+};
+
+ArcadeAudio.prototype.play = function (key) {
+  
+  var sound = this.sounds[key],
+    soundData = sound.length > 1 ? sound[Math.floor(Math.random() * sound.length)] : sound[0];
+
+  soundData.pool[soundData.tick].play();
+  soundData.tick = (soundData.tick < soundData.count - 1) ? soundData.tick + 1 : 0;
+};
+
+var Emitter = function () {
+};
+
+Emitter.prototype.update = function () {
+};
+
+Emitter.prototype.draw = function () {
+};
+
+/*globals ArcadeAudio, IO, Wisp*/
+
+window.raf = (function () {
+  return window.requestAnimationFrame || function (cb) { window.setTimeout(cb, 1000 / 60); };
+})();
+
+var Game = function (width, height) {
+
+  var doc = window.document;
+
+  this.canvas = doc.createElement('canvas');
+  this.canvas.width = width;
+  this.canvas.height = height;
+
+  this.fps = 1000 / 60;
+
+  this.ctx = this.canvas.getContext('2d');
+  doc.getElementsByTagName('body')[0].appendChild(this.canvas);
+
+  this.io = new IO(this.canvas, this);
+  this.sounds = new ArcadeAudio();
+  this.player = new Wisp(this.canvas.width / 2, this.canvas.height / 2, this);
+};
+
+Game.prototype.start = function () {
+  var _this = this;
+  this.interval = window.setInterval(function () {
+    _this.update();
+  }, this.fps);
+  this.tick();
+};
+
+Game.prototype.pause = function () {
+  window.clearInterval(this.interval);
+  delete this.interval;
+};
+
+Game.prototype.update = function () {
+  this.player.update(this.io.activeInput);
+};
+
+Game.prototype.render = function () {
+
+  // draw bakground
+  this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  this.ctx.fillStyle = '#ccc';
+  this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+  // other objects
+  this.player.render(this.ctx);
+};
+
+Game.prototype.tick = function () {
+  if (this.interval) {
+    this.render();
+    window.raf(this.tick.bind(this));
+  }
+};
+
+var IO = function (element) {
+
+  this.el = element;
+  this.ongoingTouches = [];
+  this.delegate = this;
+
+  this.addEvents();
+  this.activeInput = {
+    earth: false,
+    water: false,
+    air: false,
+    fire: false,
+    up: false,
+    down: false,
+    left: false,
+    right: false
+  };
+};
+
+IO.prototype.addEvents = function () {
+  this.el.addEventListener('touchstart', this.delegate.handleEvent.bind(this.delegate), false);
+  this.el.addEventListener('touchmove', this.delegate.handleEvent.bind(this.delegate), false);
+  this.el.addEventListener('touchend', this.delegate.handleEvent.bind(this.delegate), false);
+  this.el.addEventListener('touchcancel', this.delegate.handleEvent.bind(this.delegate), false);
+
+  window.addEventListener('keydown', this.delegate.handleEvent.bind(this.delegate), true);
+  window.addEventListener('keyup', this.delegate.handleEvent.bind(this.delegate), true);
+};
+
+IO.prototype.removeEvents = function () {
+  this.el.removeEventListener('touchstart', this.delegate.handleEvent.bind(this.delegate), false);
+  this.el.removeEventListener('touchmove', this.delegate.handleEvent.bind(this.delegate), false);
+  this.el.removeEventListener('touchend', this.delegate.handleEvent.bind(this.delegate), false);
+  this.el.removeEventListener('touchcancel', this.delegate.handleEvent.bind(this.delegate), false);
+
+  window.removeEventListener('keydown', this.delegate.handleEvent.bind(this.delegate), true);
+  window.removeEventListener('keyup', this.delegate.handleEvent.bind(this.delegate), true);
+};
+
+IO.prototype.handleEvent = function (event) {
+
+  switch (event.type) {
+    case 'keydown':
+      this.setKeyState(event.keyCode, true);
+      break;
+    case 'keyup':
+      this.setKeyState(event.keyCode, false);
+      break;
+    case 'touchstart':
+      this.handleTouchStart(event);
+      break;
+    case 'touchmove':
+      this.handleTouchMove(event);
+      break;
+    case 'touchend':
+    case 'touchcancel':
+      this.handleTouchEnd(event);
+      break;
+  }
+
+};
+
+IO.prototype.copyTouch = function (touch, oldTouch) {
+  return {
+    identifier: touch.identifier,
+    startX: oldTouch ? oldTouch.startX : touch.pageX,
+    startY: oldTouch ? oldTouch.startY : touch.pageY,
+    pageX: touch.pageX,
+    pageY: touch.pageY
+  };
+};
+
+IO.prototype.ongoingTouchIndexById = function (idToFind) {
+
+  var i, len, id;
+
+  i = 0;
+  len = this.ongoingTouches.length;
+  for (; i < len; i++) {
+    id = this.ongoingTouches[i].identifier;
+
+    if (id === idToFind) {
+      return i;
+    }
+  }
+
+  return -1;
+};
+
+IO.prototype.handleTouchStart = function (event) {
+  event.preventDefault();
+
+  var i, len, touches;
+
+  touches = event.changedTouches;
+  i = 0;
+  len = touches.length;
+  for (; i < len; i++) {
+    this.ongoingTouches.push(this.copyTouch(touches[i]));
+  }
+};
+
+IO.prototype.handleTouchMove = function (event) {
+  event.preventDefault();
+
+  var i, len, touches, idx;
+
+  touches = event.changedTouches;
+  i = 0;
+  len = touches.length;
+  for (; i < len; i++) {
+    idx = this.ongoingTouchIndexById(touches[i].identifier);
+
+    if (idx >= 0) {
+      this.ongoingTouches.splice(idx, 1, this.copyTouch(touches[i], this.ongoingTouches[idx]));
+    }
+  }
+};
+
+IO.prototype.handleTouchEnd = function (event) {
+  event.preventDefault();
+
+  var i, len, touches, idx;
+
+  touches = event.changedTouches;
+  i = 0;
+  len = touches.length;
+  for (; i < len; i++) {
+    idx = this.ongoingTouchIndexById(touches[i].identifier);
+
+    if (idx >= 0) {
+      this.ongoingTouches.splice(idx, 1);
+    }
+  }
+};
+
+IO.prototype.setKeyState = function (code, value) {
+
+  switch (code) {
+    case 49: // 1
+      if (value) {
+        this.activeInput.earth = true;
+        this.activeInput.water = false;
+        this.activeInput.air = false;
+        this.activeInput.fire = false;
+      } else {
+        this.activeInput.earth = false;
+      }
+      break;
+    case 50: // 2
+      if (value) {
+        this.activeInput.earth = false;
+        this.activeInput.water = true;
+        this.activeInput.air = false;
+        this.activeInput.fire = false;
+      } else {
+        this.activeInput.water = false;
+      }
+      break;
+    case 51: // 3
+      if (value) {
+        this.activeInput.earth = false;
+        this.activeInput.water = false;
+        this.activeInput.air = true;
+        this.activeInput.fire = false;
+      } else {
+        this.activeInput.air = false;
+      }
+      break;
+    case 52: // 4
+      if (value) {
+        this.activeInput.earth = false;
+        this.activeInput.water = false;
+        this.activeInput.air = false;
+        this.activeInput.fire = true;
+      } else {
+        this.activeInput.fire = false;
+      }
+      break;
+    case 37: // left
+      this.activeInput.left = value;
+      break;
+    case 39: // right
+      this.activeInput.right = value;
+      break;
+    case 38: // up
+      this.activeInput.up = value;
+      break;
+    case 40: // down
+      this.activeInput.down = value;
+      break;
+  }
+};
+
+var Wisp = function (x, y, game) {
+
+  this.game = game;
+
+  this.game.sounds.add('fire', 10, [
+    [3, 0.25, 0.27, 0.76, 0.54, 0.5571, , 0.1799, -0.0999, 0.0035, 0.56, -0.6597, 0.61, 0.0862, -0.8256, , 0.5, 0.5, 0.71, -0.0181, , 0.0368, 0.0333, 0.5]
+  ]);
+
+  this.game.sounds.add('air', 10, [
+    [3, 0.33, 0.89, 0.25, 0.81, 0.4692, , -0.0122, 0.0113, -0.5995, 0.23, -0.54, -0.1575, , 0.2234, 0.84, -0.4, 0.6599, 0.17, -0.3399, 0.96, 0.25, 0.72, 0.5]
+  ]);
+
+  this.position = {
+    x: x || 0,
+    y: y || 0
+  };
+
+  this.speed = {
+    x: 0,
+    y: 0
+  };
+
+  this.PI2 = Math.PI * 2;
+  this.accelerate = 2;
+  this.state = 'normal';
+};
+
+Wisp.prototype.update = function (input) {
+
+  if (input.left) {
+    this.speed.x -= this.accelerate;
+  }
+
+  if (input.right) {
+    this.speed.x += this.accelerate;
+  }
+
+  if (input.up) {
+    this.speed.y -= this.accelerate;
+  }
+
+  if (input.down) {
+    this.speed.y += this.accelerate;
+  }
+
+  if (this.speed.x > 10) {
+    this.speed.x = 10;
+  } else if (this.speed.x < -10) {
+    this.speed.x = -10;
+  }
+
+  // add dampening
+  this.speed.x *= 0.9;
+  this.speed.y *= 0.9;
+
+  this.speed.y += 0.3; // add gravity
+
+  this.position.x += this.speed.x;
+  this.position.y += this.speed.y;
+
+  if (this.position.x > this.game.canvas.width) {
+    this.position.x -= this.game.canvas.width;
+  } else if (this.position.x < 0) {
+    this.position.x += this.game.canvas.width;
+  }
+
+  if (this.position.y > this.game.canvas.height) {
+    this.position.y = this.game.canvas.height;
+    this.speed.y = -this.speed.y;
+  } else if (this.position.y < 0) {
+    this.position.y = 0;
+    this.speed.y = -this.speed.y;
+  }
+
+  if (input.earth) {
+    this.state = 'earth';
+  } else if (input.water) {
+    this.state = 'water';
+  } else if (input.air) {
+    this.state = 'air';
+  } else if (input.fire) {
+    this.state = 'fire';
+  } else {
+    this.state = 'normal';
+  }
+};
+
+Wisp.prototype.render = function (ctx) {
+  ctx.save();
+  ctx.translate(this.position.x, this.position.y);
+  ctx.beginPath();
+  ctx.arc(0, 0, 10, 0, this.PI2, false);
+  switch (this.state) {
+    case 'earth':
+      ctx.fillStyle = '#0f0';
+      break;
+    case 'water':
+      ctx.fillStyle = '#00f';
+      break;
+    case 'air':
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      break;
+    case 'fire':
+      ctx.fillStyle = '#f00';
+      break;
+    default:
+      ctx.fillStyle = '#fff';
+      break;
+  }
+  ctx.fill();
+  ctx.restore();
+};
+
+/*globals Game*/
+window.onload = function () {
+  var game = new Game(320, 480);
+  game.start();
+};
