@@ -1,6 +1,14 @@
-var Wisp = function (x, y, canvas) {
+var Wisp = function (x, y, game) {
 
-  this.canvas = canvas;
+  this.game = game;
+
+  this.game.sounds.add('fire', 10, [
+    [3, 0.25, 0.27, 0.76, 0.54, 0.5571, , 0.1799, -0.0999, 0.0035, 0.56, -0.6597, 0.61, 0.0862, -0.8256, , 0.5, 0.5, 0.71, -0.0181, , 0.0368, 0.0333, 0.5]
+  ]);
+
+  this.game.sounds.add('air', 10, [
+    [3, 0.33, 0.89, 0.25, 0.81, 0.4692, , -0.0122, 0.0113, -0.5995, 0.23, -0.54, -0.1575, , 0.2234, 0.84, -0.4, 0.6599, 0.17, -0.3399, 0.96, 0.25, 0.72, 0.5]
+  ]);
 
   this.position = {
     x: x || 0,
@@ -50,14 +58,14 @@ Wisp.prototype.update = function (input) {
   this.position.x += this.speed.x;
   this.position.y += this.speed.y;
 
-  if (this.position.x > this.canvas.width) {
-    this.position.x -= this.canvas.width;
+  if (this.position.x > this.game.canvas.width) {
+    this.position.x -= this.game.canvas.width;
   } else if (this.position.x < 0) {
-    this.position.x += this.canvas.width;
+    this.position.x += this.game.canvas.width;
   }
 
-  if (this.position.y > this.canvas.height) {
-    this.position.y = this.canvas.height;
+  if (this.position.y > this.game.canvas.height) {
+    this.position.y = this.game.canvas.height;
     this.speed.y = -this.speed.y;
   } else if (this.position.y < 0) {
     this.position.y = 0;
