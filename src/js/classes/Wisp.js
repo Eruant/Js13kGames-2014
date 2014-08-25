@@ -1,6 +1,7 @@
-var Wisp = function (x, y, game) {
+var Wisp = function (game, x, y, type) {
 
   this.game = game;
+  this.type = type || 'cpu';
 
   this.game.sounds.add('fire', 10, [
     [3, 0.25, 0.27, 0.76, 0.54, 0.5571, , 0.1799, -0.0999, 0.0035, 0.56, -0.6597, 0.61, 0.0862, -0.8256, , 0.5, 0.5, 0.71, -0.0181, , 0.0368, 0.0333, 0.5]
@@ -28,33 +29,38 @@ var Wisp = function (x, y, game) {
 
 Wisp.prototype.update = function (input) {
 
-  if (input.left) {
-    this.speed.x -= this.accelerate;
+  if (this.type === 'user') {
+    if (input.left) {
+      this.speed.x -= this.accelerate;
+    }
+
+    if (input.right) {
+      this.speed.x += this.accelerate;
+    }
+
+    if (input.up) {
+      this.speed.y -= this.accelerate;
+    }
+
+    if (input.down) {
+      this.speed.y += this.accelerate;
+    }
+  } else if (this.type === 'cpu') {
+    this.speed.x += (Math.random() * 5) - 2.5;
+    this.speed.y += (Math.random() * 5) - 2.5;
   }
 
-  if (input.right) {
-    this.speed.x += this.accelerate;
-  }
-
-  if (input.up) {
-    this.speed.y -= this.accelerate;
-  }
-
-  if (input.down) {
-    this.speed.y += this.accelerate;
-  }
-
-  if (this.speed.x > this.maxSpee) {
-    this.speed.x = this.maxSpee;
-  } else if (this.speed.x < -this.maxSpee) {
-    this.speed.x = -this.maxSpee;
+  if (this.speed.x > this.maxSpeed) {
+    this.speed.x = this.maxSpeed;
+  } else if (this.speed.x < -this.maxSpeed) {
+    this.speed.x = -this.maxSpeed;
   }
 
   // add dampening
   this.speed.x *= 0.9;
   this.speed.y *= 0.9;
 
-  this.speed.y += 0.3; // add gravity
+  //this.speed.y += 0.3; // add gravity
 
   this.position.x += this.speed.x;
   this.position.y += this.speed.y;
@@ -73,16 +79,18 @@ Wisp.prototype.update = function (input) {
     this.speed.y = -this.speed.y;
   }
 
-  if (input.earth) {
-    this.state = 'earth';
-  } else if (input.water) {
-    this.state = 'water';
-  } else if (input.air) {
-    this.state = 'air';
-  } else if (input.fire) {
-    this.state = 'fire';
-  } else {
-    this.state = 'normal';
+  if (this.type === 'user') {
+    if (input.earth) {
+      this.state = 'earth';
+    } else if (input.water) {
+      this.state = 'water';
+    } else if (input.air) {
+      this.state = 'air';
+    } else if (input.fire) {
+      this.state = 'fire';
+    } else {
+      this.state = 'normal';
+    }
   }
 };
 

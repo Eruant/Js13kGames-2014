@@ -19,7 +19,25 @@ var Game = function (width, height) {
 
   this.io = new IO(this.canvas, this);
   this.sounds = new ArcadeAudio();
-  this.player = new Wisp(this.canvas.width / 2, this.canvas.height / 2, this);
+  this.player = new Wisp(this, this.canvas.width / 2, this.canvas.height / 2, 'user');
+
+  this.cpus = [
+    new Wisp(this, Math.random() * this.canvas.width, Math.random() * this.canvas.height),
+    new Wisp(this, Math.random() * this.canvas.width, Math.random() * this.canvas.height),
+    new Wisp(this, Math.random() * this.canvas.width, Math.random() * this.canvas.height)
+  ];
+  for (var i = 0, len = this.cpus.length, random; i < len; i++) {
+    random = Math.random();
+    if (random > 0.75) {
+      this.cpus[i].state = 'earth';
+    } else if (random > 0.5) {
+      this.cpus[i].state = 'air';
+    } else if (random > 0.25) {
+      this.cpus[i].state = 'water';
+    } else {
+      this.cpus[i].state = 'fire';
+    }
+  }
 };
 
 Game.prototype.start = function () {
@@ -37,6 +55,9 @@ Game.prototype.pause = function () {
 
 Game.prototype.update = function () {
   this.player.update(this.io.activeInput);
+  for (var i = 0, len = this.cpus.length; i < len; i++) {
+    this.cpus[i].update();
+  }
 };
 
 Game.prototype.render = function () {
@@ -48,6 +69,9 @@ Game.prototype.render = function () {
 
   // other objects
   this.player.render(this.ctx);
+  for (var i = 0, len = this.cpus.length; i < len; i++) {
+    this.cpus[i].render(this.ctx);
+  }
 };
 
 Game.prototype.tick = function () {
