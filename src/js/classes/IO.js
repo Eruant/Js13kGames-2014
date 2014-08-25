@@ -115,6 +115,8 @@ IO.prototype.handleTouchMove = function (event) {
       this.ongoingTouches.splice(idx, 1, this.copyTouch(touches[i], this.ongoingTouches[idx]));
     }
   }
+
+  this.updateActiveInput();
 };
 
 IO.prototype.handleTouchEnd = function (event) {
@@ -130,6 +132,71 @@ IO.prototype.handleTouchEnd = function (event) {
 
     if (idx >= 0) {
       this.ongoingTouches.splice(idx, 1);
+    }
+  }
+
+  this.updateActiveInput();
+};
+
+IO.prototype.updateActiveInput = function () {
+
+  var directionControl, stateControl, dx, dy, range;
+
+  range = 32;
+
+  // update movement
+  directionControl = this.ongoingTouches[0] || false;
+  if (directionControl) {
+    dx = directionControl.pageX - directionControl.startX;
+    dy = directionControl.pageY - directionControl.startY;
+    if (dx > range) {
+      this.activeInput.left = false;
+      this.activeInput.right = true;
+    } else if (dx < -range) {
+      this.activeInput.left = true;
+      this.activeInput.right = false;
+    } else {
+      this.activeInput.left = this.activeInput.right = false;
+    }
+
+    if (dy > range) {
+      this.activeInput.up = false;
+      this.activeInput.down = true;
+    } else if (dy < -range) {
+      this.activeInput.up = true;
+      this.activeInput.down = false;
+    } else {
+      this.activeInput.up = this.activeInput.down = false;
+    }
+  }
+
+  // update state
+  stateControl = this.ongoingTouches[1] || false;
+  if (stateControl) {
+    dx = stateControl.pageX - stateControl.startX;
+    dy = stateControl.pageY - stateControl.startY;
+
+    this.activeInput.earth = false;
+    this.activeInput.water = false;
+    this.activeInput.air = false;
+    this.activeInput.fire = false;
+
+    if (dx > range) {
+      if (dx > dy && dx > -dy) {
+        this.activeInput.earth = true;
+      }
+    } else if (dx < -range) {
+      if (-dx > dy && -dx > -dy) {
+        this.activeInput.air = true;
+      }
+    } else if (dy > range) {
+      if (dy > dx && dy > -dx) {
+        this.activeInput.water = true;
+      }
+    } else if (dy < -range) {
+      if (-dy > dx && -dy > -dx) {
+        this.activeInput.fire = true;
+      }
     }
   }
 };

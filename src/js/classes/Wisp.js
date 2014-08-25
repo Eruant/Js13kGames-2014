@@ -21,7 +21,8 @@ var Wisp = function (x, y, game) {
   };
 
   this.PI2 = Math.PI * 2;
-  this.accelerate = 2;
+  this.accelerate = 1;
+  this.maxSpeed = 5;
   this.state = 'normal';
 };
 
@@ -43,10 +44,10 @@ Wisp.prototype.update = function (input) {
     this.speed.y += this.accelerate;
   }
 
-  if (this.speed.x > 10) {
-    this.speed.x = 10;
-  } else if (this.speed.x < -10) {
-    this.speed.x = -10;
+  if (this.speed.x > this.maxSpee) {
+    this.speed.x = this.maxSpee;
+  } else if (this.speed.x < -this.maxSpee) {
+    this.speed.x = -this.maxSpee;
   }
 
   // add dampening
