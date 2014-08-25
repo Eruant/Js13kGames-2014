@@ -19,7 +19,7 @@ gulp.task('js', function () {
     'src/js/*.js'
   ])
     .pipe(concat('js13k.js'))
-    //.pipe(uglify())
+    .pipe(uglify())
     .pipe(gulp.dest('dest/www'));
 });
 
