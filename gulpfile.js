@@ -5,10 +5,14 @@ var gulp = require('gulp'),
   concat = require('gulp-concat'),
   localhost = require('browser-sync'),
   sass = require('gulp-sass'),
-  rename = require('gulp-rename');
+  rename = require('gulp-rename'),
+  minifyCSS = require('gulp-minify-css'),
+  jade = require('gulp-jade');
 
 gulp.task('html', function () {
-  return gulp.src('src/index.html')
+  return gulp.src('src/index.jade')
+    .pipe(jade())
+    .pipe(gulp.dest('dest/test'))
     .pipe(gulp.dest('dest/www'));
 });
 
@@ -19,7 +23,8 @@ gulp.task('js', function () {
     'src/js/*.js'
   ])
     .pipe(concat('js13k.js'))
-    //.pipe(uglify())
+    .pipe(gulp.dest('dest/test'))
+    .pipe(uglify())
     .pipe(gulp.dest('dest/www'));
 });
 
@@ -27,6 +32,8 @@ gulp.task('css', function () {
   return gulp.src('src/scss/base.scss')
     .pipe(sass())
     .pipe(rename('js13k.css'))
+    .pipe(gulp.dest('dest/test'))
+    .pipe(minifyCSS())
     .pipe(gulp.dest('dest/www'));
 });
 
@@ -45,8 +52,8 @@ gulp.task('watch', ['compile'], function () {
 });
 
 gulp.task('localhost', ['watch'], function () {
-  return localhost.init(['dest/www/*'], {
-    server: './dest/www'
+  return localhost.init(['dest/test/*'], {
+    server: './dest/test'
   });
 });
 
