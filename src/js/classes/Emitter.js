@@ -16,7 +16,7 @@ Emitter.prototype.update = function (type) {
   }
 };
 
-Emitter.prototype.draw = function (/*ctx*/) {
+Emitter.prototype.render = function (/*ctx*/) {
 
   if (this.emit) {
   }

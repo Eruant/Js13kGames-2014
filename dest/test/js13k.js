@@ -562,7 +562,7 @@ Emitter.prototype.update = function (type) {
   }
 };
 
-Emitter.prototype.draw = function (/*ctx*/) {
+Emitter.prototype.render = function (/*ctx*/) {
 
   if (this.emit) {
   }
@@ -932,6 +932,15 @@ IO.prototype.setKeyState = function (code, value) {
       break;
   }
 };
+
+var Scene = function () {
+};
+
+Scene.prototype.create = function () {};
+
+Scene.prototype.update = function () {};
+
+Scene.prototype.render = function () {};
 
 /*globals Emitter*/
 
