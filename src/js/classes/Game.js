@@ -8,6 +8,8 @@ var Game = function (width, height) {
 
   var doc = window.document;
 
+  this.gravity = 0.2;
+
   this.canvas = doc.createElement('canvas');
   this.canvas.width = width;
   this.canvas.height = height;
@@ -24,20 +26,26 @@ var Game = function (width, height) {
   this.cpus = [
     new Wisp(this, Math.random() * this.canvas.width, Math.random() * this.canvas.height),
     new Wisp(this, Math.random() * this.canvas.width, Math.random() * this.canvas.height),
+    new Wisp(this, Math.random() * this.canvas.width, Math.random() * this.canvas.height),
     new Wisp(this, Math.random() * this.canvas.width, Math.random() * this.canvas.height)
   ];
-  for (var i = 0, len = this.cpus.length, random; i < len; i++) {
-    random = Math.random();
-    if (random > 0.75) {
-      this.cpus[i].state = 'earth';
-    } else if (random > 0.5) {
-      this.cpus[i].state = 'air';
-    } else if (random > 0.25) {
-      this.cpus[i].state = 'water';
-    } else {
-      this.cpus[i].state = 'fire';
-    }
-  }
+
+  this.cpus[0].state = 'earth';
+  this.cpus[1].state = 'air';
+  this.cpus[2].state = 'water';
+  this.cpus[3].state = 'fire';
+  //for (var i = 0, len = this.cpus.length, random; i < len; i++) {
+    //random = Math.random();
+    //if (random > 0.75) {
+      //this.cpus[i].state = 'earth';
+    //} else if (random > 0.5) {
+      //this.cpus[i].state = 'air';
+    //} else if (random > 0.25) {
+      //this.cpus[i].state = 'water';
+    //} else {
+      //this.cpus[i].state = 'fire';
+    //}
+  //}
 };
 
 Game.prototype.start = function () {

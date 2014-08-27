@@ -499,14 +499,17 @@ window['jsfxr'] = function(settings) {
  *         [0, , 0.01, , 0.4384, 0.2, , 0.12, 0.28, 1, 0.65, , , 0.0419, , , , , 1, , , , , 0.3]
  *     ]);
  *     aa.play('powerup');
- **/
+ */
 var ArcadeAudio = function () {
   this.sounds = {};
 };
 
 /**
- *
- **/
+ * @method add
+ * @parm key {String} reference to the sound object
+ * @param count {Number} size of sound pool
+ * @param setting {Array} sound settings imported from as3sfxr
+ */
 ArcadeAudio.prototype.add = function (key, count, settings) {
 
   this.sounds[key] = [];
@@ -528,6 +531,10 @@ ArcadeAudio.prototype.add = function (key, count, settings) {
   }, this);
 };
 
+/**
+ * @method play
+ * @param key {String} start playback of stored sound object
+ */
 ArcadeAudio.prototype.play = function (key) {
   
   var sound = this.sounds[key],
@@ -537,13 +544,41 @@ ArcadeAudio.prototype.play = function (key) {
   soundData.tick = (soundData.tick < soundData.count - 1) ? soundData.tick + 1 : 0;
 };
 
-var Emitter = function () {
+var Emitter = function (type, emit) {
+
+  this.type = type || 'default';
+  this.emit = emit || true;
+
+  this.particleTypes = {};
+  this.particles = [];
+
+  this.addParicleType('default', {});
 };
 
-Emitter.prototype.update = function () {
+Emitter.prototype.update = function (type) {
+
+  if (type !== this.type) {
+    this.type = type;
+  }
 };
 
-Emitter.prototype.draw = function () {
+Emitter.prototype.draw = function (/*ctx*/) {
+
+  if (this.emit) {
+  }
+};
+
+Emitter.prototype.addParicleType = function (key, options) {
+
+  var settings = {
+    gravity: 0 || options.gravity
+  };
+
+  this.particleTypes[key] = settings;
+};
+
+Emitter.prototype.addParticle = function () {
+  // add a new particle
 };
 
 /*globals ArcadeAudio, IO, Wisp*/
@@ -555,6 +590,8 @@ window.raf = (function () {
 var Game = function (width, height) {
 
   var doc = window.document;
+
+  this.gravity = 0.2;
 
   this.canvas = doc.createElement('canvas');
   this.canvas.width = width;
@@ -572,20 +609,26 @@ var Game = function (width, height) {
   this.cpus = [
     new Wisp(this, Math.random() * this.canvas.width, Math.random() * this.canvas.height),
     new Wisp(this, Math.random() * this.canvas.width, Math.random() * this.canvas.height),
+    new Wisp(this, Math.random() * this.canvas.width, Math.random() * this.canvas.height),
     new Wisp(this, Math.random() * this.canvas.width, Math.random() * this.canvas.height)
   ];
-  for (var i = 0, len = this.cpus.length, random; i < len; i++) {
-    random = Math.random();
-    if (random > 0.75) {
-      this.cpus[i].state = 'earth';
-    } else if (random > 0.5) {
-      this.cpus[i].state = 'air';
-    } else if (random > 0.25) {
-      this.cpus[i].state = 'water';
-    } else {
-      this.cpus[i].state = 'fire';
-    }
-  }
+
+  this.cpus[0].state = 'earth';
+  this.cpus[1].state = 'air';
+  this.cpus[2].state = 'water';
+  this.cpus[3].state = 'fire';
+  //for (var i = 0, len = this.cpus.length, random; i < len; i++) {
+    //random = Math.random();
+    //if (random > 0.75) {
+      //this.cpus[i].state = 'earth';
+    //} else if (random > 0.5) {
+      //this.cpus[i].state = 'air';
+    //} else if (random > 0.25) {
+      //this.cpus[i].state = 'water';
+    //} else {
+      //this.cpus[i].state = 'fire';
+    //}
+  //}
 };
 
 Game.prototype.start = function () {
@@ -649,20 +692,20 @@ var IO = function (element) {
 };
 
 IO.prototype.addEvents = function () {
-  this.el.addEventListener('touchstart', this.delegate.handleEvent.bind(this.delegate), false);
-  this.el.addEventListener('touchmove', this.delegate.handleEvent.bind(this.delegate), false);
-  this.el.addEventListener('touchend', this.delegate.handleEvent.bind(this.delegate), false);
-  this.el.addEventListener('touchcancel', this.delegate.handleEvent.bind(this.delegate), false);
+  //this.el.addEventListener('touchstart', this.delegate.handleEvent.bind(this.delegate), false);
+  //this.el.addEventListener('touchmove', this.delegate.handleEvent.bind(this.delegate), false);
+  //this.el.addEventListener('touchend', this.delegate.handleEvent.bind(this.delegate), false);
+  //this.el.addEventListener('touchcancel', this.delegate.handleEvent.bind(this.delegate), false);
 
   window.addEventListener('keydown', this.delegate.handleEvent.bind(this.delegate), true);
   window.addEventListener('keyup', this.delegate.handleEvent.bind(this.delegate), true);
 };
 
 IO.prototype.removeEvents = function () {
-  this.el.removeEventListener('touchstart', this.delegate.handleEvent.bind(this.delegate), false);
-  this.el.removeEventListener('touchmove', this.delegate.handleEvent.bind(this.delegate), false);
-  this.el.removeEventListener('touchend', this.delegate.handleEvent.bind(this.delegate), false);
-  this.el.removeEventListener('touchcancel', this.delegate.handleEvent.bind(this.delegate), false);
+  //this.el.removeEventListener('touchstart', this.delegate.handleEvent.bind(this.delegate), false);
+  //this.el.removeEventListener('touchmove', this.delegate.handleEvent.bind(this.delegate), false);
+  //this.el.removeEventListener('touchend', this.delegate.handleEvent.bind(this.delegate), false);
+  //this.el.removeEventListener('touchcancel', this.delegate.handleEvent.bind(this.delegate), false);
 
   window.removeEventListener('keydown', this.delegate.handleEvent.bind(this.delegate), true);
   window.removeEventListener('keyup', this.delegate.handleEvent.bind(this.delegate), true);
@@ -677,160 +720,160 @@ IO.prototype.handleEvent = function (event) {
     case 'keyup':
       this.setKeyState(event.keyCode, false);
       break;
-    case 'touchstart':
-      this.handleTouchStart(event);
-      break;
-    case 'touchmove':
-      this.handleTouchMove(event);
-      break;
-    case 'touchend':
-    case 'touchcancel':
-      this.handleTouchEnd(event);
-      break;
+    //case 'touchstart':
+      //this.handleTouchStart(event);
+      //break;
+    //case 'touchmove':
+      //this.handleTouchMove(event);
+      //break;
+    //case 'touchend':
+    //case 'touchcancel':
+      //this.handleTouchEnd(event);
+      //break;
   }
 
 };
 
-IO.prototype.copyTouch = function (touch, oldTouch) {
-  return {
-    identifier: touch.identifier,
-    startX: oldTouch ? oldTouch.startX : touch.pageX,
-    startY: oldTouch ? oldTouch.startY : touch.pageY,
-    pageX: touch.pageX,
-    pageY: touch.pageY
-  };
-};
+//IO.prototype.copyTouch = function (touch, oldTouch) {
+  //return {
+    //identifier: touch.identifier,
+    //startX: oldTouch ? oldTouch.startX : touch.pageX,
+    //startY: oldTouch ? oldTouch.startY : touch.pageY,
+    //pageX: touch.pageX,
+    //pageY: touch.pageY
+  //};
+//};
 
-IO.prototype.ongoingTouchIndexById = function (idToFind) {
+//IO.prototype.ongoingTouchIndexById = function (idToFind) {
 
-  var i, len, id;
+  //var i, len, id;
 
-  i = 0;
-  len = this.ongoingTouches.length;
-  for (; i < len; i++) {
-    id = this.ongoingTouches[i].identifier;
+  //i = 0;
+  //len = this.ongoingTouches.length;
+  //for (; i < len; i++) {
+    //id = this.ongoingTouches[i].identifier;
 
-    if (id === idToFind) {
-      return i;
-    }
-  }
+    //if (id === idToFind) {
+      //return i;
+    //}
+  //}
 
-  return -1;
-};
+  //return -1;
+//};
 
-IO.prototype.handleTouchStart = function (event) {
-  event.preventDefault();
+//IO.prototype.handleTouchStart = function (event) {
+  //event.preventDefault();
 
-  var i, len, touches;
+  //var i, len, touches;
 
-  touches = event.changedTouches;
-  i = 0;
-  len = touches.length;
-  for (; i < len; i++) {
-    this.ongoingTouches.push(this.copyTouch(touches[i]));
-  }
-};
+  //touches = event.changedTouches;
+  //i = 0;
+  //len = touches.length;
+  //for (; i < len; i++) {
+    //this.ongoingTouches.push(this.copyTouch(touches[i]));
+  //}
+//};
 
-IO.prototype.handleTouchMove = function (event) {
-  event.preventDefault();
+//IO.prototype.handleTouchMove = function (event) {
+  //event.preventDefault();
 
-  var i, len, touches, idx;
+  //var i, len, touches, idx;
 
-  touches = event.changedTouches;
-  i = 0;
-  len = touches.length;
-  for (; i < len; i++) {
-    idx = this.ongoingTouchIndexById(touches[i].identifier);
+  //touches = event.changedTouches;
+  //i = 0;
+  //len = touches.length;
+  //for (; i < len; i++) {
+    //idx = this.ongoingTouchIndexById(touches[i].identifier);
 
-    if (idx >= 0) {
-      this.ongoingTouches.splice(idx, 1, this.copyTouch(touches[i], this.ongoingTouches[idx]));
-    }
-  }
+    //if (idx >= 0) {
+      //this.ongoingTouches.splice(idx, 1, this.copyTouch(touches[i], this.ongoingTouches[idx]));
+    //}
+  //}
 
-  this.updateActiveInput();
-};
+  //this.updateActiveInput();
+//};
 
-IO.prototype.handleTouchEnd = function (event) {
-  event.preventDefault();
+//IO.prototype.handleTouchEnd = function (event) {
+  //event.preventDefault();
 
-  var i, len, touches, idx;
+  //var i, len, touches, idx;
 
-  touches = event.changedTouches;
-  i = 0;
-  len = touches.length;
-  for (; i < len; i++) {
-    idx = this.ongoingTouchIndexById(touches[i].identifier);
+  //touches = event.changedTouches;
+  //i = 0;
+  //len = touches.length;
+  //for (; i < len; i++) {
+    //idx = this.ongoingTouchIndexById(touches[i].identifier);
 
-    if (idx >= 0) {
-      this.ongoingTouches.splice(idx, 1);
-    }
-  }
+    //if (idx >= 0) {
+      //this.ongoingTouches.splice(idx, 1);
+    //}
+  //}
 
-  this.updateActiveInput();
-};
+  //this.updateActiveInput();
+//};
 
-IO.prototype.updateActiveInput = function () {
+//IO.prototype.updateActiveInput = function () {
 
-  var directionControl, stateControl, dx, dy, range;
+  //var directionControl, stateControl, dx, dy, range;
 
-  range = 32;
+  //range = 32;
 
   // update movement
-  directionControl = this.ongoingTouches[0] || false;
-  if (directionControl) {
-    dx = directionControl.pageX - directionControl.startX;
-    dy = directionControl.pageY - directionControl.startY;
-    if (dx > range) {
-      this.activeInput.left = false;
-      this.activeInput.right = true;
-    } else if (dx < -range) {
-      this.activeInput.left = true;
-      this.activeInput.right = false;
-    } else {
-      this.activeInput.left = this.activeInput.right = false;
-    }
+  //directionControl = this.ongoingTouches[0] || false;
+  //if (directionControl) {
+    //dx = directionControl.pageX - directionControl.startX;
+    //dy = directionControl.pageY - directionControl.startY;
+    //if (dx > range) {
+      //this.activeInput.left = false;
+      //this.activeInput.right = true;
+    //} else if (dx < -range) {
+      //this.activeInput.left = true;
+      //this.activeInput.right = false;
+    //} else {
+      //this.activeInput.left = this.activeInput.right = false;
+    //}
 
-    if (dy > range) {
-      this.activeInput.up = false;
-      this.activeInput.down = true;
-    } else if (dy < -range) {
-      this.activeInput.up = true;
-      this.activeInput.down = false;
-    } else {
-      this.activeInput.up = this.activeInput.down = false;
-    }
-  }
+    //if (dy > range) {
+      //this.activeInput.up = false;
+      //this.activeInput.down = true;
+    //} else if (dy < -range) {
+      //this.activeInput.up = true;
+      //this.activeInput.down = false;
+    //} else {
+      //this.activeInput.up = this.activeInput.down = false;
+    //}
+  //}
 
   // update state
-  stateControl = this.ongoingTouches[1] || false;
-  if (stateControl) {
-    dx = stateControl.pageX - stateControl.startX;
-    dy = stateControl.pageY - stateControl.startY;
+  //stateControl = this.ongoingTouches[1] || false;
+  //if (stateControl) {
+    //dx = stateControl.pageX - stateControl.startX;
+    //dy = stateControl.pageY - stateControl.startY;
 
-    this.activeInput.earth = false;
-    this.activeInput.water = false;
-    this.activeInput.air = false;
-    this.activeInput.fire = false;
+    //this.activeInput.earth = false;
+    //this.activeInput.water = false;
+    //this.activeInput.air = false;
+    //this.activeInput.fire = false;
 
-    if (dx > range) {
-      if (dx > dy && dx > -dy) {
-        this.activeInput.earth = true;
-      }
-    } else if (dx < -range) {
-      if (-dx > dy && -dx > -dy) {
-        this.activeInput.air = true;
-      }
-    } else if (dy > range) {
-      if (dy > dx && dy > -dx) {
-        this.activeInput.water = true;
-      }
-    } else if (dy < -range) {
-      if (-dy > dx && -dy > -dx) {
-        this.activeInput.fire = true;
-      }
-    }
-  }
-};
+    //if (dx > range) {
+      //if (dx > dy && dx > -dy) {
+        //this.activeInput.earth = true;
+      //}
+    //} else if (dx < -range) {
+      //if (-dx > dy && -dx > -dy) {
+        //this.activeInput.air = true;
+      //}
+    //} else if (dy > range) {
+      //if (dy > dx && dy > -dx) {
+        //this.activeInput.water = true;
+      //}
+    //} else if (dy < -range) {
+      //if (-dy > dx && -dy > -dx) {
+        //this.activeInput.fire = true;
+      //}
+    //}
+  //}
+//};
 
 IO.prototype.setKeyState = function (code, value) {
 
@@ -890,6 +933,8 @@ IO.prototype.setKeyState = function (code, value) {
   }
 };
 
+/*globals Emitter*/
+
 var Wisp = function (game, x, y, type) {
 
   this.game = game;
@@ -917,6 +962,7 @@ var Wisp = function (game, x, y, type) {
   this.accelerate = 1;
   this.maxSpeed = 5;
   this.state = 'normal';
+  this.emitter = new Emitter();
 };
 
 Wisp.prototype.update = function (input) {
@@ -952,7 +998,7 @@ Wisp.prototype.update = function (input) {
   this.speed.x *= 0.9;
   this.speed.y *= 0.9;
 
-  //this.speed.y += 0.3; // add gravity
+  //this.speed.y += this.game.gravity;
 
   this.position.x += this.speed.x;
   this.position.y += this.speed.y;
@@ -984,6 +1030,8 @@ Wisp.prototype.update = function (input) {
       this.state = 'normal';
     }
   }
+
+  this.emitter.update(this.state);
 };
 
 Wisp.prototype.render = function (ctx) {
@@ -1009,6 +1057,7 @@ Wisp.prototype.render = function (ctx) {
       break;
   }
   ctx.fill();
+  this.emitter.render(ctx);
   ctx.restore();
 };
 

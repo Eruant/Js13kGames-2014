@@ -1,3 +1,5 @@
+/*globals Emitter*/
+
 var Wisp = function (game, x, y, type) {
 
   this.game = game;
@@ -25,6 +27,7 @@ var Wisp = function (game, x, y, type) {
   this.accelerate = 1;
   this.maxSpeed = 5;
   this.state = 'normal';
+  this.emitter = new Emitter();
 };
 
 Wisp.prototype.update = function (input) {
@@ -60,7 +63,7 @@ Wisp.prototype.update = function (input) {
   this.speed.x *= 0.9;
   this.speed.y *= 0.9;
 
-  //this.speed.y += 0.3; // add gravity
+  //this.speed.y += this.game.gravity;
 
   this.position.x += this.speed.x;
   this.position.y += this.speed.y;
@@ -92,6 +95,8 @@ Wisp.prototype.update = function (input) {
       this.state = 'normal';
     }
   }
+
+  this.emitter.update(this.state);
 };
 
 Wisp.prototype.render = function (ctx) {
@@ -117,5 +122,6 @@ Wisp.prototype.render = function (ctx) {
       break;
   }
   ctx.fill();
+  this.emitter.render(ctx);
   ctx.restore();
 };
