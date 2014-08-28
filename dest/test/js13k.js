@@ -581,7 +581,7 @@ Emitter.prototype.addParticle = function () {
   // add a new particle
 };
 
-/*globals ArcadeAudio, IO, Wisp*/
+/*globals SceneController, ArcadeAudio, MainScene, MenuScene*/
 
 window.raf = (function () {
   return window.requestAnimationFrame || function (cb) { window.setTimeout(cb, 1000 / 60); };
@@ -602,33 +602,13 @@ var Game = function (width, height) {
   this.ctx = this.canvas.getContext('2d');
   doc.getElementsByTagName('body')[0].appendChild(this.canvas);
 
-  this.io = new IO(this.canvas, this);
   this.sounds = new ArcadeAudio();
-  this.player = new Wisp(this, this.canvas.width / 2, this.canvas.height / 2, 'user');
 
-  this.cpus = [
-    new Wisp(this, Math.random() * this.canvas.width, Math.random() * this.canvas.height),
-    new Wisp(this, Math.random() * this.canvas.width, Math.random() * this.canvas.height),
-    new Wisp(this, Math.random() * this.canvas.width, Math.random() * this.canvas.height),
-    new Wisp(this, Math.random() * this.canvas.width, Math.random() * this.canvas.height)
-  ];
+  this.sceneController = new SceneController();
+  this.sceneController.add('main', new MainScene(this));
+  this.sceneController.add('menu', new MenuScene(this));
+  this.sceneController.start('main');
 
-  this.cpus[0].state = 'earth';
-  this.cpus[1].state = 'air';
-  this.cpus[2].state = 'water';
-  this.cpus[3].state = 'fire';
-  //for (var i = 0, len = this.cpus.length, random; i < len; i++) {
-    //random = Math.random();
-    //if (random > 0.75) {
-      //this.cpus[i].state = 'earth';
-    //} else if (random > 0.5) {
-      //this.cpus[i].state = 'air';
-    //} else if (random > 0.25) {
-      //this.cpus[i].state = 'water';
-    //} else {
-      //this.cpus[i].state = 'fire';
-    //}
-  //}
 };
 
 Game.prototype.start = function () {
@@ -645,24 +625,11 @@ Game.prototype.pause = function () {
 };
 
 Game.prototype.update = function () {
-  this.player.update(this.io.activeInput);
-  for (var i = 0, len = this.cpus.length; i < len; i++) {
-    this.cpus[i].update();
-  }
+  this.sceneController.states[this.sceneController.currentState].update();
 };
 
 Game.prototype.render = function () {
-
-  // draw bakground
-  this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-  this.ctx.fillStyle = '#ccc';
-  this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-  // other objects
-  this.player.render(this.ctx);
-  for (var i = 0, len = this.cpus.length; i < len; i++) {
-    this.cpus[i].render(this.ctx);
-  }
+  this.sceneController.states[this.sceneController.currentState].render();
 };
 
 Game.prototype.tick = function () {
@@ -933,14 +900,23 @@ IO.prototype.setKeyState = function (code, value) {
   }
 };
 
-var Scene = function () {
+var SceneController = function () {
+
+  this.states = {};
+  this.currentState = null;
 };
 
-Scene.prototype.create = function () {};
+SceneController.prototype.add = function (key, state) {
 
-Scene.prototype.update = function () {};
+  this.states[key] = state;
 
-Scene.prototype.render = function () {};
+};
+
+SceneController.prototype.start = function (key) {
+
+  this.currentState = key;
+
+};
 
 /*globals Emitter*/
 
@@ -1068,6 +1044,71 @@ Wisp.prototype.render = function (ctx) {
   ctx.fill();
   this.emitter.render(ctx);
   ctx.restore();
+};
+
+/*globals IO, Wisp*/
+
+var MainScene = function (game) {
+
+  this.game = game;
+
+  this.io = new IO(this.game.canvas, this.game);
+  this.player = new Wisp(this.game, this.game.canvas.width / 2, this.game.canvas.height / 2, 'user');
+
+  this.cpus = [
+    new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height),
+    new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height),
+    new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height),
+    new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height)
+  ];
+
+  this.cpus[0].state = 'earth';
+  this.cpus[1].state = 'air';
+  this.cpus[2].state = 'water';
+  this.cpus[3].state = 'fire';
+
+  return this;
+};
+
+MainScene.prototype.update = function () {
+
+  this.player.update(this.io.activeInput);
+  for (var i = 0, len = this.cpus.length; i < len; i++) {
+    this.cpus[i].update();
+  }
+};
+
+MainScene.prototype.render = function () {
+
+  // draw bakground
+  this.game.ctx.clearRect(0, 0, this.game.canvas.width, this.game.canvas.height);
+  this.game.ctx.fillStyle = '#ccc';
+  this.game.ctx.fillRect(0, 0, this.game.canvas.width, this.game.canvas.height);
+
+  // other objects
+  this.player.render(this.game.ctx);
+  for (var i = 0, len = this.cpus.length; i < len; i++) {
+    this.cpus[i].render(this.game.ctx);
+  }
+};
+
+var MenuScene = function (game) {
+
+  this.game = game;
+
+  return this;
+};
+
+MenuScene.prototype.update = function () {};
+
+MenuScene.prototype.render = function () {
+
+  var ctx = this.game.ctx,
+    canvas = this.game.canvas;
+
+  ctx.fillStyle = '#333';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
 };
 
 /*globals Game*/

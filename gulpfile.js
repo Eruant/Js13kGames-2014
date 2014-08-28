@@ -20,6 +20,7 @@ gulp.task('js', function () {
   return gulp.src([
     'src/js/lib/*.js',
     'src/js/classes/*.js',
+    'src/js/scenes/*.js',
     'src/js/*.js'
   ])
     .pipe(concat('js13k.js'))

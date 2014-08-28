@@ -1,4 +1,4 @@
-/*globals ArcadeAudio, IO, Wisp*/
+/*globals SceneController, ArcadeAudio, MainScene, MenuScene*/
 
 window.raf = (function () {
   return window.requestAnimationFrame || function (cb) { window.setTimeout(cb, 1000 / 60); };
@@ -19,33 +19,13 @@ var Game = function (width, height) {
   this.ctx = this.canvas.getContext('2d');
   doc.getElementsByTagName('body')[0].appendChild(this.canvas);
 
-  this.io = new IO(this.canvas, this);
   this.sounds = new ArcadeAudio();
-  this.player = new Wisp(this, this.canvas.width / 2, this.canvas.height / 2, 'user');
 
-  this.cpus = [
-    new Wisp(this, Math.random() * this.canvas.width, Math.random() * this.canvas.height),
-    new Wisp(this, Math.random() * this.canvas.width, Math.random() * this.canvas.height),
-    new Wisp(this, Math.random() * this.canvas.width, Math.random() * this.canvas.height),
-    new Wisp(this, Math.random() * this.canvas.width, Math.random() * this.canvas.height)
-  ];
+  this.sceneController = new SceneController();
+  this.sceneController.add('main', new MainScene(this));
+  this.sceneController.add('menu', new MenuScene(this));
+  this.sceneController.start('main');
 
-  this.cpus[0].state = 'earth';
-  this.cpus[1].state = 'air';
-  this.cpus[2].state = 'water';
-  this.cpus[3].state = 'fire';
-  //for (var i = 0, len = this.cpus.length, random; i < len; i++) {
-    //random = Math.random();
-    //if (random > 0.75) {
-      //this.cpus[i].state = 'earth';
-    //} else if (random > 0.5) {
-      //this.cpus[i].state = 'air';
-    //} else if (random > 0.25) {
-      //this.cpus[i].state = 'water';
-    //} else {
-      //this.cpus[i].state = 'fire';
-    //}
-  //}
 };
 
 Game.prototype.start = function () {
@@ -62,24 +42,11 @@ Game.prototype.pause = function () {
 };
 
 Game.prototype.update = function () {
-  this.player.update(this.io.activeInput);
-  for (var i = 0, len = this.cpus.length; i < len; i++) {
-    this.cpus[i].update();
-  }
+  this.sceneController.states[this.sceneController.currentState].update();
 };
 
 Game.prototype.render = function () {
-
-  // draw bakground
-  this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-  this.ctx.fillStyle = '#ccc';
-  this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-  // other objects
-  this.player.render(this.ctx);
-  for (var i = 0, len = this.cpus.length; i < len; i++) {
-    this.cpus[i].render(this.ctx);
-  }
+  this.sceneController.states[this.sceneController.currentState].render();
 };
 
 Game.prototype.tick = function () {
