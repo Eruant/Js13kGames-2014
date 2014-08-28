@@ -26,6 +26,7 @@ var Game = function (width, height) {
   this.sceneController.add('menu', new MenuScene(this));
   this.sceneController.start('main');
 
+  this.render();
 };
 
 Game.prototype.start = function () {
