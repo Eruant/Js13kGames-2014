@@ -605,9 +605,13 @@ var Game = function (width, height) {
   this.sounds = new ArcadeAudio();
 
   this.sceneController = new SceneController();
-  this.sceneController.add('main', new MainScene(this));
-  this.sceneController.add('menu', new MenuScene(this));
-  this.sceneController.start('main');
+
+  var menu = new MenuScene(this);
+  var main = new MainScene(this);
+
+  this.sceneController.add('main', main);
+  this.sceneController.add('menu', menu);
+  this.sceneController.start('menu');
 
   this.render();
 };
@@ -640,11 +644,11 @@ Game.prototype.tick = function () {
   }
 };
 
-var IO = function (element) {
+var IO = function (element, delegate) {
 
   this.el = element;
   this.ongoingTouches = [];
-  this.delegate = this;
+  this.delegate = delegate || this;
 
   this.addEvents();
   this.activeInput = {
@@ -664,7 +668,7 @@ IO.prototype.addEvents = function () {
   //this.el.addEventListener('touchmove', this.delegate.handleEvent.bind(this.delegate), false);
   //this.el.addEventListener('touchend', this.delegate.handleEvent.bind(this.delegate), false);
   //this.el.addEventListener('touchcancel', this.delegate.handleEvent.bind(this.delegate), false);
-
+  
   window.addEventListener('keydown', this.delegate.handleEvent.bind(this.delegate), true);
   window.addEventListener('keyup', this.delegate.handleEvent.bind(this.delegate), true);
 };
@@ -1053,7 +1057,7 @@ var MainScene = function (game) {
 
   this.game = game;
 
-  this.io = new IO(this.game.canvas, this.game);
+  this.io = new IO(this.game.canvas);
   this.player = new Wisp(this.game, this.game.canvas.width / 2, this.game.canvas.height / 2, 'user');
 
   this.cpus = [
@@ -1093,9 +1097,13 @@ MainScene.prototype.render = function () {
   }
 };
 
+/*globals IO*/
+
 var MenuScene = function (game) {
 
   this.game = game;
+
+  this.io = new IO(this.game.canvas, this);
 
   return this;
 };
@@ -1110,6 +1118,19 @@ MenuScene.prototype.render = function () {
   ctx.fillStyle = '#333';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+};
+
+MenuScene.prototype.handleEvent = function (event) {
+
+  switch (event.type) {
+    case 'keydown':
+      this.startGame();
+      break;
+  }
+};
+
+MenuScene.prototype.startGame = function () {
+  this.game.sceneController.start('main');
 };
 
 /*globals Game*/

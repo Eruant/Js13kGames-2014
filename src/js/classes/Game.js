@@ -22,9 +22,13 @@ var Game = function (width, height) {
   this.sounds = new ArcadeAudio();
 
   this.sceneController = new SceneController();
-  this.sceneController.add('main', new MainScene(this));
-  this.sceneController.add('menu', new MenuScene(this));
-  this.sceneController.start('main');
+
+  var menu = new MenuScene(this);
+  var main = new MainScene(this);
+
+  this.sceneController.add('main', main);
+  this.sceneController.add('menu', menu);
+  this.sceneController.start('menu');
 
   this.render();
 };

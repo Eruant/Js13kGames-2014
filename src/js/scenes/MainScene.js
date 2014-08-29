@@ -4,7 +4,7 @@ var MainScene = function (game) {
 
   this.game = game;
 
-  this.io = new IO(this.game.canvas, this.game);
+  this.io = new IO(this.game.canvas);
   this.player = new Wisp(this.game, this.game.canvas.width / 2, this.game.canvas.height / 2, 'user');
 
   this.cpus = [

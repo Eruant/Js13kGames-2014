@@ -1,8 +1,8 @@
-var IO = function (element) {
+var IO = function (element, delegate) {
 
   this.el = element;
   this.ongoingTouches = [];
-  this.delegate = this;
+  this.delegate = delegate || this;
 
   this.addEvents();
   this.activeInput = {
@@ -22,7 +22,7 @@ IO.prototype.addEvents = function () {
   //this.el.addEventListener('touchmove', this.delegate.handleEvent.bind(this.delegate), false);
   //this.el.addEventListener('touchend', this.delegate.handleEvent.bind(this.delegate), false);
   //this.el.addEventListener('touchcancel', this.delegate.handleEvent.bind(this.delegate), false);
-
+  
   window.addEventListener('keydown', this.delegate.handleEvent.bind(this.delegate), true);
   window.addEventListener('keyup', this.delegate.handleEvent.bind(this.delegate), true);
 };
