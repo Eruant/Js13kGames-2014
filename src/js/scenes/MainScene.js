@@ -11,7 +11,7 @@ var MainScene = function (game) {
 
   this.io = new IO(this.game.canvas);
   this.player = new Wisp(this.game, this.game.canvas.width / 2, this.game.canvas.height / 2, 'user');
-  this.player.size = 3;
+  this.player.size = 5;
 
   this.cpus = [
     new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height),
@@ -26,7 +26,7 @@ var MainScene = function (game) {
   this.cpus[3].state = 'fire';
 
   for (var i = 0, len = this.cpus.length; i < len; i++) {
-    this.cpus[i].size = Math.random() * 4;
+    this.cpus[i].size = Math.random() * 15;
   }
 
   this.draw();

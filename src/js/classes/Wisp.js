@@ -27,7 +27,7 @@ var Wisp = function (game, x, y, type) {
 
   this.PI2 = Math.PI * 2;
   this.accelerate = 1;
-  this.maxSpeed = 5;
+  this.maxSpeed = (this.size > 10) ? 10 - this.size : 3;
   this.state = 'normal';
   this.emitter = new Emitter();
 };
@@ -59,6 +59,12 @@ Wisp.prototype.update = function (input) {
     this.speed.x = this.maxSpeed;
   } else if (this.speed.x < -this.maxSpeed) {
     this.speed.x = -this.maxSpeed;
+  }
+
+  if (this.speed.y > this.maxSpeed) {
+    this.speed.y = this.maxSpeed;
+  } else if (this.speed.y < -this.maxSpeed) {
+    this.speed.y = -this.maxSpeed;
   }
 
   // add dampening
@@ -120,7 +126,9 @@ Wisp.prototype.render = function (ctx) {
       ctx.fillStyle = '#f00';
       break;
     default:
-      ctx.fillStyle = '#fff';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.stroke();
       break;
   }
   ctx.fill();
