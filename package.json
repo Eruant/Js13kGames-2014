@@ -8,6 +8,7 @@
   "author": "Matt Gale <matt@littleball.co.uk>",
   "license": "MIT",
   "devDependencies": {
+    "browser-sync": "^1.3.6",
     "gulp": "^3.8.7",
     "gulp-concat": "^2.3.4",
     "gulp-filesize": "0.0.6",
