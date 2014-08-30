@@ -23,6 +23,8 @@ var Wisp = function (game, x, y, type) {
     y: 0
   };
 
+  this.size = 1;
+
   this.PI2 = Math.PI * 2;
   this.accelerate = 1;
   this.maxSpeed = 5;
@@ -49,8 +51,8 @@ Wisp.prototype.update = function (input) {
       this.speed.y += this.accelerate;
     }
   } else if (this.type === 'cpu') {
-    this.speed.x += (Math.random() * 5) - 2.5;
-    this.speed.y += (Math.random() * 5) - 2.5;
+    this.speed.x += (Math.random() * 2) - 1;
+    this.speed.y += (Math.random() * 2) - 1;
   }
 
   if (this.speed.x > this.maxSpeed) {
@@ -96,14 +98,14 @@ Wisp.prototype.update = function (input) {
     }
   }
 
-  this.emitter.update(this.state);
+  this.emitter.update(this.state, this.position);
 };
 
 Wisp.prototype.render = function (ctx) {
   ctx.save();
   ctx.translate(this.position.x, this.position.y);
   ctx.beginPath();
-  ctx.arc(0, 0, 10, 0, this.PI2, false);
+  ctx.arc(0, 0, this.size, 0, this.PI2, false);
   switch (this.state) {
     case 'earth':
       ctx.fillStyle = '#0f0';
@@ -122,6 +124,6 @@ Wisp.prototype.render = function (ctx) {
       break;
   }
   ctx.fill();
-  this.emitter.render(ctx);
   ctx.restore();
+  this.emitter.render(this.position, ctx);
 };

@@ -4,8 +4,14 @@ var MainScene = function (game) {
 
   this.game = game;
 
+  this.canvas = window.document.createElement('canvas');
+  this.canvas.width = this.game.canvas.width;
+  this.canvas.height = this.game.canvas.height;
+  this.ctx = this.canvas.getContext('2d');
+
   this.io = new IO(this.game.canvas);
   this.player = new Wisp(this.game, this.game.canvas.width / 2, this.game.canvas.height / 2, 'user');
+  this.player.size = 3;
 
   this.cpus = [
     new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height),
@@ -19,6 +25,12 @@ var MainScene = function (game) {
   this.cpus[2].state = 'water';
   this.cpus[3].state = 'fire';
 
+  for (var i = 0, len = this.cpus.length; i < len; i++) {
+    this.cpus[i].size = Math.random() * 4;
+  }
+
+  this.draw();
+
   return this;
 };
 
@@ -30,12 +42,20 @@ MainScene.prototype.update = function () {
   }
 };
 
+MainScene.prototype.draw = function () {
+
+  var gradient = this.ctx.createLinearGradient(0, 0, this.canvas.width, this.canvas.height);
+  gradient.addColorStop(0, '#004cb3');
+  gradient.addColorStop(1, '#8ed6ff');
+
+  this.ctx.fillStyle = gradient;
+  this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+};
+
 MainScene.prototype.render = function () {
 
   // draw bakground
-  this.game.ctx.clearRect(0, 0, this.game.canvas.width, this.game.canvas.height);
-  this.game.ctx.fillStyle = '#ccc';
-  this.game.ctx.fillRect(0, 0, this.game.canvas.width, this.game.canvas.height);
+  this.game.ctx.drawImage(this.canvas, 0, 0);
 
   // other objects
   this.player.render(this.game.ctx);

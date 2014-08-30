@@ -549,36 +549,119 @@ var Emitter = function (type, emit) {
   this.type = type || 'default';
   this.emit = emit || true;
 
+  this.PI2 = Math.PI * 2;
+  
+  this.particleCount = 0;
+  this.maxParticles = 100;
+
   this.particleTypes = {};
   this.particles = [];
 
-  this.addParicleType('default', {});
+  this.addParicleType('earth', {
+    colour: 'rgba(50, 255, 50, 0.2)'
+  });
+  this.addParicleType('air', {
+    colour: 'rgba(255, 255, 255, 0.2)'
+  });
+  this.addParicleType('water', {
+    colour: 'rgba(50, 50, 255, 0.2)'
+  });
+  this.addParicleType('fire', {
+    colour: 'rgba(255, 50, 50, 0.2)'
+  });
+
 };
 
-Emitter.prototype.update = function (type) {
+Emitter.prototype.update = function (type, position) {
+
+  var i, len, p;
 
   if (type !== this.type) {
     this.type = type;
   }
+
+  if (this.emit && this.particleCount < this.maxParticles) {
+    this.particleCount++;
+    this.addParticle(position);
+  }
+
+  i = 0;
+  len = this.particles.length;
+  for (; i < len; i++) {
+    p = this.particles[i];
+
+    if (p.life > 0) {
+      p.life--;
+      p.speed.y += p.gravity;
+
+      p.position.x += p.speed.x;
+      p.position.y += p.speed.y;
+    }
+  }
+
 };
 
-Emitter.prototype.render = function (/*ctx*/) {
+Emitter.prototype.render = function (position, ctx) {
 
-  if (this.emit) {
+  var i, len, p;
+
+  i = 0;
+  len = this.particles.length;
+  for (; i < len; i++) {
+    p = this.particles[i];
+    if (p.life > 0) {
+      ctx.fillStyle = p.colour;
+      ctx.beginPath();
+      ctx.arc(p.position.x, p.position.y, 3, 0, this.PI2, false);
+      ctx.fill();
+    } else if (this.emit) {
+      // this needs looking at
+      this.addParticle(position, i);
+    }
   }
+
 };
 
 Emitter.prototype.addParicleType = function (key, options) {
 
   var settings = {
-    gravity: 0 || options.gravity
+    gravity: options.gravity || 0,
+    colour: options.colour || 'rgba(0, 0, 0, 0.2)'
   };
 
   this.particleTypes[key] = settings;
 };
 
-Emitter.prototype.addParticle = function () {
-  // add a new particle
+Emitter.prototype.addParticle = function (position, key) {
+
+  if (this.type in this.particleTypes) {
+
+    var particle = {
+      position: {
+        x: position.x,
+        y: position.y
+      },
+      speed: {
+        x: (Math.random() * 2) - 1,
+        y: (Math.random() * 2) -1
+      },
+      gravity: -0.05,
+      life: 30,
+      colour: this.particleTypes[this.type].colour
+    };
+
+    if (this.particles.length < this.maxParticles) {
+
+      this.particles.push(particle);
+
+    } else if (key) {
+
+      this.particles[key] = particle;
+
+    }
+
+  }
+
 };
 
 /*globals SceneController, ArcadeAudio, MainScene, MenuScene*/
@@ -948,6 +1031,8 @@ var Wisp = function (game, x, y, type) {
     y: 0
   };
 
+  this.size = 1;
+
   this.PI2 = Math.PI * 2;
   this.accelerate = 1;
   this.maxSpeed = 5;
@@ -974,8 +1059,8 @@ Wisp.prototype.update = function (input) {
       this.speed.y += this.accelerate;
     }
   } else if (this.type === 'cpu') {
-    this.speed.x += (Math.random() * 5) - 2.5;
-    this.speed.y += (Math.random() * 5) - 2.5;
+    this.speed.x += (Math.random() * 2) - 1;
+    this.speed.y += (Math.random() * 2) - 1;
   }
 
   if (this.speed.x > this.maxSpeed) {
@@ -1021,14 +1106,14 @@ Wisp.prototype.update = function (input) {
     }
   }
 
-  this.emitter.update(this.state);
+  this.emitter.update(this.state, this.position);
 };
 
 Wisp.prototype.render = function (ctx) {
   ctx.save();
   ctx.translate(this.position.x, this.position.y);
   ctx.beginPath();
-  ctx.arc(0, 0, 10, 0, this.PI2, false);
+  ctx.arc(0, 0, this.size, 0, this.PI2, false);
   switch (this.state) {
     case 'earth':
       ctx.fillStyle = '#0f0';
@@ -1047,8 +1132,8 @@ Wisp.prototype.render = function (ctx) {
       break;
   }
   ctx.fill();
-  this.emitter.render(ctx);
   ctx.restore();
+  this.emitter.render(this.position, ctx);
 };
 
 /*globals IO, Wisp*/
@@ -1057,8 +1142,14 @@ var MainScene = function (game) {
 
   this.game = game;
 
+  this.canvas = window.document.createElement('canvas');
+  this.canvas.width = this.game.canvas.width;
+  this.canvas.height = this.game.canvas.height;
+  this.ctx = this.canvas.getContext('2d');
+
   this.io = new IO(this.game.canvas);
   this.player = new Wisp(this.game, this.game.canvas.width / 2, this.game.canvas.height / 2, 'user');
+  this.player.size = 3;
 
   this.cpus = [
     new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height),
@@ -1072,6 +1163,12 @@ var MainScene = function (game) {
   this.cpus[2].state = 'water';
   this.cpus[3].state = 'fire';
 
+  for (var i = 0, len = this.cpus.length; i < len; i++) {
+    this.cpus[i].size = Math.random() * 4;
+  }
+
+  this.draw();
+
   return this;
 };
 
@@ -1083,12 +1180,20 @@ MainScene.prototype.update = function () {
   }
 };
 
+MainScene.prototype.draw = function () {
+
+  var gradient = this.ctx.createLinearGradient(0, 0, this.canvas.width, this.canvas.height);
+  gradient.addColorStop(0, '#004cb3');
+  gradient.addColorStop(1, '#8ed6ff');
+
+  this.ctx.fillStyle = gradient;
+  this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+};
+
 MainScene.prototype.render = function () {
 
   // draw bakground
-  this.game.ctx.clearRect(0, 0, this.game.canvas.width, this.game.canvas.height);
-  this.game.ctx.fillStyle = '#ccc';
-  this.game.ctx.fillRect(0, 0, this.game.canvas.width, this.game.canvas.height);
+  this.game.ctx.drawImage(this.canvas, 0, 0);
 
   // other objects
   this.player.render(this.game.ctx);
