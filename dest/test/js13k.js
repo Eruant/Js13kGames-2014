@@ -1040,6 +1040,7 @@ var Wisp = function (game, x, y, type) {
   this.game = game;
   this.type = type || 'cpu';
   this.life = 1;
+  this.score = 0;
 
   //this.game.sounds.add('fire', 10, [
     //[3, 0.25, 0.27, 0.76, 0.54, 0.5571, , 0.1799, -0.0999, 0.0035, 0.56, -0.6597, 0.61, 0.0862, -0.8256, , 0.5, 0.5, 0.71, -0.0181, , 0.0368, 0.0333, 0.5]
@@ -1258,7 +1259,14 @@ MainScene.prototype.update = function () {
       kill = [];
 
       if (!this.player.life) {
-        alert('end');
+        this.state = 'menu';
+        this.player.score = 0;
+        this.player.life = 1;
+        this.player.size = 5;
+        this.player.position = {
+          x: this.canvas.width / 2,
+          y: this.canvas.height / 2
+        };
         return;
       }
 
@@ -1345,6 +1353,12 @@ MainScene.prototype.render = function () {
     case 'pause':
       this.game.ctx.drawImage(this.pauseCanvas, 0 ,0);
       break;
+    case 'play':
+      this.game.ctx.fillStyle = '#000';
+      this.game.ctx.font = '20px/24px Arial';
+      this.game.ctx.textAlign = 'center';
+      this.game.ctx.fillText(this.player.score, this.canvas.width / 2, 20);
+      break;
   }
 };
 
@@ -1385,12 +1399,16 @@ MainScene.prototype.destroySmallest = function (a, b) {
 
   if (a.size > b.size) {
     a.size++;
+    a.score += 2;
     b.size--;
+    b.score -= 1;
     if (b.size <= 0) {
       b.life = 0;
     }
   } else {
     b.size++;
+    b.score += 2;
+    a.score -= 1;
     a.size--;
     if (a.size <= 0) {
       a.life = 0;

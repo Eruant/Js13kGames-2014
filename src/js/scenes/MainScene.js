@@ -81,7 +81,14 @@ MainScene.prototype.update = function () {
       kill = [];
 
       if (!this.player.life) {
-        alert('end');
+        this.state = 'menu';
+        this.player.score = 0;
+        this.player.life = 1;
+        this.player.size = 5;
+        this.player.position = {
+          x: this.canvas.width / 2,
+          y: this.canvas.height / 2
+        };
         return;
       }
 
@@ -168,6 +175,12 @@ MainScene.prototype.render = function () {
     case 'pause':
       this.game.ctx.drawImage(this.pauseCanvas, 0 ,0);
       break;
+    case 'play':
+      this.game.ctx.fillStyle = '#000';
+      this.game.ctx.font = '20px/24px Arial';
+      this.game.ctx.textAlign = 'center';
+      this.game.ctx.fillText(this.player.score, this.canvas.width / 2, 20);
+      break;
   }
 };
 
@@ -208,12 +221,16 @@ MainScene.prototype.destroySmallest = function (a, b) {
 
   if (a.size > b.size) {
     a.size++;
+    a.score += 2;
     b.size--;
+    b.score -= 1;
     if (b.size <= 0) {
       b.life = 0;
     }
   } else {
     b.size++;
+    b.score += 2;
+    a.score -= 1;
     a.size--;
     if (a.size <= 0) {
       a.life = 0;

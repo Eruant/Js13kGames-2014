@@ -5,6 +5,7 @@ var Wisp = function (game, x, y, type) {
   this.game = game;
   this.type = type || 'cpu';
   this.life = 1;
+  this.score = 0;
 
   //this.game.sounds.add('fire', 10, [
     //[3, 0.25, 0.27, 0.76, 0.54, 0.5571, , 0.1799, -0.0999, 0.0035, 0.56, -0.6597, 0.61, 0.0862, -0.8256, , 0.5, 0.5, 0.71, -0.0181, , 0.0368, 0.0333, 0.5]
