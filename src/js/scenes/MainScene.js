@@ -17,6 +17,8 @@ var MainScene = function (game) {
     new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height),
     new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height),
     new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height),
+    new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height),
+    new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height),
     new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height)
   ];
 
@@ -24,6 +26,8 @@ var MainScene = function (game) {
   this.cpus[1].state = 'air';
   this.cpus[2].state = 'water';
   this.cpus[3].state = 'fire';
+  this.cpus[4].state = 'fire';
+  this.cpus[5].state = 'fire';
 
   for (var i = 0, len = this.cpus.length; i < len; i++) {
     this.cpus[i].size = Math.random() * 15;
@@ -34,12 +38,38 @@ var MainScene = function (game) {
   return this;
 };
 
+MainScene.prototype.reset = function () {
+  this.io.removeEvents();
+};
+
 MainScene.prototype.update = function () {
 
+  var i, len, kill;
+  
+  kill = [];
+  
+  if (!this.player.life || this.cpus.length === 0) {
+    this.game.sceneController.start('menu');
+    return;
+  }
+
   this.player.update(this.io.activeInput);
-  for (var i = 0, len = this.cpus.length; i < len; i++) {
+  i = 0;
+  len = this.cpus.length;
+  for (; i < len; i++) {
+    if (this.cpus[i].life === 0) {
+      kill.push(i);
+    }
     this.cpus[i].update();
   }
+
+  i = 0;
+  len = kill.length;
+  for (; i < len; i++) {
+    this.cpus.splice(kill[i], 1);
+  }
+
+  this.testCollision();
 };
 
 MainScene.prototype.draw = function () {
@@ -62,4 +92,47 @@ MainScene.prototype.render = function () {
   for (var i = 0, len = this.cpus.length; i < len; i++) {
     this.cpus[i].render(this.game.ctx);
   }
+};
+
+MainScene.prototype.testCollision = function () {
+
+  var i, len, sprite, aSize, aMaxX, aMinX, aMaxY, aMinY;
+
+  aSize = (this.player.size / 2);
+  aMaxX = this.player.position.x + aSize;
+  aMinX = this.player.position.x - aSize;
+  aMaxY = this.player.position.y + aSize;
+  aMinY = this.player.position.y - aSize;
+
+  i = 0;
+  len = this.cpus.length;
+  for (; i < len; i++) {
+    sprite = this.cpus[i];
+
+    if ((aMaxX > sprite.position.x) && (aMinX < sprite.position.x)) {
+      if ((aMaxY > sprite.position.y) && (aMinY < sprite.position.y)) {
+        this.destroySmallest(this.player, sprite);
+      }
+    }
+
+  }
+
+};
+
+MainScene.prototype.destroySmallest = function (a, b) {
+
+  if (a.size > b.size) {
+    a.size++;
+    b.size--;
+    if (b.size <= 0) {
+      b.life = 0;
+    }
+  } else {
+    b.size++;
+    a.size--;
+    if (a.size <= 0) {
+      a.life = 0;
+    }
+  }
+
 };

@@ -16,6 +16,11 @@ var MenuScene = function (game) {
   return this;
 };
 
+MenuScene.prototype.reset = function () {
+  this.io.removeEvents();
+  delete this.io;
+};
+
 MenuScene.prototype.update = function () {};
 
 MenuScene.prototype.render = function () {

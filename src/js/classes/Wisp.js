@@ -4,6 +4,7 @@ var Wisp = function (game, x, y, type) {
 
   this.game = game;
   this.type = type || 'cpu';
+  this.life = 1;
 
   //this.game.sounds.add('fire', 10, [
     //[3, 0.25, 0.27, 0.76, 0.54, 0.5571, , 0.1799, -0.0999, 0.0035, 0.56, -0.6597, 0.61, 0.0862, -0.8256, , 0.5, 0.5, 0.71, -0.0181, , 0.0368, 0.0333, 0.5]
@@ -108,30 +109,33 @@ Wisp.prototype.update = function (input) {
 };
 
 Wisp.prototype.render = function (ctx) {
-  ctx.save();
-  ctx.translate(this.position.x, this.position.y);
-  ctx.beginPath();
-  ctx.arc(0, 0, this.size, 0, this.PI2, false);
-  switch (this.state) {
-    case 'earth':
-      ctx.fillStyle = '#0f0';
-      break;
-    case 'water':
-      ctx.fillStyle = '#00f';
-      break;
-    case 'air':
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-      break;
-    case 'fire':
-      ctx.fillStyle = '#f00';
-      break;
-    default:
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-      ctx.stroke();
-      break;
+
+  if (this.life) {
+    ctx.save();
+    ctx.translate(this.position.x, this.position.y);
+    ctx.beginPath();
+    ctx.arc(0, 0, this.size, 0, this.PI2, false);
+    switch (this.state) {
+      case 'earth':
+        ctx.fillStyle = '#0f0';
+        break;
+      case 'water':
+        ctx.fillStyle = '#00f';
+        break;
+      case 'air':
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        break;
+      case 'fire':
+        ctx.fillStyle = '#f00';
+        break;
+      default:
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.stroke();
+        break;
+    }
+    ctx.fill();
+    ctx.restore();
   }
-  ctx.fill();
-  ctx.restore();
   this.emitter.render(this.position, ctx);
 };

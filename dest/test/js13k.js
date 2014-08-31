@@ -686,13 +686,13 @@ var Game = function (width, height) {
 
   this.sounds = new ArcadeAudio();
 
-  this.sceneController = new SceneController();
+  this.sceneController = new SceneController(this);
 
-  var menu = new MenuScene(this);
-  var main = new MainScene(this);
+  //var menu = new MenuScene(this);
+  //var main = new MainScene(this);
 
-  this.sceneController.add('main', main);
-  this.sceneController.add('menu', menu);
+  this.sceneController.add('main', MainScene);
+  this.sceneController.add('menu', MenuScene);
   this.sceneController.start('menu');
 
   this.render();
@@ -712,11 +712,11 @@ Game.prototype.pause = function () {
 };
 
 Game.prototype.update = function () {
-  this.sceneController.states[this.sceneController.currentState].update();
+  this.sceneController.currentState.update();
 };
 
 Game.prototype.render = function () {
-  this.sceneController.states[this.sceneController.currentState].render();
+  this.sceneController.currentState.render();
 };
 
 Game.prototype.tick = function () {
@@ -760,9 +760,10 @@ IO.prototype.removeEvents = function () {
   //this.el.removeEventListener('touchmove', this.delegate.handleEvent.bind(this.delegate), false);
   //this.el.removeEventListener('touchend', this.delegate.handleEvent.bind(this.delegate), false);
   //this.el.removeEventListener('touchcancel', this.delegate.handleEvent.bind(this.delegate), false);
+  console.log('removing events');
 
-  window.removeEventListener('keydown', this.delegate.handleEvent.bind(this.delegate), true);
-  window.removeEventListener('keyup', this.delegate.handleEvent.bind(this.delegate), true);
+  window.removeEventListener('keydown', this.delegate.handleEvent);
+  window.removeEventListener('keyup', this.delegate.handleEvent);
 };
 
 IO.prototype.handleEvent = function (event) {
@@ -987,21 +988,26 @@ IO.prototype.setKeyState = function (code, value) {
   }
 };
 
-var SceneController = function () {
+var SceneController = function (scope) {
+
+  this.scope = scope;
 
   this.states = {};
   this.currentState = null;
 };
 
 SceneController.prototype.add = function (key, state) {
-
   this.states[key] = state;
-
 };
 
 SceneController.prototype.start = function (key) {
 
-  this.currentState = key;
+  if (this.currentState !== null) {
+    this.currentState.reset();
+  }
+  this.currentState = new this.states[key](this.scope);
+
+  console.log(this.currentState);
 
 };
 
@@ -1011,6 +1017,7 @@ var Wisp = function (game, x, y, type) {
 
   this.game = game;
   this.type = type || 'cpu';
+  this.life = 1;
 
   //this.game.sounds.add('fire', 10, [
     //[3, 0.25, 0.27, 0.76, 0.54, 0.5571, , 0.1799, -0.0999, 0.0035, 0.56, -0.6597, 0.61, 0.0862, -0.8256, , 0.5, 0.5, 0.71, -0.0181, , 0.0368, 0.0333, 0.5]
@@ -1115,31 +1122,34 @@ Wisp.prototype.update = function (input) {
 };
 
 Wisp.prototype.render = function (ctx) {
-  ctx.save();
-  ctx.translate(this.position.x, this.position.y);
-  ctx.beginPath();
-  ctx.arc(0, 0, this.size, 0, this.PI2, false);
-  switch (this.state) {
-    case 'earth':
-      ctx.fillStyle = '#0f0';
-      break;
-    case 'water':
-      ctx.fillStyle = '#00f';
-      break;
-    case 'air':
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-      break;
-    case 'fire':
-      ctx.fillStyle = '#f00';
-      break;
-    default:
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-      ctx.stroke();
-      break;
+
+  if (this.life) {
+    ctx.save();
+    ctx.translate(this.position.x, this.position.y);
+    ctx.beginPath();
+    ctx.arc(0, 0, this.size, 0, this.PI2, false);
+    switch (this.state) {
+      case 'earth':
+        ctx.fillStyle = '#0f0';
+        break;
+      case 'water':
+        ctx.fillStyle = '#00f';
+        break;
+      case 'air':
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        break;
+      case 'fire':
+        ctx.fillStyle = '#f00';
+        break;
+      default:
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.stroke();
+        break;
+    }
+    ctx.fill();
+    ctx.restore();
   }
-  ctx.fill();
-  ctx.restore();
   this.emitter.render(this.position, ctx);
 };
 
@@ -1162,6 +1172,8 @@ var MainScene = function (game) {
     new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height),
     new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height),
     new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height),
+    new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height),
+    new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height),
     new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height)
   ];
 
@@ -1169,6 +1181,8 @@ var MainScene = function (game) {
   this.cpus[1].state = 'air';
   this.cpus[2].state = 'water';
   this.cpus[3].state = 'fire';
+  this.cpus[4].state = 'fire';
+  this.cpus[5].state = 'fire';
 
   for (var i = 0, len = this.cpus.length; i < len; i++) {
     this.cpus[i].size = Math.random() * 15;
@@ -1179,12 +1193,38 @@ var MainScene = function (game) {
   return this;
 };
 
+MainScene.prototype.reset = function () {
+  this.io.removeEvents();
+};
+
 MainScene.prototype.update = function () {
 
+  var i, len, kill;
+  
+  kill = [];
+  
+  if (!this.player.life || this.cpus.length === 0) {
+    this.game.sceneController.start('menu');
+    return;
+  }
+
   this.player.update(this.io.activeInput);
-  for (var i = 0, len = this.cpus.length; i < len; i++) {
+  i = 0;
+  len = this.cpus.length;
+  for (; i < len; i++) {
+    if (this.cpus[i].life === 0) {
+      kill.push(i);
+    }
     this.cpus[i].update();
   }
+
+  i = 0;
+  len = kill.length;
+  for (; i < len; i++) {
+    this.cpus.splice(kill[i], 1);
+  }
+
+  this.testCollision();
 };
 
 MainScene.prototype.draw = function () {
@@ -1209,6 +1249,49 @@ MainScene.prototype.render = function () {
   }
 };
 
+MainScene.prototype.testCollision = function () {
+
+  var i, len, sprite, aSize, aMaxX, aMinX, aMaxY, aMinY;
+
+  aSize = (this.player.size / 2);
+  aMaxX = this.player.position.x + aSize;
+  aMinX = this.player.position.x - aSize;
+  aMaxY = this.player.position.y + aSize;
+  aMinY = this.player.position.y - aSize;
+
+  i = 0;
+  len = this.cpus.length;
+  for (; i < len; i++) {
+    sprite = this.cpus[i];
+
+    if ((aMaxX > sprite.position.x) && (aMinX < sprite.position.x)) {
+      if ((aMaxY > sprite.position.y) && (aMinY < sprite.position.y)) {
+        this.destroySmallest(this.player, sprite);
+      }
+    }
+
+  }
+
+};
+
+MainScene.prototype.destroySmallest = function (a, b) {
+
+  if (a.size > b.size) {
+    a.size++;
+    b.size--;
+    if (b.size <= 0) {
+      b.life = 0;
+    }
+  } else {
+    b.size++;
+    a.size--;
+    if (a.size <= 0) {
+      a.life = 0;
+    }
+  }
+
+};
+
 /*globals IO*/
 
 var MenuScene = function (game) {
@@ -1225,6 +1308,11 @@ var MenuScene = function (game) {
   this.redraw = true;
 
   return this;
+};
+
+MenuScene.prototype.reset = function () {
+  this.io.removeEvents();
+  delete this.io;
 };
 
 MenuScene.prototype.update = function () {};
