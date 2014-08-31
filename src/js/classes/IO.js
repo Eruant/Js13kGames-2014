@@ -1,8 +1,11 @@
-var IO = function (element, delegate) {
+var IO = function (element, game, delegate) {
 
   this.el = element;
   this.ongoingTouches = [];
   this.delegate = delegate || this;
+  this.game = game;
+
+  this.pauseTrigger = false;
 
   this.addEvents();
   this.activeInput = {
@@ -38,6 +41,14 @@ IO.prototype.removeEvents = function () {
 };
 
 IO.prototype.handleEvent = function (event) {
+
+  if (this.game.scene.state === 'menu') {
+
+    if (event.type === 'keydown') {
+      this.game.scene.state = 'play';
+    }
+    return;
+  }
 
   switch (event.type) {
     case 'keydown':
@@ -201,9 +212,33 @@ IO.prototype.handleEvent = function (event) {
   //}
 //};
 
+IO.prototype.pause = function () {
+
+  var _this = this;
+
+  if (!this.pauseTrigger) {
+
+    if (this.game.scene.state === 'play') {
+      this.game.scene.state = 'pause';
+    } else {
+      this.game.scene.state = 'play';
+    }
+
+    this.pauseTrigger = true;
+    setTimeout(function () {
+      _this.pauseTrigger = false;
+    }, 250);
+
+  }
+
+};
+
 IO.prototype.setKeyState = function (code, value) {
 
   switch (code) {
+    case 27:
+      this.pause();
+      break;
     case 49: // 1
       if (value) {
         this.activeInput.earth = true;

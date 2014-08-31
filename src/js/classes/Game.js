@@ -21,14 +21,7 @@ var Game = function (width, height) {
 
   this.sounds = new ArcadeAudio();
 
-  this.sceneController = new SceneController();
-
-  var menu = new MenuScene(this);
-  var main = new MainScene(this);
-
-  this.sceneController.add('main', main);
-  this.sceneController.add('menu', menu);
-  this.sceneController.start('menu');
+  this.scene = new MainScene(this);
 
   this.render();
 };
@@ -47,11 +40,11 @@ Game.prototype.pause = function () {
 };
 
 Game.prototype.update = function () {
-  this.sceneController.states[this.sceneController.currentState].update();
+  this.scene.update();
 };
 
 Game.prototype.render = function () {
-  this.sceneController.states[this.sceneController.currentState].render();
+  this.scene.render();
 };
 
 Game.prototype.tick = function () {

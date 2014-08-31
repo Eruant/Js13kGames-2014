@@ -4,33 +4,41 @@ var MainScene = function (game) {
 
   this.game = game;
 
+  this.state = 'menu';
+
   this.canvas = window.document.createElement('canvas');
   this.canvas.width = this.game.canvas.width;
   this.canvas.height = this.game.canvas.height;
   this.ctx = this.canvas.getContext('2d');
 
-  this.io = new IO(this.game.canvas);
+  this.menuCanvas = window.document.createElement('canvas');
+  this.menuCanvas.width = this.game.canvas.width;
+  this.menuCanvas.height = this.game.canvas.height;
+  this.menuCtx = this.menuCanvas.getContext('2d');
+  this.drawMenu();
+
+  this.pauseCanvas = window.document.createElement('canvas');
+  this.pauseCanvas.width = this.game.canvas.width;
+  this.pauseCanvas.height = this.game.canvas.height;
+  this.pauseCtx = this.pauseCanvas.getContext('2d');
+  this.drawPause();
+
+  this.io = new IO(this.game.canvas, this.game);
   this.player = new Wisp(this.game, this.game.canvas.width / 2, this.game.canvas.height / 2, 'user');
   this.player.size = 5;
 
-  this.cpus = [
-    new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height),
-    new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height),
-    new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height),
-    new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height),
-    new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height),
-    new Wisp(this.game, Math.random() * this.game.canvas.width, Math.random() * this.game.canvas.height)
+  this.cpus = [];
+  this.cpuTypes = [
+    'earth',
+    'air',
+    'water',
+    'fire'
   ];
 
-  this.cpus[0].state = 'earth';
-  this.cpus[1].state = 'air';
-  this.cpus[2].state = 'water';
-  this.cpus[3].state = 'fire';
-  this.cpus[4].state = 'fire';
-  this.cpus[5].state = 'fire';
-
-  for (var i = 0, len = this.cpus.length; i < len; i++) {
-    this.cpus[i].size = Math.random() * 15;
+  var enemies = 10;
+  while (enemies) {
+    this.addCPU();
+    enemies--;
   }
 
   this.draw();
@@ -38,38 +46,76 @@ var MainScene = function (game) {
   return this;
 };
 
-MainScene.prototype.reset = function () {
-  this.io.removeEvents();
+MainScene.prototype.addCPU = function () {
+
+  var cpu, x, y;
+
+  x = Math.random() * this.game.canvas.width;
+  y = Math.random() * this.game.canvas.height;
+  cpu = new Wisp(this.game, x, y);
+  cpu.state = this.cpuTypes[Math.floor(Math.random() * this.cpuTypes.length)];
+  cpu.size = Math.random() * (this.player.size + 10);
+
+  this.cpus.push(cpu);
+
 };
 
 MainScene.prototype.update = function () {
 
   var i, len, kill;
-  
-  kill = [];
-  
-  if (!this.player.life || this.cpus.length === 0) {
-    this.game.sceneController.start('menu');
-    return;
-  }
 
-  this.player.update(this.io.activeInput);
-  i = 0;
-  len = this.cpus.length;
-  for (; i < len; i++) {
-    if (this.cpus[i].life === 0) {
-      kill.push(i);
-    }
-    this.cpus[i].update();
-  }
+  switch (this.state) {
 
-  i = 0;
-  len = kill.length;
-  for (; i < len; i++) {
-    this.cpus.splice(kill[i], 1);
-  }
+    case 'menu':
 
-  this.testCollision();
+      i = 0;
+      len = this.cpus.length;
+      for (; i < len; i++) {
+        this.cpus[i].update();
+      }
+
+      break;
+
+    case 'play':
+
+      kill = [];
+
+      if (!this.player.life) {
+        alert('end');
+        return;
+      }
+
+      if (this.player.size > 10) {
+        this.player.size *= 0.8;
+        i = 0;
+        len = this.cpus.length;
+        for (; i < len; i++) {
+          this.cpus[i].size *= 0.8;
+        }
+      }
+
+      this.player.update(this.io.activeInput);
+      i = 0;
+      len = this.cpus.length;
+      for (; i < len; i++) {
+        if (this.cpus[i].life === 0) {
+          // TODO test to see if emitter has finished
+          kill.push(i);
+        }
+        this.cpus[i].update();
+      }
+
+      i = 0;
+      len = kill.length;
+      for (; i < len; i++) {
+        this.cpus.splice(kill[i], 1);
+        this.addCPU();
+      }
+
+      this.testCollision();
+      break;
+
+  }
 };
 
 MainScene.prototype.draw = function () {
@@ -82,15 +128,46 @@ MainScene.prototype.draw = function () {
   this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 };
 
+MainScene.prototype.drawMenu = function () {
+
+  var ctx = this.menuCtx;
+
+  ctx.fillStyle = '#000';
+  ctx.font = '20px/24px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('Press any key to start', this.canvas.width / 2, this.canvas.height / 2);
+};
+
+MainScene.prototype.drawPause = function () {
+
+  var ctx = this.pauseCtx;
+
+  ctx.fillStyle = '#000';
+  ctx.font = '20px/24px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('Paused', this.canvas.width / 2, this.canvas.height / 2);
+};
+
 MainScene.prototype.render = function () {
 
   // draw bakground
   this.game.ctx.drawImage(this.canvas, 0, 0);
 
   // other objects
-  this.player.render(this.game.ctx);
+  if (this.state === 'play') {
+    this.player.render(this.game.ctx);
+  }
   for (var i = 0, len = this.cpus.length; i < len; i++) {
     this.cpus[i].render(this.game.ctx);
+  }
+
+  switch (this.state) {
+    case 'menu':
+      this.game.ctx.drawImage(this.menuCanvas, 0, 0);
+      break;
+    case 'pause':
+      this.game.ctx.drawImage(this.pauseCanvas, 0 ,0);
+      break;
   }
 };
 
@@ -115,6 +192,14 @@ MainScene.prototype.testCollision = function () {
       }
     }
 
+  }
+
+  i = 0;
+  len = this.cpus.length;
+  for (; i < len; i++) {
+    sprite = this.cpus[i];
+
+    // TODO test for CPUs hitting other CPUs
   }
 
 };
