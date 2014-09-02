@@ -1184,6 +1184,13 @@ var MainScene = function (game) {
 
   this.state = 'menu';
 
+  this.rules = {
+    water: 'fire',
+    fire: 'earth',
+    earth: 'air',
+    air: 'water'
+  };
+
   this.canvas = window.document.createElement('canvas');
   this.canvas.width = this.game.canvas.width;
   this.canvas.height = this.game.canvas.height;
@@ -1232,7 +1239,7 @@ MainScene.prototype.addCPU = function () {
   y = Math.random() * this.game.canvas.height;
   cpu = new Wisp(this.game, x, y);
   cpu.state = this.cpuTypes[Math.floor(Math.random() * this.cpuTypes.length)];
-  cpu.size = Math.random() * (this.player.size + 10);
+  cpu.size = Math.random() * (this.player.size + 15);
 
   this.cpus.push(cpu);
 
@@ -1351,7 +1358,7 @@ MainScene.prototype.render = function () {
       this.game.ctx.drawImage(this.menuCanvas, 0, 0);
       break;
     case 'pause':
-      this.game.ctx.drawImage(this.pauseCanvas, 0 ,0);
+      this.game.ctx.drawImage(this.pauseCanvas, 0, 0);
       break;
     case 'play':
       this.game.ctx.fillStyle = '#000';
@@ -1366,7 +1373,7 @@ MainScene.prototype.testCollision = function () {
 
   var i, len, sprite, aSize, aMaxX, aMinX, aMaxY, aMinY;
 
-  aSize = (this.player.size / 2);
+  aSize = this.player.size;
   aMaxX = this.player.position.x + aSize;
   aMinX = this.player.position.x - aSize;
   aMaxY = this.player.position.y + aSize;
@@ -1397,7 +1404,17 @@ MainScene.prototype.testCollision = function () {
 
 MainScene.prototype.destroySmallest = function (a, b) {
 
-  if (a.size > b.size) {
+  var ruleA, ruleB, valueA, valueB, boost;
+
+  boost = 10;
+
+  ruleA = this.rules[a.state];
+  ruleB = this.rules[b.state];
+
+  valueA = a.size + (b.state === ruleA ? boost : 0);
+  valueB = b.size + (a.state === ruleB ? boost : 0);
+
+  if (valueA > valueB) {
     a.size++;
     a.score += 2;
     b.size--;
@@ -1415,69 +1432,6 @@ MainScene.prototype.destroySmallest = function (a, b) {
     }
   }
 
-};
-
-/*globals IO*/
-
-var MenuScene = function (game) {
-
-  this.game = game;
-
-  this.io = new IO(this.game.canvas, this);
-
-  this.canvas = window.document.createElement('canvas');
-  this.canvas.width = this.game.canvas.width;
-  this.canvas.height = this.game.canvas.height;
-  this.ctx = this.canvas.getContext('2d');
-
-  this.redraw = true;
-
-  return this;
-};
-
-MenuScene.prototype.reset = function () {
-  this.io.removeEvents();
-  delete this.io;
-};
-
-MenuScene.prototype.update = function () {};
-
-MenuScene.prototype.render = function () {
-
-  if (this.redraw) {
-    this.draw();
-    this.redraw = false;
-  }
-
-  this.game.ctx.drawImage(this.canvas, 0, 0);
-};
-
-MenuScene.prototype.draw = function () {
-
-  var ctx = this.ctx,
-    canvas = this.canvas;
-
-  ctx.fillStyle = '#333';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  ctx.font = "Georgia";
-  ctx.fillStyle = '#fff';
-  ctx.textAlign = 'center';
-  ctx.fillText("Press any key", canvas.width / 2, canvas.height / 2);
-
-};
-
-MenuScene.prototype.handleEvent = function (event) {
-
-  switch (event.type) {
-    case 'keydown':
-      this.startGame();
-      break;
-  }
-};
-
-MenuScene.prototype.startGame = function () {
-  this.game.sceneController.start('main');
 };
 
 /*globals Game*/

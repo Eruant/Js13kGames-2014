@@ -6,6 +6,13 @@ var MainScene = function (game) {
 
   this.state = 'menu';
 
+  this.rules = {
+    water: 'fire',
+    fire: 'earth',
+    earth: 'air',
+    air: 'water'
+  };
+
   this.canvas = window.document.createElement('canvas');
   this.canvas.width = this.game.canvas.width;
   this.canvas.height = this.game.canvas.height;
@@ -54,7 +61,7 @@ MainScene.prototype.addCPU = function () {
   y = Math.random() * this.game.canvas.height;
   cpu = new Wisp(this.game, x, y);
   cpu.state = this.cpuTypes[Math.floor(Math.random() * this.cpuTypes.length)];
-  cpu.size = Math.random() * (this.player.size + 10);
+  cpu.size = Math.random() * (this.player.size + 15);
 
   this.cpus.push(cpu);
 
@@ -173,7 +180,7 @@ MainScene.prototype.render = function () {
       this.game.ctx.drawImage(this.menuCanvas, 0, 0);
       break;
     case 'pause':
-      this.game.ctx.drawImage(this.pauseCanvas, 0 ,0);
+      this.game.ctx.drawImage(this.pauseCanvas, 0, 0);
       break;
     case 'play':
       this.game.ctx.fillStyle = '#000';
@@ -188,7 +195,7 @@ MainScene.prototype.testCollision = function () {
 
   var i, len, sprite, aSize, aMaxX, aMinX, aMaxY, aMinY;
 
-  aSize = (this.player.size / 2);
+  aSize = this.player.size;
   aMaxX = this.player.position.x + aSize;
   aMinX = this.player.position.x - aSize;
   aMaxY = this.player.position.y + aSize;
@@ -219,7 +226,17 @@ MainScene.prototype.testCollision = function () {
 
 MainScene.prototype.destroySmallest = function (a, b) {
 
-  if (a.size > b.size) {
+  var ruleA, ruleB, valueA, valueB, boost;
+
+  boost = 10;
+
+  ruleA = this.rules[a.state];
+  ruleB = this.rules[b.state];
+
+  valueA = a.size + (b.state === ruleA ? boost : 0);
+  valueB = b.size + (a.state === ruleB ? boost : 0);
+
+  if (valueA > valueB) {
     a.size++;
     a.score += 2;
     b.size--;
