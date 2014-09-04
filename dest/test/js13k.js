@@ -1048,7 +1048,7 @@ var Transition = function () {
 Transition.prototype.start = function () {
 
   this.active = true;
-  this.percent = 0;
+  this.percent = (this.direction === 'forwards') ? 0 : 1;
   this.startTime = new Date().getTime();
 };
 
@@ -1253,6 +1253,8 @@ var MainScene = function (game) {
   this.menuTransition = new Transition();
   this.menuTransition.start();
 
+  this.pauseTransition = new Transition();
+
   this.canvas = window.document.createElement('canvas');
   this.canvas.width = this.game.canvas.width;
   this.canvas.height = this.game.canvas.height;
@@ -1326,7 +1328,6 @@ MainScene.prototype.update = function () {
 
       break;
 
-
     case 'play':
 
       kill = [];
@@ -1390,11 +1391,11 @@ MainScene.prototype.drawMenu = function (percent) {
 
   var ctx = this.menuCtx;
 
+  ctx.clearRect(0, 0, this.menuCanvas.width, this.menuCanvas.height);
   ctx.save();
   if (percent) {
     ctx.globalAlpha = percent;
   }
-  ctx.clearRect(0, 0, this.menuCanvas.width, this.menuCanvas.height);
   ctx.fillStyle = '#000';
   ctx.font = '20px/24px Arial';
   ctx.textAlign = 'center';
@@ -1402,15 +1403,12 @@ MainScene.prototype.drawMenu = function (percent) {
   ctx.restore();
 };
 
-MainScene.prototype.drawPause = function (percent) {
+MainScene.prototype.drawPause = function () {
 
   var ctx = this.pauseCtx;
 
+  ctx.clearRect(0, 0, this.pauseCanvas.width, this.pauseCanvas.height);
   ctx.save();
-  if (percent) {
-    ctx.globalAlpha = percent;
-  }
-
   ctx.fillStyle = '#000';
   ctx.font = '20px/24px Arial';
   ctx.textAlign = 'center';

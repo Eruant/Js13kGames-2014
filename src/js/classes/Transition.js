@@ -11,7 +11,7 @@ var Transition = function () {
 Transition.prototype.start = function () {
 
   this.active = true;
-  this.percent = 0;
+  this.percent = (this.direction === 'forwards') ? 0 : 1;
   this.startTime = new Date().getTime();
 };
 
