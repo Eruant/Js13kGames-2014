@@ -1033,6 +1033,55 @@ SceneController.prototype.start = function (key) {
 
 };
 
+var Transition = function () {
+
+  this.active = false;
+  this.direction = 'forwards';
+  this.length = 500;
+  this.startTime = null;
+  this.percent = 0;
+
+};
+
+Transition.prototype.start = function () {
+
+  this.active = true;
+  this.percent = 0;
+  this.startTime = new Date().getTime();
+};
+
+Transition.prototype.end = function () {
+
+  this.active = false;
+  this.startTime = null;
+};
+
+Transition.prototype.update = function () {
+
+  var now;
+
+  if (this.active) {
+
+    now = new Date().getTime();
+    this.percent = (now - this.startTime) / this.length;
+
+    if (this.percent >= 1) {
+      this.end();
+    }
+
+  }
+};
+
+Transition.prototype.setDirection = function (direction) {
+
+  if (direction !== 'forwards' || direction !== 'backwards') {
+    return 'error';
+  }
+
+  this.direction = direction;
+  return direction;
+};
+
 /*globals Emitter*/
 
 var Wisp = function (game, x, y, type) {
@@ -1178,7 +1227,7 @@ Wisp.prototype.render = function (ctx) {
   this.emitter.render(this.position, ctx);
 };
 
-/*globals IO, Wisp*/
+/*globals IO, Wisp, Transition*/
 
 var MainScene = function (game) {
 
@@ -1192,6 +1241,9 @@ var MainScene = function (game) {
     earth: 'air',
     air: 'water'
   };
+
+  this.menuTransition = new Transition();
+  this.menuTransition.start();
 
   this.canvas = window.document.createElement('canvas');
   this.canvas.width = this.game.canvas.width;
@@ -1254,6 +1306,8 @@ MainScene.prototype.update = function () {
   switch (this.state) {
 
     case 'menu':
+
+      this.menuTransition.update();
 
       i = 0;
       len = this.cpus.length;
@@ -1322,24 +1376,38 @@ MainScene.prototype.draw = function () {
   this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 };
 
-MainScene.prototype.drawMenu = function () {
+MainScene.prototype.drawMenu = function (percent) {
 
   var ctx = this.menuCtx;
 
+  ctx.save();
+  if (percent) {
+    console.log(percent);
+    ctx.globalAlpha = percent;
+  }
+  ctx.clearRect(0, 0, this.menuCanvas.width, this.menuCanvas.height);
   ctx.fillStyle = '#000';
   ctx.font = '20px/24px Arial';
   ctx.textAlign = 'center';
   ctx.fillText('Press any key to start', this.canvas.width / 2, this.canvas.height / 2);
+  ctx.restore();
 };
 
-MainScene.prototype.drawPause = function () {
+MainScene.prototype.drawPause = function (percent) {
 
   var ctx = this.pauseCtx;
+
+  ctx.save();
+  if (percent) {
+    ctx.globalAlpha = percent;
+  }
 
   ctx.fillStyle = '#000';
   ctx.font = '20px/24px Arial';
   ctx.textAlign = 'center';
   ctx.fillText('Paused', this.canvas.width / 2, this.canvas.height / 2);
+
+  ctx.restore();
 };
 
 MainScene.prototype.render = function () {
@@ -1357,6 +1425,9 @@ MainScene.prototype.render = function () {
 
   switch (this.state) {
     case 'menu':
+      if (this.menuTransition.active) {
+        this.drawMenu(this.menuTransition.percent);
+      }
       this.game.ctx.drawImage(this.menuCanvas, 0, 0);
       break;
     case 'pause':
