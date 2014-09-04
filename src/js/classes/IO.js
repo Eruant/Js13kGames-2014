@@ -45,7 +45,9 @@ IO.prototype.handleEvent = function (event) {
   if (this.game.scene.state === 'menu') {
 
     if (event.type === 'keydown') {
-      this.game.scene.state = 'play';
+      this.game.scene.menuTransition.setDirection('backwards');
+      this.game.scene.menuTransition.start();
+      this.game.scene.state = 'transition-play';
     }
     return;
   }

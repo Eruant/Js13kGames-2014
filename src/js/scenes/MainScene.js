@@ -77,6 +77,7 @@ MainScene.prototype.update = function () {
   switch (this.state) {
 
     case 'menu':
+    case 'transition-play':
 
       this.menuTransition.update();
 
@@ -87,6 +88,7 @@ MainScene.prototype.update = function () {
       }
 
       break;
+
 
     case 'play':
 
@@ -153,7 +155,6 @@ MainScene.prototype.drawMenu = function (percent) {
 
   ctx.save();
   if (percent) {
-    console.log(percent);
     ctx.globalAlpha = percent;
   }
   ctx.clearRect(0, 0, this.menuCanvas.width, this.menuCanvas.height);
@@ -198,6 +199,14 @@ MainScene.prototype.render = function () {
     case 'menu':
       if (this.menuTransition.active) {
         this.drawMenu(this.menuTransition.percent);
+      }
+      this.game.ctx.drawImage(this.menuCanvas, 0, 0);
+      break;
+    case 'transition-play':
+      if (this.menuTransition.active) {
+        this.drawMenu(this.menuTransition.percent);
+      } else {
+        this.state = 'play';
       }
       this.game.ctx.drawImage(this.menuCanvas, 0, 0);
       break;

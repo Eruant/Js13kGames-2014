@@ -30,16 +30,22 @@ Transition.prototype.update = function () {
     now = new Date().getTime();
     this.percent = (now - this.startTime) / this.length;
 
-    if (this.percent >= 1) {
+    if (this.direction === 'backwards') {
+      this.percent = 1 - this.percent;
+    }
+
+    if (this.direction === 'forwards' && this.percent >= 1 ||
+        this.direction === 'backwards' && this.percent <= 0) {
       this.end();
     }
 
   }
+
 };
 
 Transition.prototype.setDirection = function (direction) {
 
-  if (direction !== 'forwards' || direction !== 'backwards') {
+  if (direction !== 'forwards' && direction !== 'backwards') {
     return 'error';
   }
 
