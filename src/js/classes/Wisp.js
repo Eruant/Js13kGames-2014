@@ -78,17 +78,19 @@ Wisp.prototype.update = function (input) {
   this.position.x += this.speed.x;
   this.position.y += this.speed.y;
 
-  if (this.position.x > this.game.canvas.width) {
-    this.position.x -= this.game.canvas.width;
-  } else if (this.position.x < 0) {
-    this.position.x += this.game.canvas.width;
+  if (this.position.x > this.game.canvas.width - this.size) {
+    this.position.x = this.game.canvas.width - this.size;
+    this.speed.x = -this.speed.x;
+  } else if (this.position.x < this.size) {
+    this.position.x = this.size;
+    this.speed.x = -this.speed.x;
   }
 
-  if (this.position.y > this.game.canvas.height) {
-    this.position.y = this.game.canvas.height;
+  if (this.position.y > this.game.canvas.height - this.size) {
+    this.position.y = this.game.canvas.height - this.size;
     this.speed.y = -this.speed.y;
-  } else if (this.position.y < 0) {
-    this.position.y = 0;
+  } else if (this.position.y < this.size) {
+    this.position.y = this.size;
     this.speed.y = -this.speed.y;
   }
 
