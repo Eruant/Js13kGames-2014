@@ -61,7 +61,7 @@ MainScene.prototype.addCPU = function () {
   y = Math.random() * this.game.canvas.height;
   cpu = new Wisp(this.game, x, y);
   cpu.state = this.cpuTypes[Math.floor(Math.random() * this.cpuTypes.length)];
-  cpu.size = Math.random() * (this.player.size + 15);
+  cpu.size = Math.random() * (this.player.size + 16);
 
   this.cpus.push(cpu);
 

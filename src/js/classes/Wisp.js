@@ -36,6 +36,8 @@ var Wisp = function (game, x, y, type) {
 
 Wisp.prototype.update = function (input) {
 
+  this.maxSpeed = (20 / this.size);
+
   if (this.type === 'user') {
     if (input.left) {
       this.speed.x -= this.accelerate;
@@ -72,8 +74,6 @@ Wisp.prototype.update = function (input) {
   // add dampening
   this.speed.x *= 0.9;
   this.speed.y *= 0.9;
-
-  //this.speed.y += this.game.gravity;
 
   this.position.x += this.speed.x;
   this.position.y += this.speed.y;
