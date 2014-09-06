@@ -544,7 +544,45 @@ ArcadeAudio.prototype.play = function (key) {
   soundData.tick = (soundData.tick < soundData.count - 1) ? soundData.tick + 1 : 0;
 };
 
+var Colours = function () {
+
+  this.earth = {
+    main: '#319331',
+    dark: '#509c50',
+    light: '#65c655'
+  };
+
+  this.air = {
+    main: 'rgba(255, 255, 255, 0.5)',
+    dark: '#c3a364',
+    light: 'rgba(255, 255, 255, 0.1)'
+  };
+
+  this.player = {
+    main: '#b88f3d',
+    dark: '#c3a364',
+    light: '#e7c176'
+  };
+
+  this.water = {
+    main: '#2e457b',
+    dark: '#495b83',
+    light: '#637ab0'
+  };
+
+  this.fire = {
+    main: '#b83d3d',
+    dark: '#c36464',
+    light: '#e77676'
+  };
+
+};
+
+/*globals Colours*/
+
 var Emitter = function (type, emit) {
+
+  this.colours = new Colours();
 
   this.type = type || 'default';
   this.emit = emit || true;
@@ -555,21 +593,21 @@ var Emitter = function (type, emit) {
   this.particles = new Array(100);
 
   this.addParicleType('earth', {
-    colour: 'rgba(50, 255, 50, 0.2)',
+    colour: this.colours.earth.light,
     life: 50
   });
   this.addParicleType('air', {
-    colour: 'rgba(255, 255, 255, 0.1)',
+    colour: this.colours.air.light,
     life: 80
   });
   this.addParicleType('water', {
-    colour: 'rgba(50, 50, 255, 0.2)',
+    colour: this.colours.water.light,
     gravity: 0.1,
     maxSpeed: 3,
     life: 60
   });
   this.addParicleType('fire', {
-    colour: 'rgba(255, 50, 50, 0.2)',
+    colour: this.colours.fire.light,
     gravity: -0.1,
     maxSpeed: 2,
     life: 40
@@ -577,7 +615,7 @@ var Emitter = function (type, emit) {
 
 };
 
-Emitter.prototype.update = function (type, position) {
+Emitter.prototype.update = function (type, position, size) {
 
   var i, len, p, addParticle;
 
@@ -600,7 +638,10 @@ Emitter.prototype.update = function (type, position) {
       p.position.y += p.speed.y;
     } else if (!addParticle) {
       addParticle = true;
-      this.addParticle(position, i);
+      this.addParticle({
+        x: position.x + (Math.random() * size) - (size * 0.5),
+        y: position.y + (Math.random() * size) - (size * 0.5)
+      }, i);
     }
   }
 
@@ -663,7 +704,7 @@ Emitter.prototype.addParticle = function (position, key) {
 
 };
 
-/*globals SceneController, ArcadeAudio, MainScene, MenuScene*/
+/*globals ArcadeAudio, MainScene, Colours*/
 
 window.raf = (function () {
   return window.requestAnimationFrame || function (cb) { window.setTimeout(cb, 1000 / 60); };
@@ -672,6 +713,8 @@ window.raf = (function () {
 var Game = function (width, height) {
 
   var doc = window.document;
+
+  this.colours = new Colours();
 
   this.gravity = 0.2;
 
@@ -1200,7 +1243,7 @@ Wisp.prototype.update = function (input) {
     }
   }
 
-  this.emitter.update(this.state, this.position);
+  this.emitter.update(this.state, this.position, this.size);
 };
 
 Wisp.prototype.render = function (ctx) {
@@ -1212,20 +1255,20 @@ Wisp.prototype.render = function (ctx) {
     ctx.arc(0, 0, this.size, 0, this.PI2, false);
     switch (this.state) {
       case 'earth':
-        ctx.fillStyle = '#0f0';
+        ctx.fillStyle = this.game.colours.earth.main;
         break;
       case 'water':
-        ctx.fillStyle = '#00f';
+        ctx.fillStyle = this.game.colours.water.main;
         break;
       case 'air':
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.fillStyle = this.game.colours.air.main;
         break;
       case 'fire':
-        ctx.fillStyle = '#f00';
+        ctx.fillStyle = this.game.colours.fire.main;
         break;
       default:
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.fillStyle = this.game.colours.player.main;
+        ctx.strokeStyle = this.game.colours.player.dark;
         ctx.stroke();
         break;
     }
@@ -1389,17 +1432,40 @@ MainScene.prototype.draw = function () {
 
 MainScene.prototype.drawMenu = function (percent) {
 
-  var ctx = this.menuCtx;
+  var ctx, width, height, halfWidth, halfHeight, bgWidth, bgHeight;
 
-  ctx.clearRect(0, 0, this.menuCanvas.width, this.menuCanvas.height);
+  ctx = this.menuCtx;
+  width = this.menuCanvas.width;
+  height = this.menuCanvas.height;
+  halfWidth = width / 2;
+  halfHeight = height / 2;
+  bgWidth = width * 0.4;
+  bgHeight = height * 0.4;
+
+  ctx.clearRect(0, 0, width, height);
   ctx.save();
   if (percent) {
     ctx.globalAlpha = percent;
   }
+
+  ctx.save();
+  ctx.translate(halfWidth, halfHeight);
+  ctx.beginPath();
+  ctx.moveTo(-bgWidth - (Math.random() * 10), -bgHeight - (Math.random() * 10));
+  ctx.lineTo(bgWidth + (Math.random() * 10), -bgHeight - (Math.random() * 10));
+  ctx.lineTo(bgWidth + (Math.random() * 10), bgHeight + (Math.random() * 10));
+  ctx.lineTo(-bgWidth - (Math.random() * 10), bgHeight + (Math.random() * 10));
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(50, 50, 255, 1)';
+  ctx.strokeStyle = 'rgb(255, 255, 255';
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+
   ctx.fillStyle = '#000';
   ctx.font = '20px/24px Arial';
   ctx.textAlign = 'center';
-  ctx.fillText('Press any key to start', this.canvas.width / 2, this.canvas.height / 2);
+  ctx.fillText('Press any key to start', halfWidth, halfHeight);
   ctx.restore();
 };
 
@@ -1433,17 +1499,21 @@ MainScene.prototype.render = function () {
   switch (this.state) {
     case 'menu':
       if (this.menuTransition.active) {
-        this.drawMenu(this.menuTransition.percent);
+        this.game.ctx.globalAlpha = this.menuTransition.percent;
+        this.game.ctx.drawImage(this.menuCanvas, 0, 0);
+        this.game.ctx.globalAlpha = 1;
+      } else {
+        this.game.ctx.drawImage(this.menuCanvas, 0, 0);
       }
-      this.game.ctx.drawImage(this.menuCanvas, 0, 0);
       break;
     case 'transition-play':
       if (this.menuTransition.active) {
-        this.drawMenu(this.menuTransition.percent);
+        this.game.ctx.globalAlpha = this.menuTransition.percent;
+        this.game.ctx.drawImage(this.menuCanvas, 0, 0);
+        this.game.ctx.globalAlpha = 1;
       } else {
         this.state = 'play';
       }
-      this.game.ctx.drawImage(this.menuCanvas, 0, 0);
       break;
     case 'pause':
       this.game.ctx.drawImage(this.pauseCanvas, 0, 0);

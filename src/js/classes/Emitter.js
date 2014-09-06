@@ -1,4 +1,8 @@
+/*globals Colours*/
+
 var Emitter = function (type, emit) {
+
+  this.colours = new Colours();
 
   this.type = type || 'default';
   this.emit = emit || true;
@@ -9,21 +13,21 @@ var Emitter = function (type, emit) {
   this.particles = new Array(100);
 
   this.addParicleType('earth', {
-    colour: 'rgba(50, 255, 50, 0.2)',
+    colour: this.colours.earth.light,
     life: 50
   });
   this.addParicleType('air', {
-    colour: 'rgba(255, 255, 255, 0.1)',
+    colour: this.colours.air.light,
     life: 80
   });
   this.addParicleType('water', {
-    colour: 'rgba(50, 50, 255, 0.2)',
+    colour: this.colours.water.light,
     gravity: 0.1,
     maxSpeed: 3,
     life: 60
   });
   this.addParicleType('fire', {
-    colour: 'rgba(255, 50, 50, 0.2)',
+    colour: this.colours.fire.light,
     gravity: -0.1,
     maxSpeed: 2,
     life: 40
@@ -31,7 +35,7 @@ var Emitter = function (type, emit) {
 
 };
 
-Emitter.prototype.update = function (type, position) {
+Emitter.prototype.update = function (type, position, size) {
 
   var i, len, p, addParticle;
 
@@ -54,7 +58,10 @@ Emitter.prototype.update = function (type, position) {
       p.position.y += p.speed.y;
     } else if (!addParticle) {
       addParticle = true;
-      this.addParticle(position, i);
+      this.addParticle({
+        x: position.x + (Math.random() * size) - (size * 0.5),
+        y: position.y + (Math.random() * size) - (size * 0.5)
+      }, i);
     }
   }
 

@@ -152,17 +152,40 @@ MainScene.prototype.draw = function () {
 
 MainScene.prototype.drawMenu = function (percent) {
 
-  var ctx = this.menuCtx;
+  var ctx, width, height, halfWidth, halfHeight, bgWidth, bgHeight;
 
-  ctx.clearRect(0, 0, this.menuCanvas.width, this.menuCanvas.height);
+  ctx = this.menuCtx;
+  width = this.menuCanvas.width;
+  height = this.menuCanvas.height;
+  halfWidth = width / 2;
+  halfHeight = height / 2;
+  bgWidth = width * 0.4;
+  bgHeight = height * 0.4;
+
+  ctx.clearRect(0, 0, width, height);
   ctx.save();
   if (percent) {
     ctx.globalAlpha = percent;
   }
+
+  ctx.save();
+  ctx.translate(halfWidth, halfHeight);
+  ctx.beginPath();
+  ctx.moveTo(-bgWidth - (Math.random() * 10), -bgHeight - (Math.random() * 10));
+  ctx.lineTo(bgWidth + (Math.random() * 10), -bgHeight - (Math.random() * 10));
+  ctx.lineTo(bgWidth + (Math.random() * 10), bgHeight + (Math.random() * 10));
+  ctx.lineTo(-bgWidth - (Math.random() * 10), bgHeight + (Math.random() * 10));
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(50, 50, 255, 1)';
+  ctx.strokeStyle = 'rgb(255, 255, 255';
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+
   ctx.fillStyle = '#000';
   ctx.font = '20px/24px Arial';
   ctx.textAlign = 'center';
-  ctx.fillText('Press any key to start', this.canvas.width / 2, this.canvas.height / 2);
+  ctx.fillText('Press any key to start', halfWidth, halfHeight);
   ctx.restore();
 };
 
@@ -196,17 +219,21 @@ MainScene.prototype.render = function () {
   switch (this.state) {
     case 'menu':
       if (this.menuTransition.active) {
-        this.drawMenu(this.menuTransition.percent);
+        this.game.ctx.globalAlpha = this.menuTransition.percent;
+        this.game.ctx.drawImage(this.menuCanvas, 0, 0);
+        this.game.ctx.globalAlpha = 1;
+      } else {
+        this.game.ctx.drawImage(this.menuCanvas, 0, 0);
       }
-      this.game.ctx.drawImage(this.menuCanvas, 0, 0);
       break;
     case 'transition-play':
       if (this.menuTransition.active) {
-        this.drawMenu(this.menuTransition.percent);
+        this.game.ctx.globalAlpha = this.menuTransition.percent;
+        this.game.ctx.drawImage(this.menuCanvas, 0, 0);
+        this.game.ctx.globalAlpha = 1;
       } else {
         this.state = 'play';
       }
-      this.game.ctx.drawImage(this.menuCanvas, 0, 0);
       break;
     case 'pause':
       this.game.ctx.drawImage(this.pauseCanvas, 0, 0);

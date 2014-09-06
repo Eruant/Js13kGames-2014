@@ -1,4 +1,4 @@
-/*globals SceneController, ArcadeAudio, MainScene, MenuScene*/
+/*globals ArcadeAudio, MainScene, Colours*/
 
 window.raf = (function () {
   return window.requestAnimationFrame || function (cb) { window.setTimeout(cb, 1000 / 60); };
@@ -7,6 +7,8 @@ window.raf = (function () {
 var Game = function (width, height) {
 
   var doc = window.document;
+
+  this.colours = new Colours();
 
   this.gravity = 0.2;
 
