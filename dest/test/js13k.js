@@ -546,6 +546,12 @@ ArcadeAudio.prototype.play = function (key) {
 
 var Colours = function () {
 
+  this.menu = {
+    main: '#b88f3d',
+    dark: '#c3a364',
+    light: '#e7c176'
+  };
+
   this.earth = {
     main: '#319331',
     dark: '#509c50',
@@ -1078,6 +1084,76 @@ SceneController.prototype.start = function (key) {
 
 };
 
+var Shapes = function () {
+};
+
+Shapes.prototype.draw = function (ctx, method, options) {
+  this[method](ctx, options);
+};
+
+Shapes.prototype.elements = function (ctx, options) {
+
+  var deg90 = 90 * (Math.PI / 180);
+
+  ctx.save();
+  this.elementSegment(ctx, options[0]);
+  ctx.rotate(deg90);
+  this.elementSegment(ctx, options[1]);
+  ctx.rotate(deg90);
+  this.elementSegment(ctx, options[2]);
+  ctx.rotate(deg90);
+  this.elementSegment(ctx, options[3]);
+  ctx.restore();
+
+};
+
+Shapes.prototype.elementSegment = function (ctx, options) {
+
+  ctx.save();
+
+  var half = options.radius / 2,
+    left = half - 10,
+    right = half + 10;
+
+  ctx.beginPath();
+
+  ctx.moveTo(0, 0);
+  ctx.lineTo(left, 0);
+  ctx.lineTo(left, 10);
+  ctx.lineTo(left - 2, 20);
+  ctx.lineTo(left - 10, 15);
+
+  ctx.lineTo(left - 1, 42);
+
+  ctx.lineTo(right + 4, 28);
+  ctx.lineTo(right - 4, 26);
+
+  ctx.lineTo(right, 10);
+  ctx.lineTo(right, 0);
+
+  ctx.arc(0, 0, options.radius, 0, 0.5 * Math.PI, false);
+
+  ctx.lineTo(0, right);
+  ctx.lineTo(-10, right);
+
+  ctx.lineTo(-26, right - 4);
+  ctx.lineTo(-28, right + 4);
+
+  ctx.lineTo(-42, left - 1);
+
+  ctx.lineTo(-15, left - 10);
+  ctx.lineTo(-20, left - 2);
+  ctx.lineTo(-10, left);
+  ctx.lineTo(0, left);
+
+  ctx.closePath();
+
+  ctx.fillStyle = options.fill;
+  ctx.fill();
+
+  ctx.restore();
+};
+
 var Transition = function () {
 
   this.active = false;
@@ -1278,7 +1354,7 @@ Wisp.prototype.render = function (ctx) {
   this.emitter.render(this.position, ctx);
 };
 
-/*globals IO, Wisp, Transition*/
+/*globals IO, Wisp, Transition, Shapes*/
 
 var MainScene = function (game) {
 
@@ -1297,6 +1373,8 @@ var MainScene = function (game) {
   this.menuTransition.start();
 
   this.pauseTransition = new Transition();
+
+  this.shapes = new Shapes();
 
   this.canvas = window.document.createElement('canvas');
   this.canvas.width = this.game.canvas.width;
@@ -1456,10 +1534,23 @@ MainScene.prototype.drawMenu = function (percent) {
   ctx.lineTo(bgWidth + (Math.random() * 10), bgHeight + (Math.random() * 10));
   ctx.lineTo(-bgWidth - (Math.random() * 10), bgHeight + (Math.random() * 10));
   ctx.closePath();
-  ctx.fillStyle = 'rgba(50, 50, 255, 1)';
-  ctx.strokeStyle = 'rgb(255, 255, 255';
+  ctx.fillStyle = this.game.colours.menu.main;
+  ctx.strokeStyle = this.game.colours.menu.light;
   ctx.fill();
   ctx.stroke();
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(this.canvas.width - 60, 60);
+  ctx.rotate(-10 * (Math.PI / 180));
+  ctx.scale(0.5, 0.5);
+  ctx.transform(1, 0.1, 0, 1, 0, 0);
+  this.shapes.draw(ctx, 'elements', [
+      { fill: this.game.colours.water.main, radius: 100 },
+      { fill: this.game.colours.fire.main, radius: 100 },
+      { fill: this.game.colours.earth.main, radius: 100 },
+      { fill: this.game.colours.air.main, radius: 100 }
+    ]);
   ctx.restore();
 
   ctx.fillStyle = '#000';
@@ -1523,6 +1614,20 @@ MainScene.prototype.render = function () {
       this.game.ctx.font = '20px/24px Arial';
       this.game.ctx.textAlign = 'center';
       this.game.ctx.fillText(this.player.score, this.canvas.width / 2, 20);
+
+      this.game.ctx.save();
+      this.game.ctx.translate(this.canvas.width - 20, 20);
+      this.game.ctx.rotate(-10 * (Math.PI / 180));
+      this.game.ctx.scale(0.1, 0.1);
+      this.game.ctx.globalAlpha = 0.5;
+      this.game.ctx.transform(1, 0.1, 0, 1, 0, 0);
+      this.shapes.draw(this.game.ctx, 'elements', [
+          { fill: this.game.colours.water.main, radius: 100 },
+          { fill: this.game.colours.fire.main, radius: 100 },
+          { fill: this.game.colours.earth.main, radius: 100 },
+          { fill: this.game.colours.air.main, radius: 100 }
+        ]);
+      this.game.ctx.restore();
       break;
   }
 };

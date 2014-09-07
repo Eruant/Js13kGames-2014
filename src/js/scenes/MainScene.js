@@ -1,4 +1,4 @@
-/*globals IO, Wisp, Transition*/
+/*globals IO, Wisp, Transition, Shapes*/
 
 var MainScene = function (game) {
 
@@ -17,6 +17,8 @@ var MainScene = function (game) {
   this.menuTransition.start();
 
   this.pauseTransition = new Transition();
+
+  this.shapes = new Shapes();
 
   this.canvas = window.document.createElement('canvas');
   this.canvas.width = this.game.canvas.width;
@@ -176,10 +178,23 @@ MainScene.prototype.drawMenu = function (percent) {
   ctx.lineTo(bgWidth + (Math.random() * 10), bgHeight + (Math.random() * 10));
   ctx.lineTo(-bgWidth - (Math.random() * 10), bgHeight + (Math.random() * 10));
   ctx.closePath();
-  ctx.fillStyle = 'rgba(50, 50, 255, 1)';
-  ctx.strokeStyle = 'rgb(255, 255, 255';
+  ctx.fillStyle = this.game.colours.menu.main;
+  ctx.strokeStyle = this.game.colours.menu.light;
   ctx.fill();
   ctx.stroke();
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(this.canvas.width - 60, 60);
+  ctx.rotate(-10 * (Math.PI / 180));
+  ctx.scale(0.5, 0.5);
+  ctx.transform(1, 0.1, 0, 1, 0, 0);
+  this.shapes.draw(ctx, 'elements', [
+      { fill: this.game.colours.water.main, radius: 100 },
+      { fill: this.game.colours.fire.main, radius: 100 },
+      { fill: this.game.colours.earth.main, radius: 100 },
+      { fill: this.game.colours.air.main, radius: 100 }
+    ]);
   ctx.restore();
 
   ctx.fillStyle = '#000';
@@ -243,6 +258,20 @@ MainScene.prototype.render = function () {
       this.game.ctx.font = '20px/24px Arial';
       this.game.ctx.textAlign = 'center';
       this.game.ctx.fillText(this.player.score, this.canvas.width / 2, 20);
+
+      this.game.ctx.save();
+      this.game.ctx.translate(this.canvas.width - 20, 20);
+      this.game.ctx.rotate(-10 * (Math.PI / 180));
+      this.game.ctx.scale(0.1, 0.1);
+      this.game.ctx.globalAlpha = 0.5;
+      this.game.ctx.transform(1, 0.1, 0, 1, 0, 0);
+      this.shapes.draw(this.game.ctx, 'elements', [
+          { fill: this.game.colours.water.main, radius: 100 },
+          { fill: this.game.colours.fire.main, radius: 100 },
+          { fill: this.game.colours.earth.main, radius: 100 },
+          { fill: this.game.colours.air.main, radius: 100 }
+        ]);
+      this.game.ctx.restore();
       break;
   }
 };

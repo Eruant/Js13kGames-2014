@@ -1,5 +1,11 @@
 var Colours = function () {
 
+  this.menu = {
+    main: '#b88f3d',
+    dark: '#c3a364',
+    light: '#e7c176'
+  };
+
   this.earth = {
     main: '#319331',
     dark: '#509c50',
