@@ -1267,18 +1267,51 @@ Wisp.prototype.update = function (input, cpus) {
     }
   } else if (this.type === 'cpu') {
 
-    var i = 0;
-    var len = cpus.length;
-    var speedX = 0;
-    var speedY = 0;
-    var sprite;
-    for (; i < len; i++) {
-      sprite = cpu[i];
-      if (sprite.size < this.size) {
-        if (cpu
+    if (cpus) {
+      var i = 0;
+      var len = cpus.length;
+      var sprite;
+      var smallest = false;
+      var distanceX;
+      var distanceY;
+      var distance;
+      var directionX = 1;
+      var directionY = 1;
+      for (; i < len; i++) {
+        sprite = cpus[i];
+        if (sprite.position.x !== this.position.x &&
+            sprite.position.y !== this.position.y &&
+            sprite.size < this.size) {
+
+          distanceX = this.position.x - sprite.position.x;
+          distanceY = this.position.y - sprite.position.y;
+          if (distanceX < 0) {
+            directionX = -1;
+            distanceX = -distanceX;
+          }
+          if (distanceY < 0) {
+            directionY = -1;
+            distanceY = -distanceY;
+          }
+          distance = distanceX + distanceY;
+
+          if (!smallest || smallest.distance < distance) {
+            smallest = {
+              distance: distance,
+              sprite: i
+            };
+          }
+        }
       }
-    }
-    if (speedX === 0 && speedY === 0) {
+
+      if (smallest && Math.random() > 0.7) {
+        this.speed.x -= directionX * 0.1;
+        this.speed.y -= directionY * 0.1;
+      } else {
+        this.speed.x += (Math.random() * 2) - 1;
+        this.speed.y += (Math.random() * 2) - 1;
+      }
+    } else {
       this.speed.x += (Math.random() * 2) - 1;
       this.speed.y += (Math.random() * 2) - 1;
     }
