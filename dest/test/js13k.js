@@ -1247,6 +1247,8 @@ var Wisp = function (game, x, y, type) {
 
 Wisp.prototype.update = function (input, cpus) {
 
+  var i, len, sprite, smallest, distanceX, distanceY, distance, directionX, directionY;
+
   this.maxSpeed = (20 / this.size);
 
   if (this.type === 'user') {
@@ -1268,15 +1270,11 @@ Wisp.prototype.update = function (input, cpus) {
   } else if (this.type === 'cpu') {
 
     if (cpus) {
-      var i = 0;
-      var len = cpus.length;
-      var sprite;
-      var smallest = false;
-      var distanceX;
-      var distanceY;
-      var distance;
-      var directionX = 1;
-      var directionY = 1;
+      i = 0;
+      len = cpus.length;
+      smallest = false;
+      directionX = 1;
+      directionY = 1;
       for (; i < len; i++) {
         sprite = cpus[i];
         if (sprite.position.x !== this.position.x &&
