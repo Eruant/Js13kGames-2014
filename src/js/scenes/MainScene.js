@@ -49,7 +49,7 @@ var MainScene = function (game) {
     'fire'
   ];
 
-  var enemies = 10;
+  var enemies = 5;
   while (enemies) {
     this.addCPU();
     enemies--;
@@ -103,6 +103,14 @@ MainScene.prototype.update = function () {
 
       if (!this.player.life) {
         this.state = 'menu';
+        if (this.game.hiscore) {
+          if (this.player.score > this.game.hiscore) {
+            this.game.hiscore = this.player.score;
+          }
+        } else {
+          this.game.hiscore = this.player.score;
+        }
+        this.drawMenu();
         this.player.score = 0;
         this.player.life = 1;
         this.player.size = 5;
@@ -123,7 +131,7 @@ MainScene.prototype.update = function () {
           // TODO test to see if emitter has finished
           kill.push(i);
         }
-        this.cpus[i].update(null, this.cpus);
+        this.cpus[i].update(null, this.cpus, this.player);
       }
 
       i = 0;
@@ -249,6 +257,14 @@ MainScene.prototype.drawMenu = function (percent) {
   ctx.fillStyle = '#fff';
   ctx.fillText('Press any key to start', halfWidth, halfHeight + 150);
 
+  if (typeof this.game.hiscore === 'number') {
+    ctx.save();
+    ctx.translate(halfWidth - 80, halfHeight - 160);
+    ctx.rotate(-5 * Math.PI / 180);
+    ctx.fillText('score: ' + this.game.hiscore, 0, 0);
+    ctx.restore();
+  }
+
   ctx.restore();
 };
 
@@ -258,7 +274,7 @@ MainScene.prototype.drawPause = function () {
 
   ctx.clearRect(0, 0, this.pauseCanvas.width, this.pauseCanvas.height);
   ctx.save();
-  ctx.fillStyle = '#000';
+  ctx.fillStyle = '#fff';
   ctx.font = '20px/24px Arial';
   ctx.textAlign = 'center';
   ctx.fillText('Paused', this.canvas.width / 2, this.canvas.height / 2);
@@ -302,7 +318,7 @@ MainScene.prototype.render = function () {
       this.game.ctx.drawImage(this.pauseCanvas, 0, 0);
       break;
     case 'play':
-      this.game.ctx.fillStyle = '#000';
+      this.game.ctx.fillStyle = '#fff';
       this.game.ctx.font = '20px/24px Arial';
       this.game.ctx.textAlign = 'center';
       this.game.ctx.fillText(this.player.score, this.canvas.width / 2, 20);
@@ -339,6 +355,7 @@ MainScene.prototype.testCollision = function () {
   for (; i < len; i++) {
     sprite = this.cpus[i];
 
+    // collision between player and cpus
     if ((aMaxX > sprite.position.x) && (aMinX < sprite.position.x)) {
       if ((aMaxY > sprite.position.y) && (aMinY < sprite.position.y)) {
         this.destroySmallest(this.player, sprite);
@@ -358,6 +375,7 @@ MainScene.prototype.testCollision = function () {
     bMaxY = sprite.position.y + bSize;
     bMinY = sprite.position.y - bSize;
 
+    // collision between cpu and player
     if ((bMaxX > this.player.position.x) && (bMinX < this.player.position.x)) {
       if ((bMaxY > this.player.position.y) && (bMinY < this.player.position.y)) {
         this.destroySmallest(sprite, this.player);
@@ -369,6 +387,7 @@ MainScene.prototype.testCollision = function () {
 
       sprite2 = this.cpus[j];
 
+      // collision between cpu and cpu
       if ((bMaxX > sprite2.position.x) && (bMinX < sprite2.position.x)) {
         if ((bMaxY > sprite2.position.y) && (bMinY < sprite2.position.y)) {
           this.destroySmallest(sprite, sprite2);
@@ -395,14 +414,14 @@ MainScene.prototype.destroySmallest = function (a, b) {
     a.size++;
     a.score += 2;
     b.size--;
-    b.score -= 1;
+    //b.score -= 1;
     if (b.size <= 0) {
       b.life = 0;
     }
   } else {
     b.size++;
     b.score += 2;
-    a.score -= 1;
+    //a.score -= 1;
     a.size--;
     if (a.size <= 0) {
       a.life = 0;

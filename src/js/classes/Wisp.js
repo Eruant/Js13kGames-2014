@@ -34,7 +34,7 @@ var Wisp = function (game, x, y, type) {
   this.emitter = new Emitter();
 };
 
-Wisp.prototype.update = function (input, cpus) {
+Wisp.prototype.update = function (input, cpus, player) {
 
   var i, len, sprite, smallest, distanceX, distanceY, distance, directionX, directionY;
 
@@ -91,7 +91,30 @@ Wisp.prototype.update = function (input, cpus) {
         }
       }
 
-      if (smallest && Math.random() > 0.7) {
+      if (player &&
+          player.size < this.size) {
+        distanceX = this.position.x - player.position.x;
+        distanceY = this.position.y - player.position.y;
+        if (distanceX < 0) {
+          directionX = -1;
+          distanceX = -distanceX;
+        }
+        if (distanceY < 0) {
+          directionY = -1;
+          distanceY = -distanceY;
+        }
+        distance = distanceX + distanceY;
+
+        if (!smallest || smallest.distance < distance) {
+          smallest = {
+            distance: distance,
+            sprite: i
+          };
+        }
+
+      }
+
+      if (smallest && Math.random() > 0.3) {
         this.speed.x -= directionX * 0.1;
         this.speed.y -= directionY * 0.1;
       } else {
