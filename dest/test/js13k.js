@@ -1470,14 +1470,7 @@ MainScene.prototype.update = function () {
         return;
       }
 
-      if (this.player.size > 10) {
-        this.player.size *= 0.8;
-        i = 0;
-        len = this.cpus.length;
-        for (; i < len; i++) {
-          this.cpus[i].size *= 0.8;
-        }
-      }
+      this.scaleWorld();
 
       this.player.update(this.io.activeInput);
       i = 0;
@@ -1640,7 +1633,7 @@ MainScene.prototype.render = function () {
 
 MainScene.prototype.testCollision = function () {
 
-  var i, len, sprite, aSize, aMaxX, aMinX, aMaxY, aMinY;
+  var i, len, sprite, aSize, aMaxX, aMinX, aMaxY, aMinY, bSize, bMaxX, bMinX, bMaxY, bMinY, sprite2;
 
   aSize = this.player.size;
   aMaxX = this.player.position.x + aSize;
@@ -1662,11 +1655,28 @@ MainScene.prototype.testCollision = function () {
   }
 
   i = 0;
+  var j;
   len = this.cpus.length;
   for (; i < len; i++) {
     sprite = this.cpus[i];
 
     // TODO test for CPUs hitting other CPUs
+    j = i;
+    for (; j < len; j++) {
+
+      sprite2 = this.cpus[j];
+      bSize = sprite.size;
+      bMaxX = sprite.position.x + bSize;
+      bMinX = sprite.position.x - bSize;
+      bMaxY = sprite.position.y + bSize;
+      bMinY = sprite.position.y - bSize;
+
+      if ((bMaxX > sprite2.position.x) && (bMinX < sprite2.position.x)) {
+        if ((bMaxY > sprite2.position.y) && (bMinY < sprite2.position.y)) {
+          this.destroySmallest(sprite, sprite2);
+        }
+      }
+    }
   }
 
 };
@@ -1698,6 +1708,36 @@ MainScene.prototype.destroySmallest = function (a, b) {
     a.size--;
     if (a.size <= 0) {
       a.life = 0;
+    }
+  }
+
+};
+
+MainScene.prototype.scaleSprites = function () {
+
+  var i, len;
+
+  this.player.size *= 0.8;
+  i = 0;
+  len = this.cpus.length;
+  for (; i < len; i++) {
+    this.cpus[i].size *= 0.8;
+  }
+
+};
+
+MainScene.prototype.scaleWorld = function () {
+
+  var i, len;
+
+  if (this.player.size > 10) {
+    this.scaleSprites();
+  }
+
+  i = 0;
+  for (; i < len; i++) {
+    if (this.cpus.size > 10) {
+      this.scapeSprites();
     }
   }
 
