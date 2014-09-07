@@ -68,7 +68,7 @@ MainScene.prototype.addCPU = function () {
   y = Math.random() * this.game.canvas.height;
   cpu = new Wisp(this.game, x, y);
   cpu.state = this.cpuTypes[Math.floor(Math.random() * this.cpuTypes.length)];
-  cpu.size = Math.random() * (this.player.size + 16);
+  cpu.size = Math.random() * (this.player.size + 5);
 
   this.cpus.push(cpu);
 
@@ -119,7 +119,7 @@ MainScene.prototype.update = function () {
           // TODO test to see if emitter has finished
           kill.push(i);
         }
-        this.cpus[i].update();
+        this.cpus[i].update(null, this.cpus);
       }
 
       i = 0;
@@ -354,13 +354,15 @@ MainScene.prototype.destroySmallest = function (a, b) {
 
 MainScene.prototype.scaleSprites = function () {
 
-  var i, len;
+  var i, len, amount;
 
-  this.player.size *= 0.8;
+  amount = 0.99;
+
+  this.player.size *= amount;
   i = 0;
   len = this.cpus.length;
   for (; i < len; i++) {
-    this.cpus[i].size *= 0.8;
+    this.cpus[i].size *= amount;
   }
 
 };
@@ -374,9 +376,10 @@ MainScene.prototype.scaleWorld = function () {
   }
 
   i = 0;
+  len = this.cpus.length;
   for (; i < len; i++) {
-    if (this.cpus.size > 10) {
-      this.scapeSprites();
+    if (this.cpus[i].size > 10) {
+      this.scaleSprites();
     }
   }
 

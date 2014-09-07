@@ -1245,7 +1245,7 @@ var Wisp = function (game, x, y, type) {
   this.emitter = new Emitter();
 };
 
-Wisp.prototype.update = function (input) {
+Wisp.prototype.update = function (input, cpus) {
 
   this.maxSpeed = (20 / this.size);
 
@@ -1266,8 +1266,22 @@ Wisp.prototype.update = function (input) {
       this.speed.y += this.accelerate;
     }
   } else if (this.type === 'cpu') {
-    this.speed.x += (Math.random() * 2) - 1;
-    this.speed.y += (Math.random() * 2) - 1;
+
+    var i = 0;
+    var len = cpus.length;
+    var speedX = 0;
+    var speedY = 0;
+    var sprite;
+    for (; i < len; i++) {
+      sprite = cpu[i];
+      if (sprite.size < this.size) {
+        if (cpu
+      }
+    }
+    if (speedX === 0 && speedY === 0) {
+      this.speed.x += (Math.random() * 2) - 1;
+      this.speed.y += (Math.random() * 2) - 1;
+    }
   }
 
   if (this.speed.x > this.maxSpeed) {
@@ -1429,7 +1443,7 @@ MainScene.prototype.addCPU = function () {
   y = Math.random() * this.game.canvas.height;
   cpu = new Wisp(this.game, x, y);
   cpu.state = this.cpuTypes[Math.floor(Math.random() * this.cpuTypes.length)];
-  cpu.size = Math.random() * (this.player.size + 16);
+  cpu.size = Math.random() * (this.player.size + 5);
 
   this.cpus.push(cpu);
 
@@ -1480,7 +1494,7 @@ MainScene.prototype.update = function () {
           // TODO test to see if emitter has finished
           kill.push(i);
         }
-        this.cpus[i].update();
+        this.cpus[i].update(null, this.cpus);
       }
 
       i = 0;
@@ -1715,13 +1729,15 @@ MainScene.prototype.destroySmallest = function (a, b) {
 
 MainScene.prototype.scaleSprites = function () {
 
-  var i, len;
+  var i, len, amount;
 
-  this.player.size *= 0.8;
+  amount = 0.99;
+
+  this.player.size *= amount;
   i = 0;
   len = this.cpus.length;
   for (; i < len; i++) {
-    this.cpus[i].size *= 0.8;
+    this.cpus[i].size *= amount;
   }
 
 };
@@ -1735,9 +1751,10 @@ MainScene.prototype.scaleWorld = function () {
   }
 
   i = 0;
+  len = this.cpus.length;
   for (; i < len; i++) {
-    if (this.cpus.size > 10) {
-      this.scapeSprites();
+    if (this.cpus[i].size > 10) {
+      this.scaleSprites();
     }
   }
 

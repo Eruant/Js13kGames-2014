@@ -34,7 +34,7 @@ var Wisp = function (game, x, y, type) {
   this.emitter = new Emitter();
 };
 
-Wisp.prototype.update = function (input) {
+Wisp.prototype.update = function (input, cpus) {
 
   this.maxSpeed = (20 / this.size);
 
@@ -55,8 +55,25 @@ Wisp.prototype.update = function (input) {
       this.speed.y += this.accelerate;
     }
   } else if (this.type === 'cpu') {
-    this.speed.x += (Math.random() * 2) - 1;
-    this.speed.y += (Math.random() * 2) - 1;
+
+    var i = 0;
+    var len = cpus.length;
+    var speedX = 0;
+    var speedY = 0;
+    var sprite;
+    for (; i < len; i++) {
+      sprite = cpus[i];
+      if (sprite.size < this.size) {
+        // check its not this sprite
+        // see if sprite is smaller than you
+        // get the closest smalled sprite
+        // calclate direction
+      }
+    }
+    if (speedX === 0 && speedY === 0) {
+      this.speed.x += (Math.random() * 2) - 1;
+      this.speed.y += (Math.random() * 2) - 1;
+    }
   }
 
   if (this.speed.x > this.maxSpeed) {
