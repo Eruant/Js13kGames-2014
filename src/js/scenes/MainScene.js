@@ -197,10 +197,11 @@ MainScene.prototype.drawMenu = function (percent) {
     ]);
   ctx.restore();
 
-  ctx.fillStyle = '#000';
-  ctx.font = '20px/24px Arial';
+  ctx.fillStyle = '#fff';
+  ctx.font = '20px/24px "Trebuchet MS", Helvetica, sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('Press any key to start', halfWidth, halfHeight);
+  ctx.fillText('Take over the pond', halfWidth, halfHeight - 100);
+  ctx.fillText('Press any key to start', halfWidth, halfHeight + 150);
   ctx.restore();
 };
 

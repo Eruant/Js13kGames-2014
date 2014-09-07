@@ -14,7 +14,7 @@ var Colours = function () {
 
   this.air = {
     main: 'rgba(255, 255, 255, 0.5)',
-    dark: '#c3a364',
+    dark: '#fff',
     light: 'rgba(255, 255, 255, 0.1)'
   };
 

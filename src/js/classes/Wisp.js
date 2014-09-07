@@ -112,6 +112,7 @@ Wisp.prototype.update = function (input) {
 };
 
 Wisp.prototype.render = function (ctx) {
+  this.emitter.render(this.position, ctx);
 
   if (this.life) {
     ctx.save();
@@ -121,15 +122,19 @@ Wisp.prototype.render = function (ctx) {
     switch (this.state) {
       case 'earth':
         ctx.fillStyle = this.game.colours.earth.main;
+        ctx.strokeStyle = this.game.colours.earth.dark;
         break;
       case 'water':
         ctx.fillStyle = this.game.colours.water.main;
+        ctx.strokeStyle = this.game.colours.water.dark;
         break;
       case 'air':
         ctx.fillStyle = this.game.colours.air.main;
+        ctx.strokeStyle = this.game.colours.air.dark;
         break;
       case 'fire':
         ctx.fillStyle = this.game.colours.fire.main;
+        ctx.strokeStyle = this.game.colours.fire.dark;
         break;
       default:
         ctx.fillStyle = this.game.colours.player.main;
@@ -138,7 +143,7 @@ Wisp.prototype.render = function (ctx) {
         break;
     }
     ctx.fill();
+    ctx.stroke();
     ctx.restore();
   }
-  this.emitter.render(this.position, ctx);
 };

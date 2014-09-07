@@ -560,7 +560,7 @@ var Colours = function () {
 
   this.air = {
     main: 'rgba(255, 255, 255, 0.5)',
-    dark: '#c3a364',
+    dark: '#fff',
     light: 'rgba(255, 255, 255, 0.1)'
   };
 
@@ -1011,7 +1011,7 @@ IO.prototype.setKeyState = function (code, value) {
     case 27:
       this.pause();
       break;
-    case 49: // 1
+    case 49: // 1 == earth
       if (value) {
         this.activeInput.earth = true;
         this.activeInput.water = false;
@@ -1021,17 +1021,7 @@ IO.prototype.setKeyState = function (code, value) {
         this.activeInput.earth = false;
       }
       break;
-    case 50: // 2
-      if (value) {
-        this.activeInput.earth = false;
-        this.activeInput.water = true;
-        this.activeInput.air = false;
-        this.activeInput.fire = false;
-      } else {
-        this.activeInput.water = false;
-      }
-      break;
-    case 51: // 3
+    case 50: // 2 == air
       if (value) {
         this.activeInput.earth = false;
         this.activeInput.water = false;
@@ -1041,7 +1031,17 @@ IO.prototype.setKeyState = function (code, value) {
         this.activeInput.air = false;
       }
       break;
-    case 52: // 4
+    case 51: // 3 == water
+      if (value) {
+        this.activeInput.earth = false;
+        this.activeInput.water = true;
+        this.activeInput.air = false;
+        this.activeInput.fire = false;
+      } else {
+        this.activeInput.water = false;
+      }
+      break;
+    case 52: // 4 == fire
       if (value) {
         this.activeInput.earth = false;
         this.activeInput.water = false;
@@ -1323,6 +1323,7 @@ Wisp.prototype.update = function (input) {
 };
 
 Wisp.prototype.render = function (ctx) {
+  this.emitter.render(this.position, ctx);
 
   if (this.life) {
     ctx.save();
@@ -1332,15 +1333,19 @@ Wisp.prototype.render = function (ctx) {
     switch (this.state) {
       case 'earth':
         ctx.fillStyle = this.game.colours.earth.main;
+        ctx.strokeStyle = this.game.colours.earth.dark;
         break;
       case 'water':
         ctx.fillStyle = this.game.colours.water.main;
+        ctx.strokeStyle = this.game.colours.water.dark;
         break;
       case 'air':
         ctx.fillStyle = this.game.colours.air.main;
+        ctx.strokeStyle = this.game.colours.air.dark;
         break;
       case 'fire':
         ctx.fillStyle = this.game.colours.fire.main;
+        ctx.strokeStyle = this.game.colours.fire.dark;
         break;
       default:
         ctx.fillStyle = this.game.colours.player.main;
@@ -1349,9 +1354,9 @@ Wisp.prototype.render = function (ctx) {
         break;
     }
     ctx.fill();
+    ctx.stroke();
     ctx.restore();
   }
-  this.emitter.render(this.position, ctx);
 };
 
 /*globals IO, Wisp, Transition, Shapes*/
@@ -1553,10 +1558,11 @@ MainScene.prototype.drawMenu = function (percent) {
     ]);
   ctx.restore();
 
-  ctx.fillStyle = '#000';
-  ctx.font = '20px/24px Arial';
+  ctx.fillStyle = '#fff';
+  ctx.font = '20px/24px "Trebuchet MS", Helvetica, sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('Press any key to start', halfWidth, halfHeight);
+  ctx.fillText('Take over the pond', halfWidth, halfHeight - 100);
+  ctx.fillText('Press any key to start', halfWidth, halfHeight + 150);
   ctx.restore();
 };
 

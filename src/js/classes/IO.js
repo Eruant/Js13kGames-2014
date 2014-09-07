@@ -241,7 +241,7 @@ IO.prototype.setKeyState = function (code, value) {
     case 27:
       this.pause();
       break;
-    case 49: // 1
+    case 49: // 1 == earth
       if (value) {
         this.activeInput.earth = true;
         this.activeInput.water = false;
@@ -251,17 +251,7 @@ IO.prototype.setKeyState = function (code, value) {
         this.activeInput.earth = false;
       }
       break;
-    case 50: // 2
-      if (value) {
-        this.activeInput.earth = false;
-        this.activeInput.water = true;
-        this.activeInput.air = false;
-        this.activeInput.fire = false;
-      } else {
-        this.activeInput.water = false;
-      }
-      break;
-    case 51: // 3
+    case 50: // 2 == air
       if (value) {
         this.activeInput.earth = false;
         this.activeInput.water = false;
@@ -271,7 +261,17 @@ IO.prototype.setKeyState = function (code, value) {
         this.activeInput.air = false;
       }
       break;
-    case 52: // 4
+    case 51: // 3 == water
+      if (value) {
+        this.activeInput.earth = false;
+        this.activeInput.water = true;
+        this.activeInput.air = false;
+        this.activeInput.fire = false;
+      } else {
+        this.activeInput.water = false;
+      }
+      break;
+    case 52: // 4 == fire
       if (value) {
         this.activeInput.earth = false;
         this.activeInput.water = false;
