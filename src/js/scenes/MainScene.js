@@ -97,6 +97,10 @@ MainScene.prototype.update = function () {
 
       kill = [];
 
+      if (this.player.size < 1) {
+        this.player.life = 0;
+      }
+
       if (!this.player.life) {
         this.state = 'menu';
         this.player.score = 0;
@@ -163,6 +167,7 @@ MainScene.prototype.drawMenu = function (percent) {
     ctx.globalAlpha = percent;
   }
 
+  // draw background
   ctx.save();
   ctx.translate(halfWidth, halfHeight);
   ctx.beginPath();
@@ -177,6 +182,7 @@ MainScene.prototype.drawMenu = function (percent) {
   ctx.stroke();
   ctx.restore();
 
+  // draw element guide
   ctx.save();
   ctx.translate(this.canvas.width - 60, 60);
   ctx.rotate(-10 * (Math.PI / 180));
@@ -190,11 +196,59 @@ MainScene.prototype.drawMenu = function (percent) {
     ]);
   ctx.restore();
 
+  // draw text
   ctx.fillStyle = '#fff';
   ctx.font = '20px/24px "Trebuchet MS", Helvetica, sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('Take over the pond', halfWidth, halfHeight - 100);
+
+  ctx.save();
+  ctx.translate(halfWidth, halfHeight - 90);
+  ctx.rotate(-2 * Math.PI / 180);
+  ctx.fillText('Become the biggest', 0, 0);
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(halfWidth, halfHeight - 30);
+  ctx.rotate(1 * Math.PI / 180);
+  ctx.fillText('use the cursor', 0, 0);
+  ctx.restore();
+  ctx.save();
+  ctx.translate(halfWidth, halfHeight - 10);
+  ctx.rotate(-1 * Math.PI / 180);
+  ctx.fillText('keys to move', 0, 0);
+  ctx.restore();
+
+  ctx.save();
+  ctx.fillStyle = this.game.colours.earth.main;
+  ctx.translate(halfWidth - 50, halfHeight + 40);
+  ctx.rotate(-3 * Math.PI / 180);
+  ctx.fillText('earth "1"', 0, 0);
+  ctx.restore();
+
+  ctx.save();
+  ctx.fillStyle = this.game.colours.air.main;
+  ctx.translate(halfWidth + 60, halfHeight + 35);
+  ctx.rotate(2 * Math.PI / 180);
+  ctx.fillText('air "2"', 0, 0);
+  ctx.restore();
+  
+  ctx.save();
+  ctx.fillStyle = this.game.colours.water.main;
+  ctx.translate(halfWidth + 50, halfHeight + 85);
+  ctx.rotate(-2 * Math.PI / 180);
+  ctx.fillText('water "3"', 0, 0);
+  ctx.restore();
+  
+  ctx.save();
+  ctx.fillStyle = this.game.colours.fire.main;
+  ctx.translate(halfWidth - 60, halfHeight + 90);
+  ctx.rotate(2 * Math.PI / 180);
+  ctx.fillText('fire "4"', 0, 0);
+  ctx.restore();
+
+  ctx.fillStyle = '#fff';
   ctx.fillText('Press any key to start', halfWidth, halfHeight + 150);
+
   ctx.restore();
 };
 
@@ -298,17 +352,22 @@ MainScene.prototype.testCollision = function () {
   len = this.cpus.length;
   for (; i < len; i++) {
     sprite = this.cpus[i];
+    bSize = sprite.size;
+    bMaxX = sprite.position.x + bSize;
+    bMinX = sprite.position.x - bSize;
+    bMaxY = sprite.position.y + bSize;
+    bMinY = sprite.position.y - bSize;
 
-    // TODO test for CPUs hitting other CPUs
+    if ((bMaxX > this.player.position.x) && (bMinX < this.player.position.x)) {
+      if ((bMaxY > this.player.position.y) && (bMinY < this.player.position.y)) {
+        this.destroySmallest(sprite, this.player);
+      }
+    }
+
     j = i;
     for (; j < len; j++) {
 
       sprite2 = this.cpus[j];
-      bSize = sprite.size;
-      bMaxX = sprite.position.x + bSize;
-      bMinX = sprite.position.x - bSize;
-      bMaxY = sprite.position.y + bSize;
-      bMinY = sprite.position.y - bSize;
 
       if ((bMaxX > sprite2.position.x) && (bMinX < sprite2.position.x)) {
         if ((bMaxY > sprite2.position.y) && (bMinY < sprite2.position.y)) {
