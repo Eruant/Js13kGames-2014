@@ -38,7 +38,7 @@ var MainScene = function (game) {
   this.drawPause();
 
   this.io = new IO(this.game.canvas, this.game);
-  this.player = new Wisp(this.game, this.game.canvas.width / 2, this.game.canvas.height / 2, 'user');
+  this.player = new Wisp(this.game, this.game.canvas.width / 2, this.game.canvas.height / 2, 'user', this.ctx);
   this.player.size = 5;
 
   this.cpus = [];
@@ -66,7 +66,7 @@ MainScene.prototype.addCPU = function () {
 
   x = Math.random() * this.game.canvas.width;
   y = Math.random() * this.game.canvas.height;
-  cpu = new Wisp(this.game, x, y);
+  cpu = new Wisp(this.game, x, y, 'cpu', this.ctx);
   cpu.state = this.cpuTypes[Math.floor(Math.random() * this.cpuTypes.length)];
   cpu.size = Math.random() * (this.player.size + 5);
 

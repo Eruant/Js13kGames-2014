@@ -1,9 +1,9 @@
 /*globals Emitter*/
 
-var Wisp = function (game, x, y, type) {
+var Wisp = function (game, x, y, type, ctx) {
 
   this.game = game;
-  this.type = type || 'cpu';
+  this.type = type;
   this.life = 1;
   this.score = 0;
 
@@ -31,7 +31,7 @@ var Wisp = function (game, x, y, type) {
   this.accelerate = 1;
   this.maxSpeed = (this.size > 10) ? 10 - this.size : 3;
   this.state = 'normal';
-  this.emitter = new Emitter();
+  this.emitter = new Emitter(ctx);
 };
 
 Wisp.prototype.update = function (input, cpus, player) {
@@ -180,7 +180,6 @@ Wisp.prototype.update = function (input, cpus, player) {
 };
 
 Wisp.prototype.render = function (ctx) {
-  this.emitter.render(this.position, ctx);
 
   if (this.life) {
     ctx.save();
@@ -214,4 +213,5 @@ Wisp.prototype.render = function (ctx) {
     ctx.stroke();
     ctx.restore();
   }
+  this.emitter.render(this.position, ctx);
 };
