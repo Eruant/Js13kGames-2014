@@ -28,7 +28,8 @@ var Emitter = function (ctx, type, emit) {
 
   this.addParicleType('earth', {
     colour: this.colours.earth.light,
-    life: 50
+    life: 50,
+    rotate: 20
   });
   this.addParicleType('air', {
     colour: this.colours.air.light,
@@ -116,7 +117,10 @@ Emitter.prototype.drawParticle = function (ctx, particle) {
 
   switch (particle.type) {
     case 'earth':
-      ctx.arc(0, 0, (particle.life / 10), 0, this.PI2, false);
+      ctx.translate(-4, -4);
+      ctx.scale(particle.life / 20, particle.life / 20);
+      ctx.bezierCurveTo(0, 0, 3, 0, 3, 3);
+      ctx.bezierCurveTo(3, 3, 0, 3, 0, 0);
       break;
     case 'air':
       ctx.arc(0, 0, (particle.life / 10), 0, this.PI2, false);
@@ -153,14 +157,28 @@ Emitter.prototype.addParticle = function (position, key) {
 
   if (this.type in this.particleTypes) {
 
-    var particle, colour, life, random, gravity, speedX, speedY;
+    var particle, colour, life, random, gravity, speedX, speedY, angle;
 
     life = this.particleTypes[this.type].life;
     gravity = this.particleTypes[this.type].gravity;
     speedX = (Math.random() * this.particleTypes[this.type].maxSpeed) - (this.particleTypes[this.type].maxSpeed / 2);
     speedY = (Math.random() * this.particleTypes[this.type].maxSpeed) - (this.particleTypes[this.type].maxSpeed / 2);
+    angle = 0;
 
     switch (this.type) {
+
+      case 'earth':
+        random = Math.random();
+        if (random > 0.8) {
+          colour = 'rgb(50, 150, 50)';
+        } else if (random > 0.5) {
+          colour = 'rgb(50, 100, 50)';
+        } else {
+          colour = 'rgb(50, 80, 50)';
+        }
+
+        angle = Math.floor(random * 360);
+        break;
 
       case 'water':
         life *= 0.6;
@@ -171,10 +189,10 @@ Emitter.prototype.addParticle = function (position, key) {
         random = Math.random();
         if (random > 0.8) {
           life *= 0.5;
-          colour = 'rgba(250, 60, 50, 0.8)'
+          colour = 'rgba(250, 60, 50, 0.8)';
         } else if (random > 0.6) {
           life *= 0.5;
-          colour = this.particleTypes[this.type].colour
+          colour = this.particleTypes[this.type].colour;
         } else if (random > 0.4) {
           life *= 0.6;
           colour = 'rgba(200, 100, 50, 0.5)';
@@ -188,7 +206,7 @@ Emitter.prototype.addParticle = function (position, key) {
         break;
 
       default:
-        colour = this.particleTypes[this.type].colour
+        colour = this.particleTypes[this.type].colour;
     }
 
     particle = {
@@ -202,10 +220,10 @@ Emitter.prototype.addParticle = function (position, key) {
         y: speedY
       },
       gravity: gravity,
-      angle: 0,
+      angle: angle,
       life: life,
       colour: colour,
-      rotate: this.particleTypes[this.type].rotate
+      rotate: (Math.random() * this.particleTypes[this.type].rotate) - (this.particleTypes[this.type].rotate / 2)
     };
 
     this.particles[key] = particle;
