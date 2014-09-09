@@ -44,7 +44,7 @@ IO.prototype.handleEvent = function (event) {
 
   if (this.game.scene.state === 'menu') {
 
-    if (event.type === 'keydown') {
+    if (event.type === 'keydown' && event.keyCode === 13) {
       this.game.scene.menuTransition.setDirection('backwards');
       this.game.scene.menuTransition.start();
       this.game.scene.state = 'transition-play';

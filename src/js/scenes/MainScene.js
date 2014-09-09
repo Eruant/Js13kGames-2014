@@ -255,7 +255,7 @@ MainScene.prototype.drawMenu = function (percent) {
   ctx.restore();
 
   ctx.fillStyle = '#fff';
-  ctx.fillText('Press any key to start', halfWidth, halfHeight + 150);
+  ctx.fillText('Press any "enter" to begin', halfWidth, halfHeight + 150);
 
   if (typeof this.game.hiscore === 'number') {
     ctx.save();
