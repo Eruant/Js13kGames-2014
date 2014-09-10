@@ -1326,6 +1326,20 @@ var Wisp = function (game, x, y, type, ctx) {
   this.life = 1;
   this.score = 0;
 
+  this.gradient = {
+    water: ctx.createRadialGradient(-2, -2, 0, 0, 0, 20),
+    air: ctx.createRadialGradient(0, 0, 0, 0, 0, 20)
+  };
+
+  this.gradient.water.addColorStop(0.000, 'rgba(255, 255, 255, 0.7)');
+  this.gradient.water.addColorStop(0.381, 'rgba(0, 95, 191, 0.3)');
+  this.gradient.water.addColorStop(0.549, 'rgba(0, 95, 191, 0.3)');
+  this.gradient.water.addColorStop(0.755, 'rgba(0, 127, 255, 0.3)');
+  this.gradient.water.addColorStop(1.000, 'rgba(0, 63, 127, 0.3)');
+
+  this.gradient.air.addColorStop(0.000, 'rgba(255, 255, 255, 0.3)');
+  this.gradient.air.addColorStop(1.000, 'rgba(255, 255, 255, 0.0)');
+
   //this.game.sounds.add('fire', 10, [
     //[3, 0.25, 0.27, 0.76, 0.54, 0.5571, , 0.1799, -0.0999, 0.0035, 0.56, -0.6597, 0.61, 0.0862, -0.8256, , 0.5, 0.5, 0.71, -0.0181, , 0.0368, 0.0333, 0.5]
   //]);
@@ -1344,6 +1358,9 @@ var Wisp = function (game, x, y, type, ctx) {
     y: 0
   };
 
+  this.angle = 0;
+  this.rotate = 1;
+
   this.size = 1;
 
   this.PI2 = Math.PI * 2;
@@ -1358,6 +1375,11 @@ Wisp.prototype.update = function (input, cpus, player) {
   var i, len, sprite, smallest, distanceX, distanceY, distance, directionX, directionY;
 
   this.maxSpeed = (20 / this.size);
+
+  this.angle += this.rotate;
+  if (this.angle > 360) {
+    this.angle -= 360;
+  }
 
   if (this.type === 'user') {
     if (input.left) {
@@ -1500,36 +1522,59 @@ Wisp.prototype.update = function (input, cpus, player) {
 
 Wisp.prototype.render = function (ctx) {
 
+  var halfSize = this.size / 2;
+
   if (this.life) {
     ctx.save();
     ctx.translate(this.position.x, this.position.y);
-    ctx.beginPath();
-    ctx.arc(0, 0, this.size, 0, this.PI2, false);
+    ctx.rotate(this.angle * Math.PI / 180);
     switch (this.state) {
       case 'earth':
+        // TODO finish earth rendering
+        ctx.beginPath();
+        ctx.arc(0, 0, this.size, 0, this.PI2, false);
         ctx.fillStyle = this.game.colours.earth.main;
         ctx.strokeStyle = this.game.colours.earth.dark;
+        ctx.fill();
+        ctx.stroke();
         break;
       case 'water':
-        ctx.fillStyle = this.game.colours.water.main;
-        ctx.strokeStyle = this.game.colours.water.dark;
+        ctx.beginPath();
+        ctx.arc(0, 0, this.size, 0, this.PI2, false);
+        ctx.fillStyle = this.gradient.water;
+        ctx.fill();
         break;
       case 'air':
-        ctx.fillStyle = this.game.colours.air.main;
-        ctx.strokeStyle = this.game.colours.air.dark;
+        ctx.fillStyle = this.gradient.air;
+        ctx.beginPath();
+        ctx.arc(-halfSize, halfSize, halfSize, 0, this.PI2, false);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(halfSize, halfSize, halfSize, 0, this.PI2, false);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(0, -halfSize, halfSize, 0, this.PI2, false);
+        ctx.fill();
         break;
       case 'fire':
+        // TODO finish fire rendering
+        ctx.beginPath();
+        ctx.arc(0, 0, this.size, 0, this.PI2, false);
         ctx.fillStyle = this.game.colours.fire.main;
         ctx.strokeStyle = this.game.colours.fire.dark;
+        ctx.fill();
+        ctx.stroke();
         break;
       default:
+        // TODO finish default rendering
+        ctx.beginPath();
+        ctx.arc(0, 0, this.size, 0, this.PI2, false);
         ctx.fillStyle = this.game.colours.player.main;
         ctx.strokeStyle = this.game.colours.player.dark;
+        ctx.fill();
         ctx.stroke();
         break;
     }
-    ctx.fill();
-    ctx.stroke();
     ctx.restore();
   }
   this.emitter.render(this.position, ctx);
