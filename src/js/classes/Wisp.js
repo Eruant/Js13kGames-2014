@@ -40,7 +40,7 @@ var Wisp = function (game, x, y, type, ctx) {
   };
 
   this.angle = 0;
-  this.rotate = 1;
+  this.rotate = Math.random() * 10;
 
   this.size = 1;
 
@@ -203,7 +203,9 @@ Wisp.prototype.update = function (input, cpus, player) {
 
 Wisp.prototype.render = function (ctx) {
 
-  var halfSize = this.size / 2;
+  var halfSize = this.size * 0.5,
+    twoThirdsSize = this.size * 0.66,
+    thirdSize = this.size * 0.33;
 
   if (this.life) {
     ctx.save();
@@ -219,12 +221,14 @@ Wisp.prototype.render = function (ctx) {
         ctx.fill();
         ctx.stroke();
         break;
+
       case 'water':
         ctx.beginPath();
         ctx.arc(0, 0, this.size, 0, this.PI2, false);
         ctx.fillStyle = this.gradient.water;
         ctx.fill();
         break;
+
       case 'air':
         ctx.fillStyle = this.gradient.air;
         ctx.beginPath();
@@ -237,15 +241,22 @@ Wisp.prototype.render = function (ctx) {
         ctx.arc(0, -halfSize, halfSize, 0, this.PI2, false);
         ctx.fill();
         break;
+
       case 'fire':
-        // TODO finish fire rendering
-        ctx.beginPath();
-        ctx.arc(0, 0, this.size, 0, this.PI2, false);
         ctx.fillStyle = this.game.colours.fire.main;
-        ctx.strokeStyle = this.game.colours.fire.dark;
+        ctx.beginPath();
+        ctx.arc(-thirdSize, thirdSize, twoThirdsSize, 0, this.PI2, false);
         ctx.fill();
-        ctx.stroke();
+        ctx.fillStyle = 'rgba(200, 100, 50, 0.5)';
+        ctx.beginPath();
+        ctx.arc(thirdSize, thirdSize, twoThirdsSize, 0, this.PI2, false);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(250, 60, 50, 0.8)';
+        ctx.beginPath();
+        ctx.arc(0, -thirdSize, twoThirdsSize, 0, this.PI2, false);
+        ctx.fill();
         break;
+
       default:
         // TODO finish default rendering
         ctx.beginPath();
@@ -256,6 +267,11 @@ Wisp.prototype.render = function (ctx) {
         ctx.stroke();
         break;
     }
+    //ctx.beginPath();
+    //ctx.arc(0, 0, this.size, 0, this.PI2, false);
+    //ctx.strokeStyle = '#000';
+    //ctx.stroke();
+
     ctx.restore();
   }
   this.emitter.render(this.position, ctx);
