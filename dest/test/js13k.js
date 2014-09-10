@@ -553,7 +553,7 @@ var Colours = function () {
   };
 
   this.earth = {
-    main: '#319331',
+    main: 'rgb(50, 150, 50)',
     dark: '#509c50',
     light: '#65c655'
   };
@@ -571,13 +571,13 @@ var Colours = function () {
   };
 
   this.water = {
-    main: '#2e457b',
+    main: 'rgba(0, 63, 127, 0.9)',
     dark: '#495b83',
     light: '#637ab0'
   };
 
   this.fire = {
-    main: '#b83d3d',
+    main: 'rgba(250, 60, 50, 0.8)',
     dark: '#c36464',
     light: '#e77676'
   };
