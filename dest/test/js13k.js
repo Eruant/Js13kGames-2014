@@ -1532,13 +1532,22 @@ Wisp.prototype.render = function (ctx) {
     ctx.rotate(this.angle * Math.PI / 180);
     switch (this.state) {
       case 'earth':
-        // TODO finish earth rendering
         ctx.beginPath();
         ctx.arc(0, 0, this.size, 0, this.PI2, false);
-        ctx.fillStyle = this.game.colours.earth.main;
-        ctx.strokeStyle = this.game.colours.earth.dark;
+        ctx.fillStyle = 'rgb(139, 101, 8)';
         ctx.fill();
-        ctx.stroke();
+        ctx.fillStyle = 'rgba(139, 105, 20, 0.5)';
+        ctx.beginPath();
+        ctx.arc(-thirdSize, thirdSize, twoThirdsSize, 0, this.PI2, false);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(205, 186, 150, 0.5)';
+        ctx.beginPath();
+        ctx.arc(thirdSize, thirdSize, twoThirdsSize, 0, this.PI2, false);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(210, 180, 140, 0.5)';
+        ctx.beginPath();
+        ctx.arc(0, -thirdSize, twoThirdsSize, 0, this.PI2, false);
+        ctx.fill();
         break;
 
       case 'water':
@@ -1577,20 +1586,12 @@ Wisp.prototype.render = function (ctx) {
         break;
 
       default:
-        // TODO finish default rendering
         ctx.beginPath();
         ctx.arc(0, 0, this.size, 0, this.PI2, false);
         ctx.fillStyle = this.game.colours.player.main;
-        ctx.strokeStyle = this.game.colours.player.dark;
         ctx.fill();
-        ctx.stroke();
         break;
     }
-    //ctx.beginPath();
-    //ctx.arc(0, 0, this.size, 0, this.PI2, false);
-    //ctx.strokeStyle = '#000';
-    //ctx.stroke();
-
     ctx.restore();
   }
   this.emitter.render(this.position, ctx);
