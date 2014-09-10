@@ -29,23 +29,21 @@ var ArcadeAudio = function () {
  */
 ArcadeAudio.prototype.add = function (key, count, settings) {
 
-  this.sounds[key] = [];
-  
-  settings.forEach(function (elem, index) {
+  var i, audio;
 
-    this.sounds[key].push({
-      tick: 0,
-      count: count,
-      pool: []
-    });
+  this.sounds[key] = {
+    tick: 0,
+    count: count,
+    pool: []
+  };
 
-    for (var i = 0; i < count; i++) {
-      var audio = new Audio();
-      audio.src = jsfxr(elem);
-      this.sounds[key][index].pool.push(audio);
-    }
+  i = 0;
+  for (; i < count; i++) {
+    audio = new Audio();
+    audio.src = jsfxr(settings);
+    this.sounds[key].pool.push(audio);
+  }
 
-  }, this);
 };
 
 /**
@@ -54,9 +52,8 @@ ArcadeAudio.prototype.add = function (key, count, settings) {
  */
 ArcadeAudio.prototype.play = function (key) {
   
-  var sound = this.sounds[key],
-    soundData = sound.length > 1 ? sound[Math.floor(Math.random() * sound.length)] : sound[0];
+  var sound = this.sounds[key];
 
-  soundData.pool[soundData.tick].play();
-  soundData.tick = (soundData.tick < soundData.count - 1) ? soundData.tick + 1 : 0;
+  sound.pool[sound.tick].play();
+  sound.tick = (sound.tick < sound.count - 1) ? sound.tick + 1 : 0;
 };

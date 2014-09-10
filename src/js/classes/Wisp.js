@@ -2,6 +2,8 @@
 
 var Wisp = function (game, x, y, type, ctx) {
 
+  var _this = this;
+
   this.game = game;
   this.type = type;
   this.life = 1;
@@ -21,13 +23,10 @@ var Wisp = function (game, x, y, type, ctx) {
   this.gradient.air.addColorStop(0.000, 'rgba(255, 255, 255, 0.3)');
   this.gradient.air.addColorStop(1.000, 'rgba(255, 255, 255, 0.0)');
 
-  //this.game.sounds.add('fire', 10, [
-    //[3, 0.25, 0.27, 0.76, 0.54, 0.5571, , 0.1799, -0.0999, 0.0035, 0.56, -0.6597, 0.61, 0.0862, -0.8256, , 0.5, 0.5, 0.71, -0.0181, , 0.0368, 0.0333, 0.5]
-  //]);
+  this.playSound = function (key) {
+    this.game.sounds.play(key);
+  };
 
-  //this.game.sounds.add('air', 10, [
-    //[3, 0.33, 0.89, 0.25, 0.81, 0.4692, , -0.0122, 0.0113, -0.5995, 0.23, -0.54, -0.1575, , 0.2234, 0.84, -0.4, 0.6599, 0.17, -0.3399, 0.96, 0.25, 0.72, 0.5]
-  //]);
 
   this.position = {
     x: x || 0,
@@ -186,12 +185,24 @@ Wisp.prototype.update = function (input, cpus, player) {
 
   if (this.type === 'user') {
     if (input.earth) {
+      if (this.state !== 'earth') {
+        //this.playSound('earth');
+      }
       this.state = 'earth';
     } else if (input.water) {
+      if (this.state !== 'water') {
+        //this.playSound('water');
+      }
       this.state = 'water';
     } else if (input.air) {
+      if (this.state !== 'air') {
+        this.playSound('air');
+      }
       this.state = 'air';
     } else if (input.fire) {
+      if (this.state !== 'fire') {
+        this.playSound('fire');
+      }
       this.state = 'fire';
     } else {
       this.state = 'normal';

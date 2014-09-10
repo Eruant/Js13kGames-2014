@@ -22,6 +22,8 @@ var Game = function (width, height) {
   doc.getElementsByTagName('body')[0].appendChild(this.canvas);
 
   this.sounds = new ArcadeAudio();
+  this.sounds.add('fire', 5, [3, 0.25, 0.27, 0.76, 0.54, 0.5571, , 0.1799, -0.0999, 0.0035, 0.56, -0.6597, 0.61, 0.0862, -0.8256, , 0.5, 0.5, 0.71, -0.0181, , 0.0368, 0.0333, 0.5]);
+  this.sounds.add('air', 5, [3, 0.33, 0.89, 0.25, 0.81, 0.4692, , -0.0122, 0.0113, -0.5995, 0.23, -0.54, -0.1575, , 0.2234, 0.84, -0.4, 0.6599, 0.17, -0.3399, 0.96, 0.25, 0.72, 0.5]);
 
   this.scene = new MainScene(this);
 
