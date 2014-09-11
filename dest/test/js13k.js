@@ -1278,11 +1278,19 @@ var Storage = function () {
 
 Storage.prototype.load = function (key) {
 
+  var value;
+
   if (!this.active) {
     return this.error();
   }
 
-  return window.localStorage.getItem(key) || false;
+  value = window.localStorage.getItem(key);
+
+  if (!value || typeof value === 'undefined' || value === 'undefined') {
+    return false;
+  }
+
+  return JSON.parse(value);
 
 };
 
@@ -1292,7 +1300,7 @@ Storage.prototype.save = function (key, value) {
     return this.error();
   }
 
-  window.localStorage.setItem(key, value);
+  window.localStorage.setItem(key, JSON.stringify(value));
 
   return value;
 };
@@ -1774,11 +1782,11 @@ MainScene.prototype.update = function () {
         if (this.game.hiscore) {
           if (this.player.score > this.game.hiscore) {
             this.game.hiscore = this.player.score;
-            this.storage.save('hiscore');
+            this.storage.save('hiscore', this.game.hiscore);
           }
         } else {
           this.game.hiscore = this.player.score;
-          this.storage.save('hiscore');
+          this.storage.save('hiscore', this.game.hiscore);
         }
         this.drawMenu();
         this.player.score = 0;

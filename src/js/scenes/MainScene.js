@@ -124,11 +124,11 @@ MainScene.prototype.update = function () {
         if (this.game.hiscore) {
           if (this.player.score > this.game.hiscore) {
             this.game.hiscore = this.player.score;
-            this.storage.save('hiscore');
+            this.storage.save('hiscore', this.game.hiscore);
           }
         } else {
           this.game.hiscore = this.player.score;
-          this.storage.save('hiscore');
+          this.storage.save('hiscore', this.game.hiscore);
         }
         this.drawMenu();
         this.player.score = 0;
