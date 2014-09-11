@@ -102,6 +102,14 @@ MainScene.prototype.update = function () {
       }
 
       if (!this.player.life) {
+        this.io.activeInput.earth = false;
+        this.io.activeInput.water = false;
+        this.io.activeInput.air = false;
+        this.io.activeInput.fire = false;
+        this.io.activeInput.up = false;
+        this.io.activeInput.down = false;
+        this.io.activeInput.left = false;
+        this.io.activeInput.right = false;
         this.state = 'menu';
         if (this.game.hiscore) {
           if (this.player.score > this.game.hiscore) {
@@ -128,7 +136,6 @@ MainScene.prototype.update = function () {
       len = this.cpus.length;
       for (; i < len; i++) {
         if (this.cpus[i].life === 0) {
-          // TODO test to see if emitter has finished
           kill.push(i);
         }
         this.cpus[i].update(null, this.cpus, this.player);
