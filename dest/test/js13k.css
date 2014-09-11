@@ -2,14 +2,19 @@ body {
   background: #000; }
 
 canvas {
-  width: 100vw;
-  height: 166.67vw;
-  /* ratio = 320/480 = 0.667*/
-  max-height: 100vh;
-  max-width: 66.667vh;
-  margin: auto;
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
-  right: 0; }
+  right: 0;
+  width: 100vw;
+  height: 75vw;
+  max-height: 100vh;
+  max-width: 133vh;
+  margin: auto; }
+  .touchDevice canvas {
+    width: 100vw;
+    height: 166.67vw;
+    /* ratio = 320/480 = 0.667*/
+    max-height: 100vh;
+    max-width: 66.667vh; }

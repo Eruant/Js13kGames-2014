@@ -53,7 +53,7 @@ var MainScene = function (game) {
     'fire'
   ];
 
-  var enemies = 5;
+  var enemies = (this.game.isTouchDevice) ? 5 : 10;
   while (enemies) {
     this.addCPU();
     enemies--;
@@ -278,8 +278,13 @@ MainScene.prototype.drawMenu = function (percent) {
 
   if (typeof this.game.hiscore === 'number') {
     ctx.save();
-    ctx.translate(halfWidth - 80, halfHeight - 160);
-    ctx.rotate(-5 * Math.PI / 180);
+    if (this.game.isTouchDevice) {
+      ctx.translate(halfWidth - 40, halfHeight - 160);
+      ctx.rotate(-5 * Math.PI / 180);
+    } else {
+      ctx.translate(halfWidth, halfHeight - 160);
+      ctx.rotate(-3 * Math.PI / 180);
+    }
     ctx.fillText('score: ' + this.game.hiscore, 0, 0);
     ctx.restore();
   }

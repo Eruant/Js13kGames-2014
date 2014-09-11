@@ -821,9 +821,11 @@ window.raf = (function () {
   return window.requestAnimationFrame || function (cb) { window.setTimeout(cb, 1000 / 60); };
 })();
 
-var Game = function (width, height) {
+var Game = function (width, height, isTouchDevice) {
 
   var doc = window.document;
+
+  this.isTouchDevice = isTouchDevice;
 
   this.colours = new Colours();
 
@@ -900,23 +902,30 @@ var IO = function (element, game, delegate) {
     left: false,
     right: false
   };
+
 };
 
 IO.prototype.addEvents = function () {
-  //this.el.addEventListener('touchstart', this.delegate.handleEvent.bind(this.delegate), false);
-  //this.el.addEventListener('touchmove', this.delegate.handleEvent.bind(this.delegate), false);
-  //this.el.addEventListener('touchend', this.delegate.handleEvent.bind(this.delegate), false);
-  //this.el.addEventListener('touchcancel', this.delegate.handleEvent.bind(this.delegate), false);
+  
+  if (this.game.isTouchDevice) {
+    this.el.addEventListener('touchstart', this.delegate.handleEvent.bind(this.delegate), false);
+    this.el.addEventListener('touchmove', this.delegate.handleEvent.bind(this.delegate), false);
+    this.el.addEventListener('touchend', this.delegate.handleEvent.bind(this.delegate), false);
+    this.el.addEventListener('touchcancel', this.delegate.handleEvent.bind(this.delegate), false);
+  }
   
   window.addEventListener('keydown', this.delegate.handleEvent.bind(this.delegate), true);
   window.addEventListener('keyup', this.delegate.handleEvent.bind(this.delegate), true);
 };
 
 IO.prototype.removeEvents = function () {
-  //this.el.removeEventListener('touchstart', this.delegate.handleEvent.bind(this.delegate), false);
-  //this.el.removeEventListener('touchmove', this.delegate.handleEvent.bind(this.delegate), false);
-  //this.el.removeEventListener('touchend', this.delegate.handleEvent.bind(this.delegate), false);
-  //this.el.removeEventListener('touchcancel', this.delegate.handleEvent.bind(this.delegate), false);
+
+  if (this.game.isTouchDevice) {
+    this.el.removeEventListener('touchstart', this.delegate.handleEvent.bind(this.delegate), false);
+    this.el.removeEventListener('touchmove', this.delegate.handleEvent.bind(this.delegate), false);
+    this.el.removeEventListener('touchend', this.delegate.handleEvent.bind(this.delegate), false);
+    this.el.removeEventListener('touchcancel', this.delegate.handleEvent.bind(this.delegate), false);
+  }
 
   window.removeEventListener('keydown', this.delegate.handleEvent.bind(this.delegate), true);
   window.removeEventListener('keyup', this.delegate.handleEvent.bind(this.delegate), true);
@@ -942,160 +951,160 @@ IO.prototype.handleEvent = function (event) {
     case 'keyup':
       this.setKeyState(event.keyCode, false);
       break;
-    //case 'touchstart':
-      //this.handleTouchStart(event);
-      //break;
-    //case 'touchmove':
-      //this.handleTouchMove(event);
-      //break;
-    //case 'touchend':
-    //case 'touchcancel':
-      //this.handleTouchEnd(event);
-      //break;
+    case 'touchstart':
+      this.handleTouchStart(event);
+      break;
+    case 'touchmove':
+      this.handleTouchMove(event);
+      break;
+    case 'touchend':
+    case 'touchcancel':
+      this.handleTouchEnd(event);
+      break;
   }
 
 };
 
-//IO.prototype.copyTouch = function (touch, oldTouch) {
-  //return {
-    //identifier: touch.identifier,
-    //startX: oldTouch ? oldTouch.startX : touch.pageX,
-    //startY: oldTouch ? oldTouch.startY : touch.pageY,
-    //pageX: touch.pageX,
-    //pageY: touch.pageY
-  //};
-//};
+IO.prototype.copyTouch = function (touch, oldTouch) {
+  return {
+    identifier: touch.identifier,
+    startX: oldTouch ? oldTouch.startX : touch.pageX,
+    startY: oldTouch ? oldTouch.startY : touch.pageY,
+    pageX: touch.pageX,
+    pageY: touch.pageY
+  };
+};
 
-//IO.prototype.ongoingTouchIndexById = function (idToFind) {
+IO.prototype.ongoingTouchIndexById = function (idToFind) {
 
-  //var i, len, id;
+  var i, len, id;
 
-  //i = 0;
-  //len = this.ongoingTouches.length;
-  //for (; i < len; i++) {
-    //id = this.ongoingTouches[i].identifier;
+  i = 0;
+  len = this.ongoingTouches.length;
+  for (; i < len; i++) {
+    id = this.ongoingTouches[i].identifier;
 
-    //if (id === idToFind) {
-      //return i;
-    //}
-  //}
+    if (id === idToFind) {
+      return i;
+    }
+  }
 
-  //return -1;
-//};
+  return -1;
+};
 
-//IO.prototype.handleTouchStart = function (event) {
-  //event.preventDefault();
+IO.prototype.handleTouchStart = function (event) {
+  event.preventDefault();
 
-  //var i, len, touches;
+  var i, len, touches;
 
-  //touches = event.changedTouches;
-  //i = 0;
-  //len = touches.length;
-  //for (; i < len; i++) {
-    //this.ongoingTouches.push(this.copyTouch(touches[i]));
-  //}
-//};
+  touches = event.changedTouches;
+  i = 0;
+  len = touches.length;
+  for (; i < len; i++) {
+    this.ongoingTouches.push(this.copyTouch(touches[i]));
+  }
+};
 
-//IO.prototype.handleTouchMove = function (event) {
-  //event.preventDefault();
+IO.prototype.handleTouchMove = function (event) {
+  event.preventDefault();
 
-  //var i, len, touches, idx;
+  var i, len, touches, idx;
 
-  //touches = event.changedTouches;
-  //i = 0;
-  //len = touches.length;
-  //for (; i < len; i++) {
-    //idx = this.ongoingTouchIndexById(touches[i].identifier);
+  touches = event.changedTouches;
+  i = 0;
+  len = touches.length;
+  for (; i < len; i++) {
+    idx = this.ongoingTouchIndexById(touches[i].identifier);
 
-    //if (idx >= 0) {
-      //this.ongoingTouches.splice(idx, 1, this.copyTouch(touches[i], this.ongoingTouches[idx]));
-    //}
-  //}
+    if (idx >= 0) {
+      this.ongoingTouches.splice(idx, 1, this.copyTouch(touches[i], this.ongoingTouches[idx]));
+    }
+  }
 
-  //this.updateActiveInput();
-//};
+  this.updateActiveInput();
+};
 
-//IO.prototype.handleTouchEnd = function (event) {
-  //event.preventDefault();
+IO.prototype.handleTouchEnd = function (event) {
+  event.preventDefault();
 
-  //var i, len, touches, idx;
+  var i, len, touches, idx;
 
-  //touches = event.changedTouches;
-  //i = 0;
-  //len = touches.length;
-  //for (; i < len; i++) {
-    //idx = this.ongoingTouchIndexById(touches[i].identifier);
+  touches = event.changedTouches;
+  i = 0;
+  len = touches.length;
+  for (; i < len; i++) {
+    idx = this.ongoingTouchIndexById(touches[i].identifier);
 
-    //if (idx >= 0) {
-      //this.ongoingTouches.splice(idx, 1);
-    //}
-  //}
+    if (idx >= 0) {
+      this.ongoingTouches.splice(idx, 1);
+    }
+  }
 
-  //this.updateActiveInput();
-//};
+  this.updateActiveInput();
+};
 
-//IO.prototype.updateActiveInput = function () {
+IO.prototype.updateActiveInput = function () {
 
-  //var directionControl, stateControl, dx, dy, range;
+  var directionControl, stateControl, dx, dy, range;
 
-  //range = 32;
+  range = 32;
 
   // update movement
-  //directionControl = this.ongoingTouches[0] || false;
-  //if (directionControl) {
-    //dx = directionControl.pageX - directionControl.startX;
-    //dy = directionControl.pageY - directionControl.startY;
-    //if (dx > range) {
-      //this.activeInput.left = false;
-      //this.activeInput.right = true;
-    //} else if (dx < -range) {
-      //this.activeInput.left = true;
-      //this.activeInput.right = false;
-    //} else {
-      //this.activeInput.left = this.activeInput.right = false;
-    //}
+  directionControl = this.ongoingTouches[0] || false;
+  if (directionControl) {
+    dx = directionControl.pageX - directionControl.startX;
+    dy = directionControl.pageY - directionControl.startY;
+    if (dx > range) {
+      this.activeInput.left = false;
+      this.activeInput.right = true;
+    } else if (dx < -range) {
+      this.activeInput.left = true;
+      this.activeInput.right = false;
+    } else {
+      this.activeInput.left = this.activeInput.right = false;
+    }
 
-    //if (dy > range) {
-      //this.activeInput.up = false;
-      //this.activeInput.down = true;
-    //} else if (dy < -range) {
-      //this.activeInput.up = true;
-      //this.activeInput.down = false;
-    //} else {
-      //this.activeInput.up = this.activeInput.down = false;
-    //}
-  //}
+    if (dy > range) {
+      this.activeInput.up = false;
+      this.activeInput.down = true;
+    } else if (dy < -range) {
+      this.activeInput.up = true;
+      this.activeInput.down = false;
+    } else {
+      this.activeInput.up = this.activeInput.down = false;
+    }
+  }
 
   // update state
-  //stateControl = this.ongoingTouches[1] || false;
-  //if (stateControl) {
-    //dx = stateControl.pageX - stateControl.startX;
-    //dy = stateControl.pageY - stateControl.startY;
+  stateControl = this.ongoingTouches[1] || false;
+  if (stateControl) {
+    dx = stateControl.pageX - stateControl.startX;
+    dy = stateControl.pageY - stateControl.startY;
 
-    //this.activeInput.earth = false;
-    //this.activeInput.water = false;
-    //this.activeInput.air = false;
-    //this.activeInput.fire = false;
+    this.activeInput.earth = false;
+    this.activeInput.water = false;
+    this.activeInput.air = false;
+    this.activeInput.fire = false;
 
-    //if (dx > range) {
-      //if (dx > dy && dx > -dy) {
-        //this.activeInput.earth = true;
-      //}
-    //} else if (dx < -range) {
-      //if (-dx > dy && -dx > -dy) {
-        //this.activeInput.air = true;
-      //}
-    //} else if (dy > range) {
-      //if (dy > dx && dy > -dx) {
-        //this.activeInput.water = true;
-      //}
-    //} else if (dy < -range) {
-      //if (-dy > dx && -dy > -dx) {
-        //this.activeInput.fire = true;
-      //}
-    //}
-  //}
-//};
+    if (dx > range) {
+      if (dx > dy && dx > -dy) {
+        this.activeInput.earth = true;
+      }
+    } else if (dx < -range) {
+      if (-dx > dy && -dx > -dy) {
+        this.activeInput.air = true;
+      }
+    } else if (dy > range) {
+      if (dy > dx && dy > -dx) {
+        this.activeInput.water = true;
+      }
+    } else if (dy < -range) {
+      if (-dy > dx && -dy > -dx) {
+        this.activeInput.fire = true;
+      }
+    }
+  }
+};
 
 IO.prototype.pause = function () {
 
@@ -1711,7 +1720,7 @@ var MainScene = function (game) {
     'fire'
   ];
 
-  var enemies = 5;
+  var enemies = (this.game.isTouchDevice) ? 5 : 10;
   while (enemies) {
     this.addCPU();
     enemies--;
@@ -1936,8 +1945,13 @@ MainScene.prototype.drawMenu = function (percent) {
 
   if (typeof this.game.hiscore === 'number') {
     ctx.save();
-    ctx.translate(halfWidth - 80, halfHeight - 160);
-    ctx.rotate(-5 * Math.PI / 180);
+    if (this.game.isTouchDevice) {
+      ctx.translate(halfWidth - 40, halfHeight - 160);
+      ctx.rotate(-5 * Math.PI / 180);
+    } else {
+      ctx.translate(halfWidth, halfHeight - 160);
+      ctx.rotate(-3 * Math.PI / 180);
+    }
     ctx.fillText('score: ' + this.game.hiscore, 0, 0);
     ctx.restore();
   }
@@ -2149,6 +2163,19 @@ MainScene.prototype.scaleWorld = function () {
 
 /*globals Game*/
 window.onload = function () {
-  var game = new Game(320, 480);
+
+  var game, isTouchDevice, width, height, body;
+
+
+  isTouchDevice = !!('ontouchstart' in window || 'onmsgesturechange' in window);
+
+  if (isTouchDevice) {
+    body = window.document.getElementsByTagName('body')[0];
+    body.className = (body.className === '') ? 'touchDevice' : body.className + ' isTouchDevice';
+  }
+  width = (isTouchDevice) ? 320 : 640;
+  height = (isTouchDevice) ? 480 : 480;
+
+  game = new Game(width, height, isTouchDevice);
   game.start();
 };

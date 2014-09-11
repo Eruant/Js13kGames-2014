@@ -4,9 +4,11 @@ window.raf = (function () {
   return window.requestAnimationFrame || function (cb) { window.setTimeout(cb, 1000 / 60); };
 })();
 
-var Game = function (width, height) {
+var Game = function (width, height, isTouchDevice) {
 
   var doc = window.document;
+
+  this.isTouchDevice = isTouchDevice;
 
   this.colours = new Colours();
 
