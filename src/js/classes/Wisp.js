@@ -185,12 +185,12 @@ Wisp.prototype.update = function (input, cpus, player) {
   if (this.type === 'user') {
     if (input.earth) {
       if (this.state !== 'earth') {
-        //this.playSound('earth');
+        this.playSound('earth');
       }
       this.state = 'earth';
     } else if (input.water) {
       if (this.state !== 'water') {
-        //this.playSound('water');
+        this.playSound('water');
       }
       this.state = 'water';
     } else if (input.air) {

@@ -45,6 +45,7 @@ IO.prototype.handleEvent = function (event) {
   if (this.game.scene.state === 'menu') {
 
     if (event.type === 'keydown' && event.keyCode === 13) {
+      this.game.sounds.play('menu');
       this.game.scene.menuTransition.setDirection('backwards');
       this.game.scene.menuTransition.start();
       this.game.scene.state = 'transition-play';
@@ -219,6 +220,7 @@ IO.prototype.pause = function () {
   var _this = this;
 
   if (!this.pauseTrigger) {
+    this.game.sounds.play('menu');
 
     if (this.game.scene.state === 'play') {
       this.game.scene.state = 'pause';
@@ -227,7 +229,7 @@ IO.prototype.pause = function () {
     }
 
     this.pauseTrigger = true;
-    setTimeout(function () {
+    window.setTimeout(function () {
       _this.pauseTrigger = false;
     }, 250);
 

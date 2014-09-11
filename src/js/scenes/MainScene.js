@@ -107,6 +107,7 @@ MainScene.prototype.update = function () {
       }
 
       if (!this.player.life) {
+        this.game.sounds.play('die');
         this.player.invincible = 60;
         this.io.activeInput.earth = false;
         this.io.activeInput.water = false;
@@ -433,6 +434,7 @@ MainScene.prototype.destroySmallest = function (a, b) {
     b.size--;
     //b.score -= 1;
     if (b.size <= 0) {
+      this.game.sounds.play('kill');
       b.life = 0;
     }
   } else {
@@ -441,9 +443,11 @@ MainScene.prototype.destroySmallest = function (a, b) {
     //a.score -= 1;
     a.size--;
     if (a.size <= 0) {
+      this.game.sounds.play('kill');
       a.life = 0;
     }
   }
+  
 
 };
 
