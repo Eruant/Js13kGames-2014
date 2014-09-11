@@ -1,4 +1,4 @@
-/*globals IO, Wisp, Transition, Shapes*/
+/*globals IO, Wisp, Transition, Shapes, Storage*/
 
 var MainScene = function (game) {
 
@@ -12,6 +12,9 @@ var MainScene = function (game) {
     earth: 'air',
     air: 'water'
   };
+
+  this.storage = new Storage();
+  this.game.hiscore = this.storage.load('hiscore');
 
   this.menuTransition = new Transition();
   this.menuTransition.start();
@@ -121,9 +124,11 @@ MainScene.prototype.update = function () {
         if (this.game.hiscore) {
           if (this.player.score > this.game.hiscore) {
             this.game.hiscore = this.player.score;
+            this.storage.save('hiscore');
           }
         } else {
           this.game.hiscore = this.player.score;
+          this.storage.save('hiscore');
         }
         this.drawMenu();
         this.player.score = 0;

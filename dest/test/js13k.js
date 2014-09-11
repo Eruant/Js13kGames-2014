@@ -1268,6 +1268,41 @@ Shapes.prototype.elementSegment = function (ctx, options) {
   ctx.restore();
 };
 
+var Storage = function () {
+
+  this.active = !!window.localStorage;
+
+  return this.active;
+
+};
+
+Storage.prototype.load = function (key) {
+
+  if (!this.active) {
+    return this.error();
+  }
+
+  return window.localStorage.getItem(key) || false;
+
+};
+
+Storage.prototype.save = function (key, value) {
+
+  if (!this.active) {
+    return this.error();
+  }
+
+  window.localStorage.setItem(key, value);
+
+  return value;
+};
+
+Storage.prototype.error = function () {
+
+  return 'No localStorage available';
+
+};
+
 var Transition = function () {
 
   this.active = false;
@@ -1613,7 +1648,7 @@ Wisp.prototype.render = function (ctx) {
   this.emitter.render(this.position, ctx);
 };
 
-/*globals IO, Wisp, Transition, Shapes*/
+/*globals IO, Wisp, Transition, Shapes, Storage*/
 
 var MainScene = function (game) {
 
@@ -1627,6 +1662,9 @@ var MainScene = function (game) {
     earth: 'air',
     air: 'water'
   };
+
+  this.storage = new Storage();
+  this.game.hiscore = this.storage.load('hiscore');
 
   this.menuTransition = new Transition();
   this.menuTransition.start();
@@ -1736,9 +1774,11 @@ MainScene.prototype.update = function () {
         if (this.game.hiscore) {
           if (this.player.score > this.game.hiscore) {
             this.game.hiscore = this.player.score;
+            this.storage.save('hiscore');
           }
         } else {
           this.game.hiscore = this.player.score;
+          this.storage.save('hiscore');
         }
         this.drawMenu();
         this.player.score = 0;
