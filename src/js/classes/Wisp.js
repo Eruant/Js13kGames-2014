@@ -2,12 +2,11 @@
 
 var Wisp = function (game, x, y, type, ctx) {
 
-  var _this = this;
-
   this.game = game;
   this.type = type;
   this.life = 1;
   this.score = 0;
+  this.invincible = 0;
 
   this.gradient = {
     water: ctx.createRadialGradient(-2, -2, 0, 0, 0, 20),

@@ -40,6 +40,7 @@ var MainScene = function (game) {
   this.io = new IO(this.game.canvas, this.game);
   this.player = new Wisp(this.game, this.game.canvas.width / 2, this.game.canvas.height / 2, 'user', this.ctx);
   this.player.size = 5;
+  this.player.invincible = 60;
 
   this.cpus = [];
   this.cpuTypes = [
@@ -97,11 +98,16 @@ MainScene.prototype.update = function () {
 
       kill = [];
 
+      if (this.player.invincible > 0) {
+        this.player.invincible--;
+      }
+
       if (this.player.size < 1) {
         this.player.life = 0;
       }
 
       if (!this.player.life) {
+        this.player.invincible = 60;
         this.io.activeInput.earth = false;
         this.io.activeInput.water = false;
         this.io.activeInput.air = false;
@@ -406,6 +412,10 @@ MainScene.prototype.testCollision = function () {
 };
 
 MainScene.prototype.destroySmallest = function (a, b) {
+
+  if (a.invincible > 0 || b.invincible > 0) {
+    return;
+  }
 
   var ruleA, ruleB, valueA, valueB, boost;
 
