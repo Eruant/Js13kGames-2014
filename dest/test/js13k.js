@@ -1241,29 +1241,25 @@ IO.prototype.updateActiveInput = function () {
     this.activeInput.air = false;
     this.activeInput.fire = false;
 
-    // TODO check these ranges
-    // we should go for up, down, left and right
-    // looks like this currently goes in the diagonals
     if (dx > range) {
-
       if (dx > dy && dx > -dy) {
-        // right
-        this.activeInput.water = true;
+        // up
+        this.activeInput.earth = true;
       }
     } else if (dx < -range) {
       if (-dx > dy && -dx > -dy) {
-        // left 
-        this.activeInput.earth = true;
+        // down
+        this.activeInput.water = true;
       }
     } else if (dy > range) {
       if (dy > dx && dy > -dx) {
-        // down
-        this.activeInput.fire = true;
+        // right
+        this.activeInput.air = true;
       }
     } else if (dy < -range) {
       if (-dy > dx && -dy > -dx) {
-        // up
-        this.activeInput.air = true;
+        // left
+        this.activeInput.fire = true;
       }
     }
   }
