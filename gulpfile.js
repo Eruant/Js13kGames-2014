@@ -7,7 +7,8 @@ var gulp = require('gulp'),
   sass = require('gulp-sass'),
   rename = require('gulp-rename'),
   minifyCSS = require('gulp-minify-css'),
-  jade = require('gulp-jade');
+  jade = require('gulp-jade'),
+  del = require('del');
 
 gulp.task('html', function () {
   return gulp.src('src/index.jade')
@@ -38,10 +39,20 @@ gulp.task('css', function () {
     .pipe(gulp.dest('dest/www'));
 });
 
-gulp.task('compress', ['html', 'js', 'css'], function () {
+gulp.task('appcache', function () {
+  return gulp.src('src/js13k.appcache')
+    .pipe(gulp.dest('dest/test'))
+    .pipe(gulp.dest('dest/www'));
+});
+
+gulp.task('compress', ['html', 'js', 'css', 'appcache'], function () {
   return gulp.src('dest/www/*')
     .pipe(zip('archive.zip'))
     .pipe(gulp.dest('dest'));
+});
+
+gulp.task('clean', function (cb) {
+  del(['dest'], cb);
 });
 
 gulp.task('compile', ['compress'], function () {
@@ -58,4 +69,6 @@ gulp.task('localhost', ['watch'], function () {
   });
 });
 
-gulp.task('default', ['localhost']);
+gulp.task('default', ['clean'], function () {
+  gulp.start('localhost');
+});
