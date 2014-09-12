@@ -1,3 +1,18 @@
+/**
+ * This class deals with user Input and Output
+ *
+ * @class IO
+ * @param {object} element    - the element we are detecting events on
+ * @param {object} game       - the main game element
+ * @param {function} delegate - function that will handle the events
+ *
+ * @property {object} el            - the element we are detecting events on
+ * @property {array} ongoingTouches - list of pointers (fingers)
+ * @property {function} delegate    - function that will hangle the events
+ * @property {object} game          - the main game element
+ * @property {boolean} pauseTrigger - stores when we have triggered pause event
+ * @property {object} activeInput   - stores which inputs are active
+ */
 var IO = function (element, game, delegate) {
 
   this.el = element;
@@ -21,6 +36,10 @@ var IO = function (element, game, delegate) {
 
 };
 
+/**
+ * Adds the event listeners to the `el`
+ * @method IO.addEvents
+ */
 IO.prototype.addEvents = function () {
   
   if (this.game.isTouchDevice) {
@@ -34,6 +53,10 @@ IO.prototype.addEvents = function () {
   window.addEventListener('keyup', this.delegate.handleEvent.bind(this.delegate), true);
 };
 
+/**
+ * Removes the event listeners from the `el`
+ * @method IO.removeEvents
+ */
 IO.prototype.removeEvents = function () {
 
   if (this.game.isTouchDevice) {
@@ -47,6 +70,11 @@ IO.prototype.removeEvents = function () {
   window.removeEventListener('keyup', this.delegate.handleEvent.bind(this.delegate), true);
 };
 
+/**
+ * Handles all events
+ * @method IO.handleEvent
+ * @param {object} event - an event object
+ */
 IO.prototype.handleEvent = function (event) {
 
   if (this.game.scene.state === 'menu') {
@@ -81,6 +109,10 @@ IO.prototype.handleEvent = function (event) {
 
 };
 
+/**
+ * Duplicates the touch event data, while maintaining start position
+ * @method IO.copyTouch
+ */
 IO.prototype.copyTouch = function (touch, oldTouch) {
   return {
     identifier: touch.identifier,
@@ -91,6 +123,11 @@ IO.prototype.copyTouch = function (touch, oldTouch) {
   };
 };
 
+/**
+ * Searches for any ongoing touches and returns the array key
+ * @method IO.ongoingTouchIndexById
+ * @param {number} idToFind - The existing ID to search for
+ */
 IO.prototype.ongoingTouchIndexById = function (idToFind) {
 
   var i, len, id;
@@ -108,6 +145,11 @@ IO.prototype.ongoingTouchIndexById = function (idToFind) {
   return -1;
 };
 
+/**
+ * Process a touch start event
+ * @method IO.handleTouchStart
+ * @param {object} event - an event object
+ */
 IO.prototype.handleTouchStart = function (event) {
   event.preventDefault();
 
@@ -121,6 +163,11 @@ IO.prototype.handleTouchStart = function (event) {
   }
 };
 
+/**
+ * Process a touch move event
+ * @method IO.handleTouchMove
+ * @param {object} event - an event object
+ */
 IO.prototype.handleTouchMove = function (event) {
   event.preventDefault();
 
@@ -140,6 +187,11 @@ IO.prototype.handleTouchMove = function (event) {
   this.updateActiveInput();
 };
 
+/**
+ * Process a touch end event
+ * @method IO.handleTouchEnd
+ * @param {object} event - an event object
+ */
 IO.prototype.handleTouchEnd = function (event) {
   event.preventDefault();
 
@@ -159,6 +211,10 @@ IO.prototype.handleTouchEnd = function (event) {
   this.updateActiveInput();
 };
 
+/**
+ * Takes the touch input events registered and translates them into values
+ * @method IO.updateActiveInput
+ */
 IO.prototype.updateActiveInput = function () {
 
   var directionControl, stateControl, dx, dy, range;
@@ -225,6 +281,10 @@ IO.prototype.updateActiveInput = function () {
   }
 };
 
+/**
+ * Updates the main game to change to the pause state
+ * @method IO.pause
+ */
 IO.prototype.pause = function () {
 
   var _this = this;
@@ -247,6 +307,12 @@ IO.prototype.pause = function () {
 
 };
 
+/**
+ * Takes the keyboard input events registed and translates them into value
+ * @method IO.setKeyState
+ * @param {number} code - key code
+ * @param {boolean} value - set if this is being switch on or off
+ */
 IO.prototype.setKeyState = function (code, value) {
 
   switch (code) {

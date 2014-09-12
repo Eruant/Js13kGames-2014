@@ -1,10 +1,28 @@
+/**
+ * Some useful shapes that can be rendered to a canvas
+ *
+ * @class Shapes
+ */
 var Shapes = function () {
 };
 
+/**
+ * Calls the other draw methods
+ * @method Shapes.draw
+ * @param {object} ctx      - a canvas context2d object
+ * @param {string} method   - name of the method we want to call
+ * @param {object} options  - the arguments for the method we are calling
+ */
 Shapes.prototype.draw = function (ctx, method, options) {
   this[method](ctx, options);
 };
 
+/**
+ * Draws an four element segments
+ * @method Shapes.elements
+ * @param {object} ctx      - a canvas context2d  objects
+ * @param {object} options  - the arguments to pass on
+ */
 Shapes.prototype.elements = function (ctx, options) {
 
   var deg90 = 90 * (Math.PI / 180);
@@ -21,6 +39,12 @@ Shapes.prototype.elements = function (ctx, options) {
 
 };
 
+/**
+ * Draw a segment of an element
+ * @method Shapes.elementSegment
+ * @param {object} ctx      - a canvas context2d object
+ * @param {object} options  - radius, fill etc
+ */
 Shapes.prototype.elementSegment = function (ctx, options) {
 
   ctx.save();

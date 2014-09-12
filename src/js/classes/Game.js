@@ -1,5 +1,22 @@
 /*globals ArcadeAudio, MainScene, Colours*/
 
+/**
+ * The main game Class to kick off the game
+ * 
+ * @class Game
+ * @param {number} width          - width of canvas
+ * @param {number} height         - heigt of canvas
+ * @param {boolean} isTouchDevice - extenal detection of a touch device
+ *
+ * @property {boolean} isTouchDevice
+ * @property {object} colours
+ * @property {number} gravity
+ * @property {object} canvas
+ * @property {number} fps
+ * @property {object} ctx
+ * @property {object} sounds
+ * @property {object} scene
+ */
 var Game = function (width, height, isTouchDevice) {
 
   var doc = window.document;
@@ -33,6 +50,10 @@ var Game = function (width, height, isTouchDevice) {
   this.render();
 };
 
+/**
+ * Begin the `update` and `render` methods
+ * @method Game.start
+ */
 Game.prototype.start = function () {
   var _this = this;
   this.interval = window.setInterval(function () {
@@ -41,19 +62,35 @@ Game.prototype.start = function () {
   this.tick();
 };
 
+/**
+ * Stop the `update` and `render` methods
+ * @method Game.pause
+ */
 Game.prototype.pause = function () {
   window.clearInterval(this.interval);
   delete this.interval;
 };
 
+/**
+ * Calculate changes in all objects. This is run at regular intervals
+ * @method Game.update
+ */
 Game.prototype.update = function () {
   this.scene.update();
 };
 
+/**
+ * Paints to the canvas
+ * @method Game.render
+ */
 Game.prototype.render = function () {
   this.scene.render();
 };
 
+/**
+ * Call and heavy methods and re-call this method once they have been completed
+ * @method Game.tick
+ */
 Game.prototype.tick = function () {
   if (this.interval) {
     this.render();

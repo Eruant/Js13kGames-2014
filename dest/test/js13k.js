@@ -484,9 +484,6 @@ window['jsfxr'] = function(settings) {
 /*globals Audio, jsfxr*/
 
 /**
- * @class ArcadeAudio
- * @requires jsfxr
- *
  * This class allows you to add and play sounds.
  *
  * ## Usage
@@ -494,21 +491,26 @@ window['jsfxr'] = function(settings) {
  *
  * You can then copy and paste the sound array into the add function
  *
- *     var aa = new ArcadeAudio();
- *     aa.add('powerup', 10, [
- *         [0, , 0.01, , 0.4384, 0.2, , 0.12, 0.28, 1, 0.65, , , 0.0419, , , , , 1, , , , , 0.3]
- *     ]);
- *     aa.play('powerup');
+ * @example
+ * var aa = new ArcadeAudio();
+ * aa.add('powerup', 10, [0, , 0.01, , 0.4384, 0.2, , 0.12, 0.28, 1, 0.65, , , 0.0419, , , , , 1, , , , , 0.3]);
+ * aa.play('powerup');
+ *
+ * @class ArcadeAudio
+ * @requires jsfxr
+ *
+ * @property {object} sounds
  */
 var ArcadeAudio = function () {
+
   this.sounds = {};
 };
 
 /**
- * @method add
- * @parm key {String} reference to the sound object
- * @param count {Number} size of sound pool
- * @param setting {Array} sound settings imported from as3sfxr
+ * @method ArcadeAudio.add
+ * @param {string} key     - reference to the sound object
+ * @param {number} count   - size of sound pool
+ * @param {array} setting  - sound settings imported from as3sfxr
  */
 ArcadeAudio.prototype.add = function (key, count, settings) {
 
@@ -530,8 +532,8 @@ ArcadeAudio.prototype.add = function (key, count, settings) {
 };
 
 /**
- * @method play
- * @param key {String} start playback of stored sound object
+ * @method ArcadeAudio.play
+ * @param {string} key - start playback of stored sound object
  */
 ArcadeAudio.prototype.play = function (key) {
   
@@ -540,6 +542,11 @@ ArcadeAudio.prototype.play = function (key) {
   sound.pool[sound.tick].play();
   sound.tick = (sound.tick < sound.count - 1) ? sound.tick + 1 : 0;
 };
+
+/**
+ * Stores colours used in the main game
+ * @class Colours
+ */
 
 var Colours = function () {
 
@@ -583,6 +590,23 @@ var Colours = function () {
 
 /*globals Colours*/
 
+/**
+ * A particle emitter
+ * @class Emitter
+ * @param {object} ctx   - A canvas context2d object
+ * @param {string} type  - A type of emitter e.g. 'fire'
+ * @param {boolean} emit - Set if the emitter should emit particles
+ *
+ * @property {object} colours       - Colour Object
+ * @property {object} gradient      - canvas gradients
+ * @property {string} type          - type of emitter e.g. 'fire'
+ * @property {boolean} emit         - option of the emitter should produce new particles
+ * @property {number} PI            - 3.14...
+ * @property {number} PI2           - 2 * 3.14...
+ * @property {object} particleTypes - Object containing all particle types
+ * @property {array} particles      - list of all particles
+ */
+
 var Emitter = function (ctx, type, emit) {
 
   this.colours = new Colours();
@@ -609,22 +633,22 @@ var Emitter = function (ctx, type, emit) {
   this.particleTypes = {};
   this.particles = new Array(300);
 
-  this.addParicleType('earth', {
+  this.addParticleType('earth', {
     colour: this.colours.earth.light,
     life: 50,
     rotate: 20
   });
-  this.addParicleType('air', {
+  this.addParticleType('air', {
     colour: this.colours.air.light,
     life: 80
   });
-  this.addParicleType('water', {
+  this.addParticleType('water', {
     colour: this.colours.water.light,
     gravity: 0.1,
     maxSpeed: 3,
     life: 60
   });
-  this.addParicleType('fire', {
+  this.addParticleType('fire', {
     colour: this.colours.fire.light,
     gravity: -0.1,
     maxSpeed: 2,
@@ -634,6 +658,14 @@ var Emitter = function (ctx, type, emit) {
 
 };
 
+/**
+ * Calculates the changes of all particles
+ *
+ * @method Emitter.update
+ * @param {string} type     - type of particle
+ * @param {object} position - position of parent
+ * @param {number} size     - size of parent
+ */
 Emitter.prototype.update = function (type, position, size) {
 
   var i, len, p, addParticle;
@@ -662,6 +694,12 @@ Emitter.prototype.update = function (type, position, size) {
 
 };
 
+/**
+ * Calculates the changes of an individual particle
+ *
+ * @method Emitter.updateParticle
+ * @param {object} particle - a particle object
+ */
 Emitter.prototype.updateParticle = function (particle) {
 
   particle.life--;
@@ -673,6 +711,13 @@ Emitter.prototype.updateParticle = function (particle) {
 
 };
 
+/**
+ * Render the particles to the canvas
+ *
+ * @method Emitter.render
+ * @param {object} position - position of the parent
+ * @param {object} ctx      - canvas context2d object
+ */
 Emitter.prototype.render = function (position, ctx) {
 
   var i, len, p;
@@ -683,14 +728,22 @@ Emitter.prototype.render = function (position, ctx) {
     p = this.particles[i];
 
     if (p && p.life > 0) {
-      this.drawParticle(ctx, p);
+      this.renderParticle(ctx, p);
     } else {
       this.particleCount--;
     }
   }
 };
 
-Emitter.prototype.drawParticle = function (ctx, particle) {
+/**
+ * Render an individual particle to the canvas
+ *
+ * @method Emitter.renderParticle
+ * @param {object} ctx      - canvas context2d object
+ * @param {object} particle - particle to render
+ *
+ */
+Emitter.prototype.renderParticle = function (ctx, particle) {
 
   ctx.save();
   ctx.translate(particle.position.x, particle.position.y);
@@ -723,7 +776,14 @@ Emitter.prototype.drawParticle = function (ctx, particle) {
 
 };
 
-Emitter.prototype.addParicleType = function (key, options) {
+/**
+ * Adds a new particle type
+ *
+ * @method Emitter.addParticleType
+ * @param {string} key      - name of the particle type
+ * @param {object} options  - values to override defaults
+ */
+Emitter.prototype.addParticleType = function (key, options) {
 
   var settings = {
     gravity: options.gravity || 0,
@@ -736,6 +796,12 @@ Emitter.prototype.addParicleType = function (key, options) {
   this.particleTypes[key] = settings;
 };
 
+/**
+ * Add an individual particle
+ * @method Emitter.addParticle
+ * @param {object} position - contains `x` and `y` values
+ * @param {string} key      - type of particle
+ */
 Emitter.prototype.addParticle = function (position, key) {
 
   if (this.type in this.particleTypes) {
@@ -817,10 +883,23 @@ Emitter.prototype.addParticle = function (position, key) {
 
 /*globals ArcadeAudio, MainScene, Colours*/
 
-window.raf = (function () {
-  return window.requestAnimationFrame || function (cb) { window.setTimeout(cb, 1000 / 60); };
-})();
-
+/**
+ * The main game Class to kick off the game
+ * 
+ * @class Game
+ * @param {number} width          - width of canvas
+ * @param {number} height         - heigt of canvas
+ * @param {boolean} isTouchDevice - extenal detection of a touch device
+ *
+ * @property {boolean} isTouchDevice
+ * @property {object} colours
+ * @property {number} gravity
+ * @property {object} canvas
+ * @property {number} fps
+ * @property {object} ctx
+ * @property {object} sounds
+ * @property {object} scene
+ */
 var Game = function (width, height, isTouchDevice) {
 
   var doc = window.document;
@@ -854,6 +933,10 @@ var Game = function (width, height, isTouchDevice) {
   this.render();
 };
 
+/**
+ * Begin the `update` and `render` methods
+ * @method Game.start
+ */
 Game.prototype.start = function () {
   var _this = this;
   this.interval = window.setInterval(function () {
@@ -862,19 +945,35 @@ Game.prototype.start = function () {
   this.tick();
 };
 
+/**
+ * Stop the `update` and `render` methods
+ * @method Game.pause
+ */
 Game.prototype.pause = function () {
   window.clearInterval(this.interval);
   delete this.interval;
 };
 
+/**
+ * Calculate changes in all objects. This is run at regular intervals
+ * @method Game.update
+ */
 Game.prototype.update = function () {
   this.scene.update();
 };
 
+/**
+ * Paints to the canvas
+ * @method Game.render
+ */
 Game.prototype.render = function () {
   this.scene.render();
 };
 
+/**
+ * Call and heavy methods and re-call this method once they have been completed
+ * @method Game.tick
+ */
 Game.prototype.tick = function () {
   if (this.interval) {
     this.render();
@@ -882,6 +981,21 @@ Game.prototype.tick = function () {
   }
 };
 
+/**
+ * This class deals with user Input and Output
+ *
+ * @class IO
+ * @param {object} element    - the element we are detecting events on
+ * @param {object} game       - the main game element
+ * @param {function} delegate - function that will handle the events
+ *
+ * @property {object} el            - the element we are detecting events on
+ * @property {array} ongoingTouches - list of pointers (fingers)
+ * @property {function} delegate    - function that will hangle the events
+ * @property {object} game          - the main game element
+ * @property {boolean} pauseTrigger - stores when we have triggered pause event
+ * @property {object} activeInput   - stores which inputs are active
+ */
 var IO = function (element, game, delegate) {
 
   this.el = element;
@@ -905,6 +1019,10 @@ var IO = function (element, game, delegate) {
 
 };
 
+/**
+ * Adds the event listeners to the `el`
+ * @method IO.addEvents
+ */
 IO.prototype.addEvents = function () {
   
   if (this.game.isTouchDevice) {
@@ -918,6 +1036,10 @@ IO.prototype.addEvents = function () {
   window.addEventListener('keyup', this.delegate.handleEvent.bind(this.delegate), true);
 };
 
+/**
+ * Removes the event listeners from the `el`
+ * @method IO.removeEvents
+ */
 IO.prototype.removeEvents = function () {
 
   if (this.game.isTouchDevice) {
@@ -931,6 +1053,11 @@ IO.prototype.removeEvents = function () {
   window.removeEventListener('keyup', this.delegate.handleEvent.bind(this.delegate), true);
 };
 
+/**
+ * Handles all events
+ * @method IO.handleEvent
+ * @param {object} event - an event object
+ */
 IO.prototype.handleEvent = function (event) {
 
   if (this.game.scene.state === 'menu') {
@@ -965,6 +1092,10 @@ IO.prototype.handleEvent = function (event) {
 
 };
 
+/**
+ * Duplicates the touch event data, while maintaining start position
+ * @method IO.copyTouch
+ */
 IO.prototype.copyTouch = function (touch, oldTouch) {
   return {
     identifier: touch.identifier,
@@ -975,6 +1106,11 @@ IO.prototype.copyTouch = function (touch, oldTouch) {
   };
 };
 
+/**
+ * Searches for any ongoing touches and returns the array key
+ * @method IO.ongoingTouchIndexById
+ * @param {number} idToFind - The existing ID to search for
+ */
 IO.prototype.ongoingTouchIndexById = function (idToFind) {
 
   var i, len, id;
@@ -992,6 +1128,11 @@ IO.prototype.ongoingTouchIndexById = function (idToFind) {
   return -1;
 };
 
+/**
+ * Process a touch start event
+ * @method IO.handleTouchStart
+ * @param {object} event - an event object
+ */
 IO.prototype.handleTouchStart = function (event) {
   event.preventDefault();
 
@@ -1005,6 +1146,11 @@ IO.prototype.handleTouchStart = function (event) {
   }
 };
 
+/**
+ * Process a touch move event
+ * @method IO.handleTouchMove
+ * @param {object} event - an event object
+ */
 IO.prototype.handleTouchMove = function (event) {
   event.preventDefault();
 
@@ -1024,6 +1170,11 @@ IO.prototype.handleTouchMove = function (event) {
   this.updateActiveInput();
 };
 
+/**
+ * Process a touch end event
+ * @method IO.handleTouchEnd
+ * @param {object} event - an event object
+ */
 IO.prototype.handleTouchEnd = function (event) {
   event.preventDefault();
 
@@ -1043,6 +1194,10 @@ IO.prototype.handleTouchEnd = function (event) {
   this.updateActiveInput();
 };
 
+/**
+ * Takes the touch input events registered and translates them into values
+ * @method IO.updateActiveInput
+ */
 IO.prototype.updateActiveInput = function () {
 
   var directionControl, stateControl, dx, dy, range;
@@ -1109,6 +1264,10 @@ IO.prototype.updateActiveInput = function () {
   }
 };
 
+/**
+ * Updates the main game to change to the pause state
+ * @method IO.pause
+ */
 IO.prototype.pause = function () {
 
   var _this = this;
@@ -1131,6 +1290,12 @@ IO.prototype.pause = function () {
 
 };
 
+/**
+ * Takes the keyboard input events registed and translates them into value
+ * @method IO.setKeyState
+ * @param {number} code - key code
+ * @param {boolean} value - set if this is being switch on or off
+ */
 IO.prototype.setKeyState = function (code, value) {
 
   switch (code) {
@@ -1192,31 +1357,31 @@ IO.prototype.setKeyState = function (code, value) {
   }
 };
 
-var SceneController = function () {
-
-  this.states = {};
-  this.currentState = null;
-};
-
-SceneController.prototype.add = function (key, state) {
-
-  this.states[key] = state;
-
-};
-
-SceneController.prototype.start = function (key) {
-
-  this.currentState = key;
-
-};
-
+/**
+ * Some useful shapes that can be rendered to a canvas
+ *
+ * @class Shapes
+ */
 var Shapes = function () {
 };
 
+/**
+ * Calls the other draw methods
+ * @method Shapes.draw
+ * @param {object} ctx      - a canvas context2d object
+ * @param {string} method   - name of the method we want to call
+ * @param {object} options  - the arguments for the method we are calling
+ */
 Shapes.prototype.draw = function (ctx, method, options) {
   this[method](ctx, options);
 };
 
+/**
+ * Draws an four element segments
+ * @method Shapes.elements
+ * @param {object} ctx      - a canvas context2d  objects
+ * @param {object} options  - the arguments to pass on
+ */
 Shapes.prototype.elements = function (ctx, options) {
 
   var deg90 = 90 * (Math.PI / 180);
@@ -1233,6 +1398,12 @@ Shapes.prototype.elements = function (ctx, options) {
 
 };
 
+/**
+ * Draw a segment of an element
+ * @method Shapes.elementSegment
+ * @param {object} ctx      - a canvas context2d object
+ * @param {object} options  - radius, fill etc
+ */
 Shapes.prototype.elementSegment = function (ctx, options) {
 
   ctx.save();
@@ -1280,6 +1451,13 @@ Shapes.prototype.elementSegment = function (ctx, options) {
   ctx.restore();
 };
 
+/**
+ * Saves data to local storage
+ *
+ * @class Storage
+ *
+ * @property {boolean} active - sets if localStorage is available
+ */
 var Storage = function () {
 
   this.active = !!window.localStorage;
@@ -1288,6 +1466,12 @@ var Storage = function () {
 
 };
 
+/**
+ * Loads data
+ *
+ * @method Storage.load
+ * @param {string} key
+ */
 Storage.prototype.load = function (key) {
 
   var value;
@@ -1306,6 +1490,13 @@ Storage.prototype.load = function (key) {
 
 };
 
+/**
+ * Saves data
+ *
+ * @method Storage.save
+ * @param {string} key
+ * @param {object} value
+ */
 Storage.prototype.save = function (key, value) {
 
   if (!this.active) {
@@ -1317,6 +1508,10 @@ Storage.prototype.save = function (key, value) {
   return value;
 };
 
+/**
+ * Returns the generic message
+ * @method Storage.error
+ */
 Storage.prototype.error = function () {
 
   return 'No localStorage available';
@@ -1723,7 +1918,7 @@ var MainScene = function (game) {
     'fire'
   ];
 
-  var enemies = (this.game.isTouchDevice) ? 5 : 1;
+  var enemies = (this.game.isTouchDevice) ? 5 : 10;
   while (enemies) {
     this.addCPU();
     enemies--;
@@ -2166,10 +2361,14 @@ MainScene.prototype.scaleWorld = function () {
 };
 
 /*globals Game*/
+
+window.raf = (function () {
+  return window.requestAnimationFrame || function (cb) { window.setTimeout(cb, 1000 / 60); };
+})();
+
 window.onload = function () {
 
   var game, isTouchDevice, width, height, body;
-
 
   isTouchDevice = !!('ontouchstart' in window || 'onmsgesturechange' in window);
 

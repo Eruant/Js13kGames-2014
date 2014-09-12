@@ -8,7 +8,6 @@ window.onload = function () {
 
   var game, isTouchDevice, width, height, body;
 
-
   isTouchDevice = !!('ontouchstart' in window || 'onmsgesturechange' in window);
 
   if (isTouchDevice) {

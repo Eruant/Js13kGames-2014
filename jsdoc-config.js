@@ -13,7 +13,7 @@
     "default": {
       "outputSouceFiles": true
     },
-    "systemName": "JS 13K Games 2014",
+    "systemName": "Wisp",
     "footer": "",
     "copyright": "Copyright (C) 2014 Matt Gale",
     "navType": "vertical",

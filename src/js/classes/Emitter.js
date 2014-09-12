@@ -138,7 +138,7 @@ Emitter.prototype.render = function (position, ctx) {
     p = this.particles[i];
 
     if (p && p.life > 0) {
-      this.drawParticle(ctx, p);
+      this.renderParticle(ctx, p);
     } else {
       this.particleCount--;
     }
@@ -148,14 +148,12 @@ Emitter.prototype.render = function (position, ctx) {
 /**
  * Render an individual particle to the canvas
  *
- * @method Emitter.drawParticle
+ * @method Emitter.renderParticle
  * @param {object} ctx      - canvas context2d object
  * @param {object} particle - particle to render
  *
  */
-
-  // TODO check to see if re-naming this to `renderParticle` will have any side effects
-Emitter.prototype.drawParticle = function (ctx, particle) {
+Emitter.prototype.renderParticle = function (ctx, particle) {
 
   ctx.save();
   ctx.translate(particle.position.x, particle.position.y);

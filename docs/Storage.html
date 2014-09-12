@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Wisp Class: ArcadeAudio</title>
+	<title>Wisp Class: Storage</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -72,12 +72,12 @@
 					
 
 
-	<h1 class="page-title">Class: ArcadeAudio</h1>
+	<h1 class="page-title">Class: Storage</h1>
 <section>
 
 <header>
     <h2>
-    ArcadeAudio
+    Storage
     </h2>
     
 </header>
@@ -89,7 +89,7 @@
     
         
 <dt>
-    <h4 class="name" id="ArcadeAudio"><span class="type-signature"></span>new ArcadeAudio<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Storage"><span class="type-signature"></span>new Storage<span class="signature">()</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -97,9 +97,7 @@
     
     
     <div class="description">
-        <p>This class allows you to add and play sounds.</p>
-<h2>Usage</h2><p>Sounds can be generated at <a href="http://www.superflashbros.net/as3sfxr/">as3sfxr</a></p>
-<p>You can then copy and paste the sound array into the add function</p>
+        <p>Saves data to local storage</p>
     </div>
     
 
@@ -139,13 +137,13 @@
 
         <tr>
             
-                <td class="name"><code>sounds</code></td>
+                <td class="name"><code>active</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">boolean</span>
 
 
             
@@ -155,7 +153,7 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>sets if localStorage is available</p></td>
         </tr>
 
 	
@@ -204,14 +202,6 @@
     
     
     
-        <h5>Example</h5>
-        
-    <pre class="sunlight-highlight-javascript">var aa = new ArcadeAudio();
-aa.add(&#x27;powerup&#x27;, 10, [0, , 0.01, , 0.4384, 0.2, , 0.12, 0.28, 1, 0.65, , , 0.0419, , , , , 1, , , , , 0.3]);
-aa.play(&#x27;powerup&#x27;);</pre>
-
-
-    
 </dd>
 
     
@@ -221,12 +211,6 @@ aa.play(&#x27;powerup&#x27;);</pre>
 
     
 
-    
-        <h3 class="subsection-title">Requires</h3>
-
-        <ul>
-            <li>module:jsfxr</li>
-        </ul>
     
 
     
@@ -241,12 +225,82 @@ aa.play(&#x27;powerup&#x27;);</pre>
         <dl>
             
 <dt>
-    <h4 class="name" id="add"><span class="type-signature">&lt;static> </span>add<span class="signature">(key, count, setting)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="error"><span class="type-signature">&lt;static> </span>error<span class="signature">()</span><span class="type-signature"></span></h4>
     
     
 </dt>
 <dd>
     
+    
+    <div class="description">
+        <p>Returns the generic message</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="load"><span class="type-signature">&lt;static> </span>load<span class="signature">(key)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Loads data</p>
+    </div>
     
 
     
@@ -295,53 +349,7 @@ aa.play(&#x27;powerup&#x27;);</pre>
 
             
 
-            <td class="description last"><p>reference to the sound object</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>count</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>size of sound pool</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>setting</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>sound settings imported from as3sfxr</p></td>
+            <td class="description last"></td>
         </tr>
 
 	
@@ -398,12 +406,16 @@ aa.play(&#x27;powerup&#x27;);</pre>
         
             
 <dt>
-    <h4 class="name" id="play"><span class="type-signature">&lt;static> </span>play<span class="signature">(key)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="save"><span class="type-signature">&lt;static> </span>save<span class="signature">(key, value)</span><span class="type-signature"></span></h4>
     
     
 </dt>
 <dd>
     
+    
+    <div class="description">
+        <p>Saves data</p>
+    </div>
     
 
     
@@ -452,7 +464,30 @@ aa.play(&#x27;powerup&#x27;);</pre>
 
             
 
-            <td class="description last"><p>start playback of stored sound object</p></td>
+            <td class="description last"></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
         </tr>
 
 	

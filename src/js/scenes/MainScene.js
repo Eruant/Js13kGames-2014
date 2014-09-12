@@ -53,7 +53,7 @@ var MainScene = function (game) {
     'fire'
   ];
 
-  var enemies = (this.game.isTouchDevice) ? 5 : 1;
+  var enemies = (this.game.isTouchDevice) ? 5 : 10;
   while (enemies) {
     this.addCPU();
     enemies--;
