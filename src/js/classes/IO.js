@@ -260,23 +260,23 @@ IO.prototype.updateActiveInput = function () {
 
     if (dx > range) {
       if (dx > dy && dx > -dy) {
-        // right
-        this.activeInput.air = true;
+        // up
+        this.activeInput.earth = true;
       }
     } else if (dx < -range) {
       if (-dx > dy && -dx > -dy) {
-        // left 
-        this.activeInput.fire = true;
-      }
-    } else if (dy > range) {
-      if (dy > dx && dy > -dx) {
         // down
         this.activeInput.water = true;
       }
+    } else if (dy > range) {
+      if (dy > dx && dy > -dx) {
+        // right
+        this.activeInput.air = true;
+      }
     } else if (dy < -range) {
       if (-dy > dx && -dy > -dx) {
-        // up
-        this.activeInput.earth = true;
+        // left
+        this.activeInput.fire = true;
       }
     }
   }
