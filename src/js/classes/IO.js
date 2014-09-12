@@ -51,7 +51,7 @@ IO.prototype.handleEvent = function (event) {
 
   if (this.game.scene.state === 'menu') {
 
-    if (event.type === 'keydown' && event.keyCode === 13) {
+    if ((event.type === 'keydown' && event.keyCode === 13) || event.type === 'touchend') {
       this.game.sounds.play('menu');
       this.game.scene.menuTransition.setDirection('backwards');
       this.game.scene.menuTransition.start();
@@ -202,6 +202,9 @@ IO.prototype.updateActiveInput = function () {
     this.activeInput.air = false;
     this.activeInput.fire = false;
 
+    // TODO check these ranges
+    // we should go for up, down, left and right
+    // looks like this currently goes in the diagonals
     if (dx > range) {
       if (dx > dy && dx > -dy) {
         this.activeInput.earth = true;

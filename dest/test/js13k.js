@@ -935,7 +935,7 @@ IO.prototype.handleEvent = function (event) {
 
   if (this.game.scene.state === 'menu') {
 
-    if (event.type === 'keydown' && event.keyCode === 13) {
+    if ((event.type === 'keydown' && event.keyCode === 13) || event.type === 'touchend') {
       this.game.sounds.play('menu');
       this.game.scene.menuTransition.setDirection('backwards');
       this.game.scene.menuTransition.start();
@@ -1086,6 +1086,9 @@ IO.prototype.updateActiveInput = function () {
     this.activeInput.air = false;
     this.activeInput.fire = false;
 
+    // TODO check these ranges
+    // we should go for up, down, left and right
+    // looks like this currently goes in the diagonals
     if (dx > range) {
       if (dx > dy && dx > -dy) {
         this.activeInput.earth = true;
@@ -1720,7 +1723,7 @@ var MainScene = function (game) {
     'fire'
   ];
 
-  var enemies = (this.game.isTouchDevice) ? 5 : 10;
+  var enemies = (this.game.isTouchDevice) ? 5 : 1;
   while (enemies) {
     this.addCPU();
     enemies--;
@@ -1845,8 +1848,9 @@ MainScene.prototype.draw = function () {
 
 MainScene.prototype.drawMenu = function (percent) {
 
-  var ctx, width, height, halfWidth, halfHeight, bgWidth, bgHeight;
+  var ctx, width, height, halfWidth, halfHeight, bgWidth, bgHeight, isTouchDevice;
 
+  isTouchDevice = this.game.isTouchDevice;
   ctx = this.menuCtx;
   width = this.menuCanvas.width;
   height = this.menuCanvas.height;
@@ -1904,44 +1908,44 @@ MainScene.prototype.drawMenu = function (percent) {
   ctx.save();
   ctx.translate(halfWidth, halfHeight - 30);
   ctx.rotate(1 * Math.PI / 180);
-  ctx.fillText('use the cursor', 0, 0);
+  ctx.fillText((isTouchDevice ? 'touch and drag to move' : 'use the cursor'), 0, 0);
   ctx.restore();
   ctx.save();
-  ctx.translate(halfWidth, halfHeight - 10);
+  ctx.translate(halfWidth, halfHeight - (isTouchDevice ? 10 : 0));
   ctx.rotate(-1 * Math.PI / 180);
-  ctx.fillText('keys to move', 0, 0);
+  ctx.fillText((isTouchDevice ? 'your second touch for:' : 'keys to move'), 0, 0);
   ctx.restore();
 
   ctx.save();
   ctx.fillStyle = this.game.colours.earth.main;
   ctx.translate(halfWidth - 50, halfHeight + 40);
   ctx.rotate(-3 * Math.PI / 180);
-  ctx.fillText('earth "1"', 0, 0);
+  ctx.fillText('earth ' + (isTouchDevice ? '"up"' : '"1"'), 0, 0);
   ctx.restore();
 
   ctx.save();
   ctx.fillStyle = this.game.colours.air.main;
   ctx.translate(halfWidth + 60, halfHeight + 35);
   ctx.rotate(2 * Math.PI / 180);
-  ctx.fillText('air "2"', 0, 0);
+  ctx.fillText('air ' + (isTouchDevice ? '"right"' : '"2"'), 0, 0);
   ctx.restore();
   
   ctx.save();
   ctx.fillStyle = this.game.colours.water.main;
   ctx.translate(halfWidth + 50, halfHeight + 85);
   ctx.rotate(-2 * Math.PI / 180);
-  ctx.fillText('water "3"', 0, 0);
+  ctx.fillText('water ' + (isTouchDevice ? '"down"' : '"3"'), 0, 0);
   ctx.restore();
   
   ctx.save();
   ctx.fillStyle = this.game.colours.fire.main;
   ctx.translate(halfWidth - 60, halfHeight + 90);
   ctx.rotate(2 * Math.PI / 180);
-  ctx.fillText('fire "4"', 0, 0);
+  ctx.fillText('fire ' + (isTouchDevice ? '"left"' : '"4"'), 0, 0);
   ctx.restore();
 
   ctx.fillStyle = '#fff';
-  ctx.fillText('Press any "enter" to begin', halfWidth, halfHeight + 150);
+  ctx.fillText((isTouchDevice ? 'Touch the screen to begin': 'Press any "enter" to begin'), halfWidth, halfHeight + 150);
 
   if (typeof this.game.hiscore === 'number') {
     ctx.save();
