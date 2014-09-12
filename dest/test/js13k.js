@@ -1463,9 +1463,9 @@ Shapes.prototype.elementSegment = function (ctx, options) {
  *
  * @property {boolean} active - sets if localStorage is available
  */
-var Storage = function () {
+var Storage = function (isTouchDevice) {
 
-  this.active = !!window.localStorage;
+  this.active = !isTouchDevice || !!window.localStorage;
 
   return this.active;
 
@@ -1970,7 +1970,7 @@ var MainScene = function (game) {
     air: 'water'
   };
 
-  this.storage = new Storage();
+  this.storage = new Storage(this.game.isTouchDevice);
   this.game.hiscore = this.storage.load('hiscore');
 
   this.menuTransition = new Transition();

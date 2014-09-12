@@ -35,7 +35,7 @@ var MainScene = function (game) {
     air: 'water'
   };
 
-  this.storage = new Storage();
+  this.storage = new Storage(this.game.isTouchDevice);
   this.game.hiscore = this.storage.load('hiscore');
 
   this.menuTransition = new Transition();
