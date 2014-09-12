@@ -252,7 +252,7 @@ MainScene.prototype.drawMenu = function (percent) {
   // draw element guide
   ctx.save();
   ctx.translate(this.canvas.width - 60, 60);
-  ctx.rotate(-10 * (Math.PI / 180));
+  ctx.rotate(45 * (Math.PI / 180));
   ctx.scale(0.5, 0.5);
   ctx.transform(1, 0.1, 0, 1, 0, 0);
   this.shapes.draw(ctx, 'elements', [
@@ -397,7 +397,7 @@ MainScene.prototype.render = function () {
 
       this.game.ctx.save();
       this.game.ctx.translate(this.canvas.width - 20, 20);
-      this.game.ctx.rotate(-10 * (Math.PI / 180));
+      this.game.ctx.rotate(45 * (Math.PI / 180));
       this.game.ctx.scale(0.1, 0.1);
       this.game.ctx.globalAlpha = 0.5;
       this.game.ctx.transform(1, 0.1, 0, 1, 0, 0);
