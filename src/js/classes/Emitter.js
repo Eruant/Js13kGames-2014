@@ -7,9 +7,14 @@
  * @param {string} type  - A type of emitter e.g. 'fire'
  * @param {boolean} emit - Set if the emitter should emit particles
  *
- * @property {object} colours   - Colour Object
- * @property {object} gradient  - canvas gradients
- * @property {string} type      - type of emitter e.g. 'fire'
+ * @property {object} colours       - Colour Object
+ * @property {object} gradient      - canvas gradients
+ * @property {string} type          - type of emitter e.g. 'fire'
+ * @property {boolean} emit         - option of the emitter should produce new particles
+ * @property {number} PI            - 3.14...
+ * @property {number} PI2           - 2 * 3.14...
+ * @property {object} particleTypes - Object containing all particle types
+ * @property {array} particles      - list of all particles
  */
 
 var Emitter = function (ctx, type, emit) {
@@ -38,22 +43,22 @@ var Emitter = function (ctx, type, emit) {
   this.particleTypes = {};
   this.particles = new Array(300);
 
-  this.addParicleType('earth', {
+  this.addParticleType('earth', {
     colour: this.colours.earth.light,
     life: 50,
     rotate: 20
   });
-  this.addParicleType('air', {
+  this.addParticleType('air', {
     colour: this.colours.air.light,
     life: 80
   });
-  this.addParicleType('water', {
+  this.addParticleType('water', {
     colour: this.colours.water.light,
     gravity: 0.1,
     maxSpeed: 3,
     life: 60
   });
-  this.addParicleType('fire', {
+  this.addParticleType('fire', {
     colour: this.colours.fire.light,
     gravity: -0.1,
     maxSpeed: 2,
@@ -64,10 +69,12 @@ var Emitter = function (ctx, type, emit) {
 };
 
 /**
+ * Calculates the changes of all particles
+ *
  * @method Emitter.update
- * @param {string} type
- * @param {object} position
- * @param {number} size
+ * @param {string} type     - type of particle
+ * @param {object} position - position of parent
+ * @param {number} size     - size of parent
  */
 Emitter.prototype.update = function (type, position, size) {
 
@@ -97,6 +104,12 @@ Emitter.prototype.update = function (type, position, size) {
 
 };
 
+/**
+ * Calculates the changes of an individual particle
+ *
+ * @method Emitter.updateParticle
+ * @param {object} particle - a particle object
+ */
 Emitter.prototype.updateParticle = function (particle) {
 
   particle.life--;
@@ -108,6 +121,13 @@ Emitter.prototype.updateParticle = function (particle) {
 
 };
 
+/**
+ * Render the particles to the canvas
+ *
+ * @method Emitter.render
+ * @param {object} position - position of the parent
+ * @param {object} ctx      - canvas context2d object
+ */
 Emitter.prototype.render = function (position, ctx) {
 
   var i, len, p;
@@ -125,6 +145,16 @@ Emitter.prototype.render = function (position, ctx) {
   }
 };
 
+/**
+ * Render an individual particle to the canvas
+ *
+ * @method Emitter.drawParticle
+ * @param {object} ctx      - canvas context2d object
+ * @param {object} particle - particle to render
+ *
+ */
+
+  // TODO check to see if re-naming this to `renderParticle` will have any side effects
 Emitter.prototype.drawParticle = function (ctx, particle) {
 
   ctx.save();
@@ -158,7 +188,14 @@ Emitter.prototype.drawParticle = function (ctx, particle) {
 
 };
 
-Emitter.prototype.addParicleType = function (key, options) {
+/**
+ * Adds a new particle type
+ *
+ * @method Emitter.addParticleType
+ * @param {string} key      - name of the particle type
+ * @param {object} options  - values to override defaults
+ */
+Emitter.prototype.addParticleType = function (key, options) {
 
   var settings = {
     gravity: options.gravity || 0,
@@ -171,6 +208,12 @@ Emitter.prototype.addParicleType = function (key, options) {
   this.particleTypes[key] = settings;
 };
 
+/**
+ * Add an individual particle
+ * @method Emitter.addParticle
+ * @param {object} position - contains `x` and `y` values
+ * @param {string} key      - type of particle
+ */
 Emitter.prototype.addParticle = function (position, key) {
 
   if (this.type in this.particleTypes) {
