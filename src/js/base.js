@@ -1,4 +1,9 @@
 /*globals Game*/
+
+window.raf = (function () {
+  return window.requestAnimationFrame || function (cb) { window.setTimeout(cb, 1000 / 60); };
+})();
+
 window.onload = function () {
 
   var game, isTouchDevice, width, height, body;
