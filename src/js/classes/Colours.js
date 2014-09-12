@@ -1,3 +1,8 @@
+/**
+ * Stores colours used in the main game
+ * @class Colours
+ */
+
 var Colours = function () {
 
   this.menu = {

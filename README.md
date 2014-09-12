@@ -4,9 +4,15 @@ The game was build for the competition [JS13KGames][js13k]. The theme of the com
 
 To play the game, go to [littleball.co.uk/Js13kGames-2014][play].
 
-If you wish to run the game locally, you will need to use `node` with the following command
+## Running it locally
+
+You can open the files directly from the folder `dest/www`. Alternatly you can run a local server with `node`.
 
     $ npm i && gulp
+
+## Documentation
+
+    $ ./node_modules/.bin/jsdoc src/js/classes/*.js -t ./node_modules/ink-docstrap/template -c jsdoc-config.js -d docs
 
 [js13k]:  http://js13kgames.com/
 [play]:   http://littleball.co.uk/Js13kGames-2014/

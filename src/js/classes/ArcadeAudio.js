@@ -1,9 +1,6 @@
 /*globals Audio, jsfxr*/
 
 /**
- * @class ArcadeAudio
- * @requires jsfxr
- *
  * This class allows you to add and play sounds.
  *
  * ## Usage
@@ -11,21 +8,26 @@
  *
  * You can then copy and paste the sound array into the add function
  *
- *     var aa = new ArcadeAudio();
- *     aa.add('powerup', 10, [
- *         [0, , 0.01, , 0.4384, 0.2, , 0.12, 0.28, 1, 0.65, , , 0.0419, , , , , 1, , , , , 0.3]
- *     ]);
- *     aa.play('powerup');
+ * @example
+ * var aa = new ArcadeAudio();
+ * aa.add('powerup', 10, [0, , 0.01, , 0.4384, 0.2, , 0.12, 0.28, 1, 0.65, , , 0.0419, , , , , 1, , , , , 0.3]);
+ * aa.play('powerup');
+ *
+ * @class ArcadeAudio
+ * @requires jsfxr
+ *
+ * @property {object} sounds
  */
 var ArcadeAudio = function () {
+
   this.sounds = {};
 };
 
 /**
- * @method add
- * @parm key {String} reference to the sound object
- * @param count {Number} size of sound pool
- * @param setting {Array} sound settings imported from as3sfxr
+ * @method ArcadeAudio.add
+ * @param {string} key     - reference to the sound object
+ * @param {number} count   - size of sound pool
+ * @param {array} setting  - sound settings imported from as3sfxr
  */
 ArcadeAudio.prototype.add = function (key, count, settings) {
 
@@ -47,8 +49,8 @@ ArcadeAudio.prototype.add = function (key, count, settings) {
 };
 
 /**
- * @method play
- * @param key {String} start playback of stored sound object
+ * @method ArcadeAudio.play
+ * @param {string} key - start playback of stored sound object
  */
 ArcadeAudio.prototype.play = function (key) {
   

@@ -1,5 +1,17 @@
 /*globals Colours*/
 
+/**
+ * A particle emitter
+ * @class Emitter
+ * @param {object} ctx   - A canvas context2d object
+ * @param {string} type  - A type of emitter e.g. 'fire'
+ * @param {boolean} emit - Set if the emitter should emit particles
+ *
+ * @property {object} colours   - Colour Object
+ * @property {object} gradient  - canvas gradients
+ * @property {string} type      - type of emitter e.g. 'fire'
+ */
+
 var Emitter = function (ctx, type, emit) {
 
   this.colours = new Colours();
@@ -51,6 +63,12 @@ var Emitter = function (ctx, type, emit) {
 
 };
 
+/**
+ * @method Emitter.update
+ * @param {string} type
+ * @param {object} position
+ * @param {number} size
+ */
 Emitter.prototype.update = function (type, position, size) {
 
   var i, len, p, addParticle;
