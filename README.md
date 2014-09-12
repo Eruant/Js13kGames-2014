@@ -12,7 +12,7 @@ You can open the files directly from the folder `dest/www`. Alternatly you can r
 
 ## Documentation
 
-    $ ./node_modules/.bin/jsdoc src/js/classes/*.js -t ./node_modules/ink-docstrap/template -c jsdoc-config.js -d docs
+    $ ./node_modules/.bin/jsdoc src/js/base.js src/js/classes/*.js src/js/scenes/*.js -t ./node_modules/ink-docstrap/template -c jsdoc-config.js -d docs
 
 [js13k]:  http://js13kgames.com/
 [play]:   http://littleball.co.uk/Js13kGames-2014/

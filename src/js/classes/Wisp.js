@@ -1,5 +1,32 @@
 /*globals Emitter*/
 
+/**
+ * A sprite that moves around the screen
+ *
+ * @class Wisp
+ * @param {object} game - the main game object
+ * @param {number} x    - position to spawn the sprite
+ * @param {number} y    - position to spawn the sprite
+ * @param {string} type - defines if this is a user or cpu
+ * @param {object} ctx  - a canvas context2d object
+ *
+ * @property {object} game        - the main game object
+ * @property {string} type        - defines if this is a user or cpu
+ * @property {number} life        - displays the amound of life left
+ * @property {number} score       - the current score of this Wisp
+ * @property {number} invincible  - shows how many cycles of invinciblility are left
+ * @property {object} gradient    - stores canvas gradients
+ * @property {function} playSound - a wrapper function around the `game.sounds.play` method
+ * @property {object} position    - `x` and `y` position
+ * @property {object} speed       - `x` and `y` speeds
+ * @property {number} angle       - current rotation
+ * @property {number} rotate      - speed of rotation
+ * @property {number} size        - size of this shape
+ * @property {number} PI2         - 3.14... * 2
+ * @property {number} accelerate  - how much extra speed to add on input
+ * @property {number} maxSpeed    - limit the top speed
+ * @property {object} emitter     - a particle emitter
+ */
 var Wisp = function (game, x, y, type, ctx) {
 
   this.game = game;
@@ -26,7 +53,6 @@ var Wisp = function (game, x, y, type, ctx) {
     this.game.sounds.play(key);
   };
 
-
   this.position = {
     x: x || 0,
     y: y || 0
@@ -49,6 +75,13 @@ var Wisp = function (game, x, y, type, ctx) {
   this.emitter = new Emitter(ctx);
 };
 
+/**
+ * Calculates the changes in speed and velocity
+ * @method Wisp.update
+ * @param {object} input  - any directional changes to make
+ * @param {array} cpus    - list of other Wisp positions
+ * @param {object} player - the players Wisp
+ */
 Wisp.prototype.update = function (input, cpus, player) {
 
   var i, len, sprite, smallest, distanceX, distanceY, distance, directionX, directionY;
@@ -211,6 +244,11 @@ Wisp.prototype.update = function (input, cpus, player) {
   this.emitter.update(this.state, this.position, this.size);
 };
 
+/**
+ * Draws this Wisp to the canvas
+ * @method Wisp.render
+ * @param {object} ctx  - a canas context2d object
+ */
 Wisp.prototype.render = function (ctx) {
 
   var halfSize = this.size * 0.5,

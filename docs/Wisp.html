@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Wisp Class: Game</title>
+	<title>Wisp Class: Wisp</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -98,12 +98,12 @@
 					
 
 
-	<h1 class="page-title">Class: Game</h1>
+	<h1 class="page-title">Class: Wisp</h1>
 <section>
 
 <header>
     <h2>
-    Game
+    Wisp
     </h2>
     
 </header>
@@ -115,7 +115,7 @@
     
         
 <dt>
-    <h4 class="name" id="Game"><span class="type-signature"></span>new Game<span class="signature">(width, height, isTouchDevice)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Wisp"><span class="type-signature"></span>new Wisp<span class="signature">(game, x, y, type, ctx)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -123,7 +123,7 @@
     
     
     <div class="description">
-        <p>The main game Class to kick off the game</p>
+        <p>A sprite that moves around the screen</p>
     </div>
     
 
@@ -157,7 +157,30 @@
 
         <tr>
             
-                <td class="name"><code>width</code></td>
+                <td class="name"><code>game</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the main game object</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
             
 
             <td class="type">
@@ -173,14 +196,14 @@
 
             
 
-            <td class="description last"><p>width of canvas</p></td>
+            <td class="description last"><p>position to spawn the sprite</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>height</code></td>
+                <td class="name"><code>y</code></td>
             
 
             <td class="type">
@@ -196,20 +219,20 @@
 
             
 
-            <td class="description last"><p>heigt of canvas</p></td>
+            <td class="description last"><p>position to spawn the sprite</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>isTouchDevice</code></td>
+                <td class="name"><code>type</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">boolean</span>
+<span class="param-type">string</span>
 
 
             
@@ -219,7 +242,30 @@
 
             
 
-            <td class="description last"><p>extenal detection of a touch device</p></td>
+            <td class="description last"><p>defines if this is a user or cpu</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>ctx</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>a canvas context2d object</p></td>
         </tr>
 
 	
@@ -258,30 +304,7 @@
 
         <tr>
             
-                <td class="name"><code>isTouchDevice</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>colours</code></td>
+                <td class="name"><code>game</code></td>
             
 
             <td class="type">
@@ -297,14 +320,37 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>the main game object</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>gravity</code></td>
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>defines if this is a user or cpu</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>life</code></td>
             
 
             <td class="type">
@@ -320,37 +366,14 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>displays the amound of life left</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>canvas</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>fps</code></td>
+                <td class="name"><code>score</code></td>
             
 
             <td class="type">
@@ -366,14 +389,37 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>the current score of this Wisp</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>ctx</code></td>
+                <td class="name"><code>invincible</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>shows how many cycles of invinciblility are left</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>gradient</code></td>
             
 
             <td class="type">
@@ -389,14 +435,37 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>stores canvas gradients</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>sounds</code></td>
+                <td class="name"><code>playSound</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>a wrapper function around the <code>game.sounds.play</code> method</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>position</code></td>
             
 
             <td class="type">
@@ -412,14 +481,14 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p><code>x</code> and <code>y</code> position</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>scene</code></td>
+                <td class="name"><code>speed</code></td>
             
 
             <td class="type">
@@ -435,7 +504,168 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p><code>x</code> and <code>y</code> speeds</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>angle</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>current rotation</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>rotate</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>speed of rotation</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>size</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>size of this shape</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>PI2</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>3.14... * 2</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>accelerate</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>how much extra speed to add on input</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>maxSpeed</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>limit the top speed</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>emitter</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>a particle emitter</p></td>
         </tr>
 
 	
@@ -507,7 +737,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="pause"><span class="type-signature">&lt;static> </span>pause<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="render"><span class="type-signature">&lt;static> </span>render<span class="signature">(ctx)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -515,7 +745,7 @@
     
     
     <div class="description">
-        <p>Stop the <code>update</code> and <code>render</code> methods</p>
+        <p>Draws this Wisp to the canvas</p>
     </div>
     
 
@@ -523,6 +753,55 @@
     
     
     
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>ctx</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>a canas context2d object</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
     
     
     
@@ -573,7 +852,7 @@
         
             
 <dt>
-    <h4 class="name" id="render"><span class="type-signature">&lt;static> </span>render<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="update"><span class="type-signature">&lt;static> </span>update<span class="signature">(input, cpus, player)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -581,7 +860,7 @@
     
     
     <div class="description">
-        <p>Paints to the canvas</p>
+        <p>Calculates the changes in speed and velocity</p>
     </div>
     
 
@@ -590,203 +869,100 @@
     
     
     
-    
-    
-<dl class="details">
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
+        <h5>Parameters:</h5>
         
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
             
-<dt>
-    <h4 class="name" id="start"><span class="type-signature">&lt;static> </span>start<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Begin the <code>update</code> and <code>render</code> methods</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
+                <td class="name"><code>input</code></td>
             
-<dt>
-    <h4 class="name" id="tick"><span class="type-signature">&lt;static> </span>tick<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Call and heavy methods and re-call this method once they have been completed</p>
-    </div>
-    
 
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
+            <td class="type">
             
-<dt>
-    <h4 class="name" id="update"><span class="type-signature">&lt;static> </span>update<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Calculate changes in all objects. This is run at regular intervals</p>
-    </div>
-    
+                
+<span class="param-type">object</span>
 
-    
-    
-    
-    
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>any directional changes to make</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>cpus</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>list of other Wisp positions</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>player</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the players Wisp</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
     
     
     

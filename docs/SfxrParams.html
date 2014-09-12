@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Wisp Class: Storage</title>
+	<title>Wisp Class: SfxrParams</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -48,7 +48,11 @@
 						</li>
 						
 						<li>
-							<a href="MainScene.html">MainScene</a>
+							<a href="SfxrParams.html">SfxrParams</a>
+						</li>
+						
+						<li>
+							<a href="SfxrSynth.html">SfxrSynth</a>
 						</li>
 						
 						<li>
@@ -71,20 +75,6 @@
 					</ul>
 				</li>
 				
-				<li class="dropdown">
-					<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b
-						class="caret"></b></a>
-
-					<ul class="dropdown-menu ">
-						
-						<li>
-							<a href="global.html#raf">raf</a>
-						</li>
-						
-
-					</ul>
-				</li>
-				
 			</ul>
 		</div>
 	</div>
@@ -98,12 +88,12 @@
 					
 
 
-	<h1 class="page-title">Class: Storage</h1>
+	<h1 class="page-title">Class: SfxrParams</h1>
 <section>
 
 <header>
     <h2>
-    Storage
+    SfxrParams
     </h2>
     
 </header>
@@ -115,16 +105,12 @@
     
         
 <dt>
-    <h4 class="name" id="Storage"><span class="type-signature"></span>new Storage<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="SfxrParams"><span class="type-signature"></span>new SfxrParams<span class="signature">()</span><span class="type-signature"></span></h4>
     
     
 </dt>
 <dd>
     
-    
-    <div class="description">
-        <p>Saves data to local storage</p>
-    </div>
     
 
     
@@ -135,58 +121,6 @@
     
     
 <dl class="details">
-	
-
-	<h5 class="subsection-title">Properties:</h5>
-
-	<dl>
-
-<table class="props table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>active</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>sets if localStorage is available</p></td>
-        </tr>
-
-	
-	</tbody>
-</table>
-</dl>
-
 	
 
 	
@@ -251,7 +185,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="error"><span class="type-signature">&lt;static> </span>error<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="setSettings"><span class="type-signature"></span>setSettings<span class="signature">(array)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -259,73 +193,7 @@
     
     
     <div class="description">
-        <p>Returns the generic message</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="load"><span class="type-signature">&lt;static> </span>load<span class="signature">(key)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Loads data</p>
+        <p>Parses a settings array into the parameters</p>
     </div>
     
 
@@ -359,15 +227,10 @@
 
         <tr>
             
-                <td class="name"><code>key</code></td>
+                <td class="name"><code>array</code></td>
             
 
             <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
             
             </td>
 
@@ -375,7 +238,31 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>Array of the settings values, where elements 0 - 23 are
+               a: waveType
+               b: attackTime
+               c: sustainTime
+               d: sustainPunch
+               e: decayTime
+               f: startFrequency
+               g: minFrequency
+               h: slide
+               i: deltaSlide
+               j: vibratoDepth
+               k: vibratoSpeed
+               l: changeAmount
+               m: changeSpeed
+               n: squareDuty
+               o: dutySweep
+               p: repeatSpeed
+               q: phaserOffset
+               r: phaserSweep
+               s: lpFilterCutoff
+               t: lpFilterCutoffSweep
+               u: lpFilterResonance
+               v: hpFilterCutoff
+               w: hpFilterCutoffSweep
+               x: masterVolume</p></td>
         </tr>
 
 	
@@ -425,144 +312,17 @@
     
     
     
+    <h5>Returns:</h5>
     
-    
-</dd>
+            
+<div class="param-desc">
+    <p>If the string successfully parsed</p>
+</div>
+
+
+
 
         
-            
-<dt>
-    <h4 class="name" id="save"><span class="type-signature">&lt;static> </span>save<span class="signature">(key, value)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Saves data</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>key</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>value</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-    
-    
-    
-<dl class="details">
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
     
     
 </dd>
@@ -593,7 +353,7 @@
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a>
-		on 2014-09-12T21:59:14+01:00 using the <a
+		on 2014-09-12T21:35:54+01:00 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

@@ -1,5 +1,27 @@
 /*globals IO, Wisp, Transition, Shapes, Storage*/
 
+/**
+ * Creats a game scene for us to play with
+ * @class MainScene
+ * @param {object} game - a game object
+ *
+ * @property {object} game            - a game object
+ * @property {string} state           - the state we wish to display
+ * @property {object} rules           - stores which elements beat other elements
+ * @property {object} storage         - an intance of the Storage class
+ * @property {object} menuTransition  - an instance of the Transition class
+ * @property {object} shapes          - an instance of the Shape class
+ * @property {object} canvas          - a canvas element
+ * @property {object} ctx             - a canvas context2d object
+ * @property {object} menuCanvas      - a canvas element
+ * @property {object} menuCtx         - a canvas context2d object
+ * @property {object} pauseCanvas     - a canvas element
+ * @property {object} pauseCtx        - a canvas context2d object
+ * @property {object} io              - an instance of the IO class
+ * @property {object} player          - an instance of the Wisp class
+ * @property {array} cpus             - an array of Wisp instances
+ * @property {array} cpuTypes         - a list of the elements
+ */
 var MainScene = function (game) {
 
   this.game = game;
@@ -64,6 +86,10 @@ var MainScene = function (game) {
   return this;
 };
 
+/**
+ * Adds a CPU controlled Wisp
+ * @method MainScene.addCPU
+ */
 MainScene.prototype.addCPU = function () {
 
   var cpu, x, y;
@@ -78,6 +104,10 @@ MainScene.prototype.addCPU = function () {
 
 };
 
+/**
+ * Updates all the elements in this scene
+ * @method MainScene.update
+ */
 MainScene.prototype.update = function () {
 
   var i, len, kill;
@@ -166,6 +196,10 @@ MainScene.prototype.update = function () {
   }
 };
 
+/**
+ * Renders to the canvas
+ * @method MainScene.draw
+ */
 MainScene.prototype.draw = function () {
 
   var gradient = this.ctx.createLinearGradient(0, 0, this.canvas.width, this.canvas.height);
@@ -176,6 +210,11 @@ MainScene.prototype.draw = function () {
   this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 };
 
+/**
+ * Draws the menu canvas
+ * @method MainScene.drawMenu
+ * @param {number} percent - force the menu to render during a transition
+ */
 MainScene.prototype.drawMenu = function (percent) {
 
   var ctx, width, height, halfWidth, halfHeight, bgWidth, bgHeight, isTouchDevice;
@@ -293,6 +332,10 @@ MainScene.prototype.drawMenu = function (percent) {
   ctx.restore();
 };
 
+/**
+ * Draws the pause menu
+ * @method MainScene.drawPause
+ */
 MainScene.prototype.drawPause = function () {
 
   var ctx = this.pauseCtx;
@@ -307,6 +350,10 @@ MainScene.prototype.drawPause = function () {
   ctx.restore();
 };
 
+/**
+ * Draws the whole scene
+ * @method MainScene.render
+ */
 MainScene.prototype.render = function () {
 
   // draw bakground
@@ -365,6 +412,10 @@ MainScene.prototype.render = function () {
   }
 };
 
+/**
+ * Tests to see if any of the Wisps are in contact
+ * @method MainScene.testCollision
+ */
 MainScene.prototype.testCollision = function () {
 
   var i, len, sprite, aSize, aMaxX, aMinX, aMaxY, aMinY, bSize, bMaxX, bMinX, bMaxY, bMinY, sprite2;
@@ -423,6 +474,12 @@ MainScene.prototype.testCollision = function () {
 
 };
 
+/**
+ * Makes two Wisps fight, and the smaller one looses
+ * @method MainScene.destroySmallest
+ * @param {object} a - a Wisp instance
+ * @param {object} b - a Wisp instance
+ */
 MainScene.prototype.destroySmallest = function (a, b) {
 
   if (a.invincible > 0 || b.invincible > 0) {
@@ -462,6 +519,10 @@ MainScene.prototype.destroySmallest = function (a, b) {
 
 };
 
+/**
+ * Resizes all sprites so that they fit onscreen
+ * @method MainScene.scaleSprites
+ */
 MainScene.prototype.scaleSprites = function () {
 
   var i, len, amount;
@@ -477,6 +538,10 @@ MainScene.prototype.scaleSprites = function () {
 
 };
 
+/**
+ * Tests to see if the Wisps are getting too large on screen
+ * @method MainScene.scaleWorld
+ */
 MainScene.prototype.scaleWorld = function () {
 
   var i, len;

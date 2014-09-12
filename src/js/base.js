@@ -1,5 +1,9 @@
 /*globals Game*/
 
+/**
+ * Creates a requestAnimationFrame object with fallbacks
+ * @function raf
+ */
 window.raf = (function () {
   return window.requestAnimationFrame || function (cb) { window.setTimeout(cb, 1000 / 60); };
 })();

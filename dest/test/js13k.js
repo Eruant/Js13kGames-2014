@@ -1518,6 +1518,16 @@ Storage.prototype.error = function () {
 
 };
 
+/**
+ * Sets timers for you to use in transitions
+ *
+ * @class Transition
+ * @property {boolean} active   - Is the timer updating or finished
+ * @property {string} direction - `'forwards'` or `'backwards'`
+ * @property {number} length    - milliseconds
+ * @property {number} startTime - when the transition kicked off
+ * @property {number} percent   - how far through the transition we are
+ */
 var Transition = function () {
 
   this.active = false;
@@ -1528,6 +1538,10 @@ var Transition = function () {
 
 };
 
+/**
+ * Set the transition off
+ * @method Transition.start
+ */
 Transition.prototype.start = function () {
 
   this.active = true;
@@ -1535,12 +1549,20 @@ Transition.prototype.start = function () {
   this.startTime = new Date().getTime();
 };
 
+/**
+ * Triggers when the transition ends
+ * @method Transition.end
+ */
 Transition.prototype.end = function () {
 
   this.active = false;
   this.startTime = null;
 };
 
+/**
+ * test to see if the transition has completed
+ * @method Transition.update
+ */
 Transition.prototype.update = function () {
 
   var now;
@@ -1563,6 +1585,11 @@ Transition.prototype.update = function () {
 
 };
 
+/**
+ * Sets the direction the transition to go in
+ * @method Transition.setDirection
+ * @param {string} direction - `'forwards'` or `'backwards'`
+ */
 Transition.prototype.setDirection = function (direction) {
 
   if (direction !== 'forwards' && direction !== 'backwards') {
@@ -1575,6 +1602,33 @@ Transition.prototype.setDirection = function (direction) {
 
 /*globals Emitter*/
 
+/**
+ * A sprite that moves around the screen
+ *
+ * @class Wisp
+ * @param {object} game - the main game object
+ * @param {number} x    - position to spawn the sprite
+ * @param {number} y    - position to spawn the sprite
+ * @param {string} type - defines if this is a user or cpu
+ * @param {object} ctx  - a canvas context2d object
+ *
+ * @property {object} game        - the main game object
+ * @property {string} type        - defines if this is a user or cpu
+ * @property {number} life        - displays the amound of life left
+ * @property {number} score       - the current score of this Wisp
+ * @property {number} invincible  - shows how many cycles of invinciblility are left
+ * @property {object} gradient    - stores canvas gradients
+ * @property {function} playSound - a wrapper function around the `game.sounds.play` method
+ * @property {object} position    - `x` and `y` position
+ * @property {object} speed       - `x` and `y` speeds
+ * @property {number} angle       - current rotation
+ * @property {number} rotate      - speed of rotation
+ * @property {number} size        - size of this shape
+ * @property {number} PI2         - 3.14... * 2
+ * @property {number} accelerate  - how much extra speed to add on input
+ * @property {number} maxSpeed    - limit the top speed
+ * @property {object} emitter     - a particle emitter
+ */
 var Wisp = function (game, x, y, type, ctx) {
 
   this.game = game;
@@ -1601,7 +1655,6 @@ var Wisp = function (game, x, y, type, ctx) {
     this.game.sounds.play(key);
   };
 
-
   this.position = {
     x: x || 0,
     y: y || 0
@@ -1624,6 +1677,13 @@ var Wisp = function (game, x, y, type, ctx) {
   this.emitter = new Emitter(ctx);
 };
 
+/**
+ * Calculates the changes in speed and velocity
+ * @method Wisp.update
+ * @param {object} input  - any directional changes to make
+ * @param {array} cpus    - list of other Wisp positions
+ * @param {object} player - the players Wisp
+ */
 Wisp.prototype.update = function (input, cpus, player) {
 
   var i, len, sprite, smallest, distanceX, distanceY, distance, directionX, directionY;
@@ -1786,6 +1846,11 @@ Wisp.prototype.update = function (input, cpus, player) {
   this.emitter.update(this.state, this.position, this.size);
 };
 
+/**
+ * Draws this Wisp to the canvas
+ * @method Wisp.render
+ * @param {object} ctx  - a canas context2d object
+ */
 Wisp.prototype.render = function (ctx) {
 
   var halfSize = this.size * 0.5,
@@ -1865,6 +1930,28 @@ Wisp.prototype.render = function (ctx) {
 
 /*globals IO, Wisp, Transition, Shapes, Storage*/
 
+/**
+ * Creats a game scene for us to play with
+ * @class MainScene
+ * @param {object} game - a game object
+ *
+ * @property {object} game            - a game object
+ * @property {string} state           - the state we wish to display
+ * @property {object} rules           - stores which elements beat other elements
+ * @property {object} storage         - an intance of the Storage class
+ * @property {object} menuTransition  - an instance of the Transition class
+ * @property {object} shapes          - an instance of the Shape class
+ * @property {object} canvas          - a canvas element
+ * @property {object} ctx             - a canvas context2d object
+ * @property {object} menuCanvas      - a canvas element
+ * @property {object} menuCtx         - a canvas context2d object
+ * @property {object} pauseCanvas     - a canvas element
+ * @property {object} pauseCtx        - a canvas context2d object
+ * @property {object} io              - an instance of the IO class
+ * @property {object} player          - an instance of the Wisp class
+ * @property {array} cpus             - an array of Wisp instances
+ * @property {array} cpuTypes         - a list of the elements
+ */
 var MainScene = function (game) {
 
   this.game = game;
@@ -1929,6 +2016,10 @@ var MainScene = function (game) {
   return this;
 };
 
+/**
+ * Adds a CPU controlled Wisp
+ * @method MainScene.addCPU
+ */
 MainScene.prototype.addCPU = function () {
 
   var cpu, x, y;
@@ -1943,6 +2034,10 @@ MainScene.prototype.addCPU = function () {
 
 };
 
+/**
+ * Updates all the elements in this scene
+ * @method MainScene.update
+ */
 MainScene.prototype.update = function () {
 
   var i, len, kill;
@@ -2031,6 +2126,10 @@ MainScene.prototype.update = function () {
   }
 };
 
+/**
+ * Renders to the canvas
+ * @method MainScene.draw
+ */
 MainScene.prototype.draw = function () {
 
   var gradient = this.ctx.createLinearGradient(0, 0, this.canvas.width, this.canvas.height);
@@ -2041,6 +2140,11 @@ MainScene.prototype.draw = function () {
   this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 };
 
+/**
+ * Draws the menu canvas
+ * @method MainScene.drawMenu
+ * @param {number} percent - force the menu to render during a transition
+ */
 MainScene.prototype.drawMenu = function (percent) {
 
   var ctx, width, height, halfWidth, halfHeight, bgWidth, bgHeight, isTouchDevice;
@@ -2158,6 +2262,10 @@ MainScene.prototype.drawMenu = function (percent) {
   ctx.restore();
 };
 
+/**
+ * Draws the pause menu
+ * @method MainScene.drawPause
+ */
 MainScene.prototype.drawPause = function () {
 
   var ctx = this.pauseCtx;
@@ -2172,6 +2280,10 @@ MainScene.prototype.drawPause = function () {
   ctx.restore();
 };
 
+/**
+ * Draws the whole scene
+ * @method MainScene.render
+ */
 MainScene.prototype.render = function () {
 
   // draw bakground
@@ -2230,6 +2342,10 @@ MainScene.prototype.render = function () {
   }
 };
 
+/**
+ * Tests to see if any of the Wisps are in contact
+ * @method MainScene.testCollision
+ */
 MainScene.prototype.testCollision = function () {
 
   var i, len, sprite, aSize, aMaxX, aMinX, aMaxY, aMinY, bSize, bMaxX, bMinX, bMaxY, bMinY, sprite2;
@@ -2288,6 +2404,12 @@ MainScene.prototype.testCollision = function () {
 
 };
 
+/**
+ * Makes two Wisps fight, and the smaller one looses
+ * @method MainScene.destroySmallest
+ * @param {object} a - a Wisp instance
+ * @param {object} b - a Wisp instance
+ */
 MainScene.prototype.destroySmallest = function (a, b) {
 
   if (a.invincible > 0 || b.invincible > 0) {
@@ -2327,6 +2449,10 @@ MainScene.prototype.destroySmallest = function (a, b) {
 
 };
 
+/**
+ * Resizes all sprites so that they fit onscreen
+ * @method MainScene.scaleSprites
+ */
 MainScene.prototype.scaleSprites = function () {
 
   var i, len, amount;
@@ -2342,6 +2468,10 @@ MainScene.prototype.scaleSprites = function () {
 
 };
 
+/**
+ * Tests to see if the Wisps are getting too large on screen
+ * @method MainScene.scaleWorld
+ */
 MainScene.prototype.scaleWorld = function () {
 
   var i, len;
@@ -2362,6 +2492,10 @@ MainScene.prototype.scaleWorld = function () {
 
 /*globals Game*/
 
+/**
+ * Creates a requestAnimationFrame object with fallbacks
+ * @function raf
+ */
 window.raf = (function () {
   return window.requestAnimationFrame || function (cb) { window.setTimeout(cb, 1000 / 60); };
 })();
