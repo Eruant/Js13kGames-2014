@@ -2260,7 +2260,7 @@ MainScene.prototype.drawMenu = function (percent) {
       ctx.translate(halfWidth, halfHeight - 160);
       ctx.rotate(-3 * Math.PI / 180);
     }
-    ctx.fillText('score: ' + this.game.hiscore, 0, 0);
+    ctx.fillText('hi-score: ' + this.game.hiscore, 0, 0);
     ctx.restore();
   }
 
